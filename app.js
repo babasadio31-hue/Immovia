@@ -24,12 +24,8 @@ let charts = {
 // ==========================================================================
 
 function initApp() {
-  loadData();
   
-  if (state.owners.length === 0 || state.properties.length === 0) {
-    loadMockData();
-    saveData();
-  }
+  
 
   // Initialisation par défaut si le state ne contenait pas ces nouveaux attributs
   let dataChanged = false;
@@ -126,7 +122,17 @@ function handleLogin(e) {
     }
     sessionStorage.setItem('auraimmo_session', user.id);
     document.getElementById('login-password').value = '';
-    initApp(); // reload the app with session
+    async function startApp() {
+  const token = getAuthToken();
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+  await loadData();
+  // Call the original initApp logic synchronously now that data is loaded
+  initApp();
+}
+startApp(); // reload the app with session
   } else {
     showToast('Email ou mot de passe incorrect.', 'error');
   }
@@ -137,25 +143,34 @@ function handleLogout() {
   location.reload(); // Reloads the page to clear memory state and show login
 }
 
-function loadData() {
-  const savedState = localStorage.getItem('auraimmo_state');
-  if (savedState) {
-    try {
-      state = JSON.parse(savedState);
-      state.owners = state.owners || [];
-      state.properties = state.properties || [];
-      state.transactions = state.transactions || [];
-      state.staff = state.staff || [];
-      state.agencySettings = state.agencySettings || {};
-    } catch (e) {
-      console.error("Erreur lors de la lecture des données AuraImmo", e);
+async function loadData() {
+  try {
+    const [apiOwners, apiProperties, apiTenants, apiTransactions] = await Promise.all([
+      API.getOwners(),
+      API.getProperties(),
+      API.getTenants(),
+      API.getTransactions()
+    ]);
+    state.owners = apiOwners || [];
+    state.properties = apiProperties || [];
+    state.transactions = apiTransactions || [];
+    state.tenants = apiTenants || [];
+    
+    const savedState = localStorage.getItem('auraimmo_state');
+    if (savedState) {
+        const local = JSON.parse(savedState);
+        state.staff = local.staff || [];
+        state.agencySettings = local.agencySettings || {};
+    } else {
+        state.staff = [];
+        state.agencySettings = {};
     }
+  } catch (e) {
+    console.error("Erreur API:", e);
   }
 }
 
-function saveData() {
-  localStorage.setItem('auraimmo_state', JSON.stringify(state));
-}
+function saveData() { /* API persistance used instead */ }
 
 function loadMockData() {
   const getPastDate = (daysAgo) => {
@@ -2909,7 +2924,17 @@ function handleTenantSubmit(e) {
 
 // Démarrage de l'application
 window.addEventListener('DOMContentLoaded', () => {
+  async function startApp() {
+  const token = getAuthToken();
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+  await loadData();
+  // Call the original initApp logic synchronously now that data is loaded
   initApp();
+}
+startApp();
 });
 
 // --- Rendu & Actions pour la page Personnel (Staff) ---
