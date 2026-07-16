@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraImmo - Gestionnaire Premium d'Agence Immobilière</title>
+  <meta name="description" content="Gérez vos propriétaires, propriétés et transactions de loyers avec un tableau de bord moderne en glassmorphism.">
+  
+  <!-- Font Outfit de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  
+  <!-- Login Screen (Masqué par défaut) -->
+  <div id="login-screen" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--color-background); align-items: center; justify-content: center;">
+    <div class="card glass" style="width: 100%; max-width: 400px; padding: 2rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="width: 64px; height: 64px; background: var(--color-primary); color: white; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: white;">AuraImmo</h2>
+        <p style="color: var(--color-text-muted); font-size: 0.9rem;">Connectez-vous à votre espace</p>
+      </div>
+      <form id="form-login">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="login-email">Adresse Email</label>
+          <input type="email" id="login-email" class="form-input" required placeholder="ex. admin@auraimmo.ml">
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="login-password">Mot de passe</label>
+          <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Se Connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="app-container" id="app-container">
+    <div id="global-print-header" class="only-print"></div>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h1 class="logo-text" id="logo-title">AuraImmo</h1>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <button class="menu-btn active" id="btn-nav-dashboard" data-tab="dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>
+          </svg>
+          <span>Tableau de bord</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-owners" data-tab="owners">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Propriétaires</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-tenants" data-tab="tenants">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Locataires</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-properties" data-tab="properties">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Biens Immobiliers</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-accounting" data-tab="accounting">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span>Comptabilité</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-staff" data-tab="staff">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Personnel</span>
+        </button>
+        <button class="menu-btn" id="btn-nav-settings" data-tab="settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Paramètres</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar" id="sidebar-user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebar-user-name">Admin</span>
+            <span class="user-role" id="sidebar-user-role">Administrateur</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="welcome-text">
+          <h2 id="greeting-title">Gestion d'Agence AuraImmo</h2>
+          <p class="subtitle">Vue d'ensemble et pilotage de vos parcs immobiliers.</p>
+        </div>
+        <div class="header-actions">
+        </div>
+      </header>
+      
+      <!-- Content View Wrapper -->
+      <div class="view-wrapper">
+        
+        <!-- ================= DASHBOARD TAB ================= -->
+        <section class="tab-view active" id="view-dashboard">
+          
+          <div class="kpi-grid">
+            <!-- Total Commissions (Agency Profit) -->
+            <div class="card glass kpi-card glow-purple">
+              <div class="kpi-icon icon-purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Commissions Agence</span>
+                <h3 class="kpi-value value-green" id="val-total-commissions">0 FCFA</h3>
+                <span class="kpi-trend trend-up">Revenus de l'agence</span>
+              </div>
+            </div>
+            
+            <!-- Total Rents Collected -->
+            <div class="card glass kpi-card glow-green">
+              <div class="kpi-icon icon-green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Loyers Encaissés</span>
+                <h3 class="kpi-value" id="val-total-rents">0 FCFA</h3>
+                <span class="kpi-trend trend-neutral">Volume global collecté</span>
+              </div>
+            </div>
+            
+            <!-- Total Active Properties -->
+            <div class="card glass kpi-card glow-rose">
+              <div class="kpi-icon icon-rose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Biens Sous Mandat</span>
+                <h3 class="kpi-value" id="val-total-properties">0</h3>
+                <span class="kpi-trend trend-up" id="val-occupancy-rate">0% Taux d'occupation</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="dashboard-grid">
+            <!-- Line Chart: Cash Flows -->
+            <div class="card glass span-two-columns">
+              <div class="card-header">
+                <h4 class="card-title">Flux de Commissions Mensuelles de l'Agence</h4>
+                <div class="card-options">
+                  <span class="badge badge-purple">Mise à jour en direct</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart-container-large">
+                  <canvas id="chart-dashboard-overview"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recent Activity List -->
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">Mouvements de Fonds Récents</h4>
+                <button class="btn btn-text" id="btn-see-all-transactions">Voir tout</button>
+              </div>
+              <div class="card-body">
+                <div class="recent-list" id="list-recent-transactions">
+                  <!-- Dynamic rows loaded here -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Landlords List Preview -->
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">Propriétaires Vedettes</h4>
+                <button class="btn btn-text" id="btn-nav-to-owners">Voir tout</button>
+              </div>
+              <div class="card-body">
+                <div class="budget-summary-list" id="list-dashboard-owners">
+                  <!-- Dynamic preview list -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Occupancy Overview -->
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">État du Parc Immobilier</h4>
+                <button class="btn btn-text" id="btn-nav-to-properties">Gérer les biens</button>
+              </div>
+              <div class="card-body">
+                <div class="goals-summary-list" id="list-dashboard-properties">
+                  <!-- Dynamic properties tracker -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= OWNERS TAB ================= -->
+        <section class="tab-view" id="view-owners">
+          <div class="card glass">
+            <div class="card-header">
+              <div>
+                <h4 class="card-title">Répertoire des Propriétaires</h4>
+                <p class="subtitle">Liste des bailleurs sous mandat de gestion. Cliquez sur un nom pour ouvrir son dossier.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-open-owner-modal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Nouveau Propriétaire</span>
+              </button>
+            </div>
+            
+            <div class="table-container" style="margin-top: 1.5rem;">
+              <table class="data-table" id="table-owners">
+                <thead>
+                  <tr>
+                    <th>Bailleur</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th class="text-center">Biens sous mandat</th>
+                    <th class="text-right">Loyers Mensuels Estimés</th>
+                    <th class="text-center no-print">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="body-owners-table">
+                  <!-- Dynamic rows loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= OWNER DETAILS SUB-PAGE (5 sub-tabs) ================= -->
+        <section class="tab-view" id="view-owner-details">
+          
+          <!-- Retour Button -->
+          <div style="margin-bottom: 1.5rem;">
+            <button class="btn btn-outline btn-sm" id="btn-back-to-owners" style="padding: 0.5rem 0.75rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+              </svg>
+              <span style="display: inline-block; vertical-align: middle;">Retour aux propriétaires</span>
+            </button>
+          </div>
+          
+          <!-- Dossier Header Card -->
+          <div class="card glass no-print" style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem;">
+            <div class="avatar" id="owner-detail-avatar" style="width: 60px; height: 60px; font-size: 1.5rem; border-radius: 16px;">OW</div>
+            <div>
+              <h3 id="owner-detail-name" style="font-size: 1.5rem; font-weight: 700; color: white;">Bailleur</h3>
+              <p id="owner-detail-contact" class="subtitle" style="margin: 0;">Contact</p>
+            </div>
+          </div>
+          
+          <!-- Sub-navigation horizontal bar -->
+          <div class="toolbar" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1.5rem; justify-content: flex-start; gap: 0.5rem;">
+            <button class="btn btn-secondary btn-sm owner-sub-btn active" data-subtab="info">Informations</button>
+            <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="biens">Biens Possédés</button>
+            <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="locataires">Locataires</button>
+            <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="retraits">Retraits de Loyers</button>
+            <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="fonds">Fonds Disponibles</button>
+          </div>
+          
+          <!-- Sub-panels containers -->
+          <div class="owner-detail-panels">
+            
+            <div class="owner-panel active" id="panel-owner-info">
+              <div class="card glass">
+                <h4 class="card-title" style="margin-bottom: 1.5rem;">Fiche d'Information Bailleur</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Honoraires Mandat</span>
+                    <div style="display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
+                      <input type="number" id="input-edit-owner-commission" class="form-input" style="width: 70px; padding: 0.25rem; font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover); text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;" min="0" max="100">
+                      <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover);">%</span>
+                    </div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Biens gérés sous contrat</span>
+                    <h5 id="owner-info-properties" style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem;">0</h5>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Total Loyers Encaissés</span>
+                    <h5 id="owner-info-collected" style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; color: var(--color-green);">0 FCFA</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Panel 2: Biens Possédés -->
+            <div class="owner-panel" id="panel-owner-biens">
+              <div class="card glass">
+                <h4 class="card-title" style="margin-bottom: 1.25rem;">Patrimoine Immobilier Sous Mandat</h4>
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Libellé du Bien</th>
+                        <th>Adresse / Quartier</th>
+                        <th class="text-right">Loyer Hors Charges</th>
+                        <th class="text-center">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody id="body-owner-biens-table">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Panel 3: Locataires -->
+            <div class="owner-panel" id="panel-owner-locataires">
+              <div class="card glass">
+                <h4 class="card-title" style="margin-bottom: 1.25rem;">Ménages & Locataires Actifs</h4>
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Nom du Locataire</th>
+                        <th>Bien Occupé</th>
+                        <th>Téléphone de Contact</th>
+                        <th class="text-right">Loyer Mensuel</th>
+                        <th class="text-center no-print">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="body-owner-locataires-table">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Panel 4: Retraits -->
+            <div class="owner-panel" id="panel-owner-retraits">
+              <!-- Controls (No-print) -->
+              <div class="no-print" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                <!-- Save Button -->
+                <button class="btn btn-primary btn-sm" id="btn-save-receipt">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Enregistrer les Flux</span>
+                </button>
+                <!-- Upload Logo Button -->
+                <button class="btn btn-outline btn-sm" id="btn-upload-logo-trigger">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Modifier le Logo</span>
+                </button>
+                <input type="file" id="input-logo-upload" accept="image/png" style="display: none;">
+                <!-- Reset Logo Button -->
+                <button class="btn btn-outline btn-sm" id="btn-reset-logo" style="display: none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Réinitialiser Logo</span>
+                </button>
+                <!-- Clear Button -->
+                <button class="btn btn-outline btn-sm" id="btn-clear-receipt">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Effacer</span>
+                </button>
+                <!-- Print Button -->
+                <button class="btn btn-secondary btn-sm" id="btn-print-receipt">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Imprimer la Fiche</span>
+                </button>
+              </div>
+
+              <div class="card glass receipt-card" id="owner-receipt-card" style="position: relative;">
+                
+                <!-- 1. En-tête : Infos Entreprise dynamique gérée par JS -->
+                <div id="dynamic-receipt-header"></div>
+
+                <!-- 2. Titre du Reçu et Date -->
+                <div class="receipt-title-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                  <div>
+                    <h3 style="font-weight: 800; font-size: 1.4rem; color: var(--color-primary); letter-spacing: 1px; margin: 0; text-transform: uppercase;">Retrait de Loyer</h3>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;" id="receipt-building-desc">Bâtiment sous gérance</p>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">Loyer Mensuel Estimé : <strong id="receipt-estimated-rent" style="color: var(--color-green);">0 FCFA</strong></p>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-end;">
+                      <span style="font-size: 0.88rem; font-weight: 500;">Bamako, le :</span>
+                      <input type="text" id="receipt-date-input" class="form-input" style="width: 140px; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); font-size: 0.88rem; color: white;" value="13 janv-26">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recipient Info -->
+                <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+                  <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: white;">
+                    Bailleur : <span id="receipt-owner-title-name" style="color: var(--color-primary-hover);">Monsieur Abdoulaye Cisse</span>
+                  </p>
+                  <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4;">
+                    Nous vous informons que nous débitons votre compte des opérations suivantes :
+                  </p>
+                </div>
+
+                <!-- The Receipt Grid Table -->
+                <div class="table-container" style="margin-bottom: 1.5rem;">
+                  <table class="data-table receipt-table" style="border-collapse: collapse; width: 100%;">
+                    <thead>
+                      <tr style="background: rgba(99, 102, 241, 0.1); border-bottom: 2px solid var(--color-primary);">
+                        <th>Locataires</th>
+                        <th class="text-right">Loyer Mensuel</th>
+                        <th>Mois Actuel</th>
+                        <th class="text-right">Montant Payé ce Mois</th>
+                        <th class="text-right">Reliquats</th>
+                        <th class="text-center">Statut</th>
+                        <th class="text-center no-print">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="body-receipt-table">
+                      <!-- Dynamic editable rows here -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Add Row Button (No-print) -->
+                <div class="no-print" style="margin-bottom: 2rem;">
+                  <button class="btn btn-secondary btn-sm" id="btn-receipt-add-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Ajouter une ligne</span>
+                  </button>
+                </div>
+
+                <!-- Receipt Calculations Box + Signatures Grid -->
+                <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 1.5rem;">
+                  
+                  <!-- Calculs Alignés à GAUCHE -->
+                  <div style="display: flex; justify-content: flex-start; margin-bottom: 2.5rem;">
+                    <table style="width: 100%; max-width: 340px; border-collapse: collapse; font-size: 0.9rem;">
+                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">TOTAL PAYÉ :</td>
+                        <td class="text-right" id="receipt-val-total" style="padding: 0.5rem 0; font-weight: 700; color: white;">0 FCFA</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Frais de gérance :</td>
+                        <td class="text-right" id="receipt-val-frais" style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Reliquats :</td>
+                        <td class="text-right" id="receipt-val-reliquats" style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
+                      </tr>
+                      <tr style="border-top: 2px solid var(--color-primary); background: rgba(99, 102, 241, 0.05);">
+                        <td style="padding: 0.65rem 0.5rem; font-weight: 800; color: white;">NET À REVERSER :</td>
+                        <td class="text-right value-green" id="receipt-val-net" style="padding: 0.65rem 0.5rem; font-weight: 800; font-size: 1.15rem;">0 FCFA</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <!-- Signatures Grid en BAS -->
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; color: white; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); min-height: 120px;">
+                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                      <span style="text-decoration: underline; text-underline-offset: 4px;">Le Bénéficiaire</span>
+                      <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature du propriétaire)</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
+                      <span style="text-decoration: underline; text-underline-offset: 4px;">Le Gérant</span>
+                      <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature de l'agence)</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+            
+            <!-- Panel 5: Fonds -->
+            <div class="owner-panel" id="panel-owner-fonds">
+              <div class="card glass">
+                <h4 class="card-title" style="margin-bottom: 1.5rem;">État des Fonds et Reversabilité</h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.12);">
+                    <div class="kpi-details">
+                      <span class="kpi-label" style="font-size: 0.72rem;">Loyers Bruts Collectés</span>
+                      <h3 class="kpi-value value-green" id="owner-fonds-brut" style="font-size: 1.5rem;">0 FCFA</h3>
+                      <span class="kpi-trend trend-neutral">Volume perçu des locataires</span>
+                    </div>
+                  </div>
+                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(244, 63, 94, 0.04); border-color: rgba(244, 63, 94, 0.12);">
+                    <div class="kpi-details">
+                      <span class="kpi-label" style="font-size: 0.72rem;">Honoraires d'Agence Mandat</span>
+                      <h3 class="kpi-value value-rose" id="owner-fonds-com" style="font-size: 1.5rem;">0 FCFA</h3>
+                      <span class="kpi-trend trend-neutral">Retenue commissions de gestion</span>
+                    </div>
+                  </div>
+                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(139, 92, 246, 0.06); border-color: rgba(139, 92, 246, 0.2);">
+                    <div class="kpi-details">
+                      <span class="kpi-label" style="font-size: 0.72rem;">Net Disponible à Reverser</span>
+                      <h3 class="kpi-value" id="owner-fonds-net" style="font-size: 1.65rem; color: white;">0 FCFA</h3>
+                      <span class="kpi-trend trend-up">Fonds disponibles pour retrait</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                  <button class="btn btn-primary" id="btn-request-withdrawal">Effectuer un retrait de fonds</button>
+                  <button class="btn btn-outline" id="btn-owner-fonds-statement">Générer un relevé financier</button>
+                  <button class="btn btn-outline btn-sm" id="btn-clear-fonds" style="margin-left: auto;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    <span style="display: inline-block; vertical-align: middle;">Effacer</span>
+                  </button>
+                </div>
+
+                <div style="margin-top: 2.25rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                  <h5 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: white;">Historique des Retraits de Fonds</h5>
+                  <div class="table-container">
+                    <table class="data-table" id="table-owner-withdrawals" style="width: 100%;">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Libellé / Description</th>
+                          <th class="text-right">Montant Retiré</th>
+                          <th class="text-center">Statut</th>
+                          <th class="text-center no-print" style="width: 60px;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="body-owner-withdrawals-table">
+                        <!-- Dynamically populated -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+        </section>
+        
+        <!-- ================= PROPERTIES TAB ================= -->
+        <section class="tab-view" id="view-properties">
+          <div class="card glass">
+            <div class="card-header">
+              <div>
+                <h4 class="card-title">Parc Immobilier Géré</h4>
+                <p class="subtitle">Inventaire des appartements, studios et villas en gérance.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-open-property-modal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Nouveau Bien</span>
+              </button>
+            </div>
+            
+            <div class="goals-detailed-grid" id="grid-detailed-properties" style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+              <!-- Dynamic Property Cards here -->
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= TRANSACTIONS TAB ================= -->
+        <section class="tab-view" id="view-transactions">
+          <div class="card glass">
+            <div class="toolbar">
+              <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="input-search-transactions" placeholder="Rechercher libellé, propriétaire, bien...">
+              </div>
+              
+              <div class="filters-group">
+                <select class="form-select" id="select-filter-type">
+                  <option value="all">Tous les flux</option>
+                  <option value="income">Entrées (Commissions, Honoraires)</option>
+                  <option value="expense">Sorties (Reversements, Dépenses)</option>
+                </select>
+                
+                <select class="form-select" id="select-sort-order">
+                  <option value="date-desc">Plus récent d'abord</option>
+                  <option value="date-asc">Plus ancien d'abord</option>
+                  <option value="amount-desc">Montant le plus élevé</option>
+                  <option value="amount-asc">Montant le plus bas</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="data-table" id="table-transactions">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Libellé</th>
+                    <th>Propriétaire</th>
+                    <th>Bien Associé</th>
+                    <th>Type</th>
+                    <th class="text-right">Montant</th>
+                    <th class="text-center no-print">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="body-transactions-table">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+              <div class="empty-state hidden" id="empty-transactions-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <p>Aucun flux financier enregistré.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= ANALYTICS TAB ================= -->
+        <section class="tab-view" id="view-analytics">
+          <div class="analytics-actions">
+            <button class="btn btn-secondary" id="btn-export-csv">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Exporter en CSV</span>
+            </button>
+            <button class="btn btn-outline" id="btn-reset-data">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+              </svg>
+              <span>Réinitialiser les Données d'Agence</span>
+            </button>
+          </div>
+          
+          <div class="analytics-layout-grid">
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">Taux d'Occupation des Biens</h4>
+                <p class="subtitle">Répartition par statut de location</p>
+              </div>
+              <div class="card-body center-chart">
+                <div class="chart-container-medium">
+                  <canvas id="chart-analytics-expenses"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">Portefeuille Propriétaires</h4>
+                <p class="subtitle">Nombre de propriétés par bailleur</p>
+              </div>
+              <div class="card-body center-chart">
+                <div class="chart-container-medium">
+                  <canvas id="chart-analytics-income"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card glass span-two-columns">
+              <div class="card-header">
+                <h4 class="card-title">Commissions vs Coûts d'Agence</h4>
+                <p class="subtitle">Historique des entrées d'honoraires et dépenses opérationnelles</p>
+              </div>
+              <div class="card-body">
+                <div class="chart-container-large">
+                  <canvas id="chart-analytics-trends"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= TENANTS TAB ================= -->
+        <section class="tab-view" id="view-tenants">
+          <div class="card glass">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 class="card-title">Répertoire des Locataires</h4>
+                <p class="subtitle">Liste de tous les locataires actifs occupant les biens sous mandat.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-open-tenant-modal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Ajouter un Locataire</span>
+              </button>
+            </div>
+            
+            <div class="toolbar" style="margin-top: 1.5rem;">
+              <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="input-search-tenants" placeholder="Rechercher locataire, bien, propriétaire...">
+              </div>
+            </div>
+            
+            <div class="table-container" style="margin-top: 1rem;">
+              <table class="data-table" id="table-tenants">
+                <thead>
+                  <tr>
+                    <th>Nom du Locataire</th>
+                    <th>Téléphone</th>
+                    <th>Bien Occupé</th>
+                    <th>Bailleur</th>
+                    <th class="text-right">Loyer Mensuel</th>
+                    <th class="text-center no-print">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="body-tenants-table">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TENANT DOSSIER TAB ================= -->
+        <section class="tab-view" id="view-tenant-dossier">
+          <div style="margin-bottom: 1.5rem;" class="no-print">
+            <button class="btn btn-outline btn-sm" id="btn-back-to-tenants">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+              <span>Retour aux Locataires</span>
+            </button>
+          </div>
+
+          <div class="card glass" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <h4 class="card-title">Fiche Signalétique du Locataire</h4>
+              <p class="subtitle">Informations d'identification et de bail actif</p>
+            </div>
+            <div class="card-body">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Nom du Locataire</span>
+                  <span id="dossier-tenant-name" style="font-size: 1.15rem; font-weight: 700; color: white; display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Téléphone</span>
+                  <span id="dossier-tenant-phone" style="font-size: 1.15rem; font-weight: 700; color: white; display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bien Occupé</span>
+                  <span id="dossier-tenant-property" style="font-size: 1.15rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bailleur</span>
+                  <span id="dossier-tenant-owner" style="font-size: 1.15rem; font-weight: 700; color: white; display: block; margin-top: 0.25rem;">-</span>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Date d'Entrée (Début Bail)</span>
+                  <span id="dossier-tenant-lease-start" style="font-size: 1.1rem; font-weight: 700; color: white; display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Caution Versée</span>
+                  <span id="dossier-tenant-caution" style="font-size: 1.1rem; font-weight: 700; color: var(--color-rose); display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Loyer Mensuel</span>
+                  <span id="dossier-tenant-rent" style="font-size: 1.1rem; font-weight: 700; color: var(--color-green); display: block; margin-top: 0.25rem;">-</span>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Adresse Physique</span>
+                  <span id="dossier-tenant-address" style="font-size: 1.1rem; font-weight: 700; color: white; display: block; margin-top: 0.25rem;">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card glass">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 class="card-title">Fiche de Suivi des Loyers & États de Paiements</h4>
+                <p class="subtitle">Historique comptable mensuel exhaustif des loyers perçus et des reliquats</p>
+              </div>
+              <button class="btn btn-secondary btn-sm no-print" id="btn-print-tenant-dossier">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                </svg>
+                <span>Imprimer la Fiche</span>
+              </button>
+            </div>
+            <div class="table-container" style="margin-top: 1rem;">
+              <table class="data-table" id="table-tenant-payments" style="width: 100%;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--color-primary);">
+                    <th>Mois</th>
+                    <th class="text-right">Loyer</th>
+                    <th class="text-right">Payé ce mois</th>
+                    <th class="text-right">Total payé</th>
+                    <th class="text-right">Solde</th>
+                    <th class="text-right">Reliquat</th>
+                    <th class="text-center">Avance (mois)</th>
+                    <th class="text-center">Retard (mois)</th>
+                    <th class="text-center">Statut</th>
+                  </tr>
+                </thead>
+                <tbody id="body-tenant-payments-table">
+                  <!-- Dynamically populated -->
+                </tbody>
+                <tfoot>
+                  <tr style="border-top: 2px solid rgba(255,255,255,0.15); font-weight: 800; color: white;">
+                    <td colspan="2">TOTAL =</td>
+                    <td class="text-right" id="tenant-dossier-total-paid">0 FCFA</td>
+                    <td colspan="6"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= ACCOUNTING TAB ================= -->
+        <section class="tab-view" id="view-accounting">
+          
+          <!-- KPI Cards Grid for Accounting -->
+          <div class="kpi-grid">
+            <!-- Total Inflow (Gross collected Rents) -->
+            <div class="card glass kpi-card glow-green" style="display: none;">
+              <div class="kpi-icon icon-green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Recettes Brutes</span>
+                <h3 class="kpi-value value-green" id="accounting-total-inflows">0 FCFA</h3>
+                <span class="kpi-trend trend-neutral">Total loyers perçus</span>
+              </div>
+            </div>
+            
+            <!-- Agency Net Revenue (Commissions) -->
+            <div class="card glass kpi-card glow-purple">
+              <div class="kpi-icon icon-purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Revenus Honoraires</span>
+                <h3 class="kpi-value" id="accounting-net-agency" style="color: white;">0 FCFA</h3>
+                <span class="kpi-trend trend-up">Commissions encaissées</span>
+              </div>
+            </div>
+            
+            <!-- Paid Out (Reversements Proprietaires) -->
+            <div class="card glass kpi-card glow-rose">
+              <div class="kpi-icon icon-rose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Sorties / Reversements</span>
+                <h3 class="kpi-value value-rose" id="accounting-total-outflows">0 FCFA</h3>
+                <span class="kpi-trend trend-neutral">Reversements & Dépenses</span>
+              </div>
+            </div>
+            
+            <!-- Solde Net (Reste) -->
+            <div class="card glass kpi-card glow-blue">
+              <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="14" y2="12"/><line x1="6" y1="16" x2="6" y2="16"/><line x1="10" y1="16" x2="10" y2="16"/><line x1="14" y1="16" x2="14" y2="16"/>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Solde Net (Reste)</span>
+                <h3 class="kpi-value" id="accounting-balance" style="color: #3b82f6;">0 FCFA</h3>
+                <span class="kpi-trend trend-neutral">Entrées - Sorties</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card glass" style="margin-bottom: 2rem;">
+            <div class="card-header">
+              <div>
+                <h4 class="card-title">Grand Livre de Caisse</h4>
+                <p class="subtitle">Bilan comptable des loyers perçus, honoraires d'agence et reversements aux propriétaires.</p>
+              </div>
+            </div>
+            
+            <!-- Sub-tabs navigation for accounting -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;" class="no-print">
+              <button class="btn btn-secondary btn-sm accounting-sub-btn active" data-subtab="entrées">Recettes (Entrées)</button>
+              <button class="btn btn-secondary btn-sm accounting-sub-btn" data-subtab="sorties">Dépenses & Retraits (Sorties)</button>
+            </div>
+            
+            <div class="toolbar" style="margin-top: 1.5rem;">
+              <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="input-search-accounting" placeholder="Rechercher un flux...">
+              </div>
+            </div>
+            
+            <!-- Panel: Entrées -->
+            <div class="accounting-panel active" id="panel-accounting-entrées">
+              <div style="display: flex; justify-content: flex-end; margin-top: 1rem; margin-bottom: 1rem;" class="no-print">
+                <button class="btn btn-outline btn-sm" id="btn-clear-entrees">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Effacer</span>
+                </button>
+              </div>
+              <div class="table-container" style="margin-top: 1rem;">
+                <table class="data-table" id="table-accounting-entrées" style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th>Propriétaire</th>
+                      <th>Bien Associé</th>
+                      <th class="text-right">Part Agence (Commission)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="body-accounting-entrées-table">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Panel: Sorties -->
+            <div class="accounting-panel" id="panel-accounting-sorties" style="display: none;">
+              <h4 class="print-only" style="display: none; color: black; margin-bottom: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold;">Historique des Dépenses et Sorties</h4>
+              <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; margin-bottom: 1rem; gap: 0.75rem;" class="no-print">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <select id="sorties-filter-type" class="form-select btn-sm" style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+                    <option value="all">Toutes les dates</option>
+                    <option value="day">Par Jour</option>
+                    <option value="month">Par Mois</option>
+                    <option value="year">Par Année</option>
+                  </select>
+                  <input type="date" id="sorties-filter-day" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="month" id="sorties-filter-month" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="number" id="sorties-filter-year" class="form-input btn-sm" placeholder="Ex: 2024" style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-print-sorties">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Imprimer</span>
+                </button>
+                <button class="btn btn-outline btn-sm" id="btn-clear-sorties">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                  <span style="display: inline-block; vertical-align: middle;">Effacer</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-accounting-add-expense">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>Effectuer une sortie</span>
+                </button>
+              </div>
+              <div class="table-container">
+                <table class="data-table" id="table-accounting-sorties" style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th>Bien Associé</th>
+                      <th class="text-right">Montant Retiré / Dépensé</th>
+                      <th class="text-center">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody id="body-accounting-sorties-table">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= STAFF (PERSONNEL) TAB ================= -->
+        <section class="tab-view" id="view-staff">
+          <div class="card glass">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 class="card-title">Registre du Personnel</h4>
+                <p class="subtitle">Gestion des membres de l'équipe de l'agence et de leurs rôles.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-open-staff-modal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Nouveau Membre</span>
+              </button>
+            </div>
+            
+            <div class="table-container" style="margin-top: 1.5rem;">
+              <table class="data-table" id="table-staff">
+                <thead>
+                  <tr>
+                    <th>Membre</th>
+                    <th>Rôle</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th class="text-center">Statut</th>
+                    <th class="text-center no-print">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="body-staff-table">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SETTINGS (PARAMÈTRES) TAB ================= -->
+        <section class="tab-view" id="view-settings">
+          <div class="split-view-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;">
+            
+            <!-- Company Info settings card -->
+            <div class="card glass">
+              <div class="card-header">
+                <h4 class="card-title">Informations de l'Agence</h4>
+              </div>
+              <form id="form-settings-agency" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                  <label for="input-settings-name" class="form-label">Nom de l'agence</label>
+                  <input type="text" id="input-settings-name" class="form-input" placeholder="ex. AuraImmo S.A.R.L" required>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                  <label for="input-settings-address" class="form-label">Adresse physique</label>
+                  <input type="text" id="input-settings-address" class="form-input" placeholder="ex. Rue du Golf, Immeuble Horizon, Bamako, Mali" required>
+                </div>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-phone" class="form-label">Téléphone</label>
+                    <input type="text" id="input-settings-phone" class="form-input" placeholder="ex. +223 20 22 44 66" required>
+                  </div>
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-email" class="form-label">Email</label>
+                    <input type="email" id="input-settings-email" class="form-input" placeholder="ex. contact@auraimmo.ml" required>
+                  </div>
+                </div>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-currency" class="form-label">Devise</label>
+                    <input type="text" id="input-settings-currency" class="form-input" placeholder="ex. FCFA" required>
+                  </div>
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-commission" class="form-label">Honoraires par défaut (%)</label>
+                    <input type="number" id="input-settings-commission" class="form-input" min="1" max="100" placeholder="10" required>
+                  </div>
+                </div>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-nif" class="form-label">Numéro d'Identification Fiscale (NIF)</label>
+                    <input type="text" id="input-settings-nif" class="form-input" placeholder="ex. NIF: 123456789">
+                  </div>
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-slogan" class="form-label">Slogan / Description d'activité</label>
+                    <input type="text" id="input-settings-slogan" class="form-input" placeholder="ex. Agence Immobilière & Syndic de Copropriété">
+                  </div>
+                </div>
+                <div style="margin-top: 0.5rem; display: flex; justify-content: flex-end;">
+                  <button type="submit" class="btn btn-primary btn-sm">Enregistrer les Paramètres</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Logo and System settings card -->
+            <div class="card glass" style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <div>
+                <h4 class="card-title" style="margin-bottom: 0.5rem;">Logo de l'Agence</h4>
+                <p class="subtitle">Importez un logo d'entreprise PNG pour habiller vos reçus et documents officiels.</p>
+                <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+                  <button class="btn btn-secondary btn-sm" id="btn-settings-upload-logo">Modifier le Logo</button>
+                  <input type="file" id="input-settings-upload-logo" accept="image/png, image/jpeg, image/svg+xml" style="display: none;">
+                  <button class="btn btn-outline btn-sm" id="btn-settings-reset-logo" style="border-color: rgba(244, 63, 94, 0.3); color: var(--color-rose-hover);">Réinitialiser</button>
+                </div>
+              </div>
+
+              <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08);">
+
+              <div>
+                <h4 class="card-title" style="margin-bottom: 0.5rem;">Système & Données</h4>
+                <p class="subtitle">Actions globales de maintenance et d'administration des données de l'application.</p>
+                <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                  <button class="btn btn-secondary btn-sm" id="btn-settings-export-json" style="width: 100%; justify-content: flex-start;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Exporter la sauvegarde (JSON)</span>
+                  </button>
+                  <button class="btn btn-outline btn-sm" id="btn-settings-import-json" style="width: 100%; justify-content: flex-start;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>Importer une sauvegarde (JSON)</span>
+                  </button>
+                  <input type="file" id="input-settings-import-file" accept=".json" style="display: none;">
+                  <button class="btn btn-outline btn-sm" id="btn-settings-reset-data" style="width: 100%; justify-content: flex-start; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+                    </svg>
+                    <span>Réinitialiser les données de l'application</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+        
+      </div>
+    </main>
+  </div>
+  
+  <!-- ================= MODALS SECTION ================= -->
+  
+  <!-- Modal: Add Owner (Nouveau Propriétaire) -->
+  <div class="modal-overlay" id="modal-owner">
+    <div class="modal-card glass animate-slide-up">
+      <div class="modal-header">
+        <h3>Nouveau Propriétaire</h3>
+        <button class="modal-close" id="btn-close-owner-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-owner">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="input-owner-name" class="form-label">Nom complet / Raison Sociale</label>
+            <input type="text" id="input-owner-name" class="form-input" placeholder="ex. Moussa Ndiaye" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-owner-phone" class="form-label">Téléphone</label>
+              <input type="text" id="input-owner-phone" class="form-input" placeholder="ex. +221 77 000 00 00" required>
+            </div>
+            <div class="form-group">
+              <label for="input-owner-email" class="form-label">Adresse Email</label>
+              <input type="email" id="input-owner-email" class="form-input" placeholder="ex. moussa@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-owner-address" class="form-label">Adresse Physique</label>
+            <input type="text" id="input-owner-address" class="form-input" placeholder="ex. ACI 2000, Bamako">
+          </div>
+          <div class="form-group">
+            <label for="input-owner-commission" class="form-label">Taux d'honoraires de gestion (%)</label>
+            <input type="number" id="input-owner-commission" class="form-input" min="1" max="100" value="10" required>
+          </div>
+          
+          <!-- Section: Bien Immobilier Initial (Facultatif) -->
+          <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: white; margin-bottom: 0.75rem;">Bien Immobilier Associé (Facultatif)</h4>
+            <div class="form-group">
+              <label for="input-owner-prop-name" class="form-label">Nom du Bien (Libellé)</label>
+              <input type="text" id="input-owner-prop-name" class="form-input" placeholder="ex. Appartement F3 GOLF">
+            </div>
+            <div class="form-group">
+              <label for="input-owner-prop-address" class="form-label">Adresse / Quartier</label>
+              <input type="text" id="input-owner-prop-address" class="form-input" placeholder="ex. Badalabougou, Bamako">
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="select-owner-prop-type" class="form-label">Type de bien</label>
+                <select id="select-owner-prop-type" class="form-select">
+                  <option value="Appartement" selected>Appartement</option>
+                  <option value="Villa">Villa</option>
+                  <option value="Magasin">Magasin</option>
+                  <option value="Terrain">Terrain</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="input-owner-prop-caution" class="form-label">Caution (FCFA)</label>
+                <input type="number" id="input-owner-prop-caution" class="form-input" min="0" placeholder="ex. 300000">
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="input-owner-prop-rent" class="form-label">Loyer Mensuel (FCFA)</label>
+                <input type="number" id="input-owner-prop-rent" class="form-input" min="0" placeholder="ex. 150000">
+              </div>
+              <div class="form-group">
+                <label for="select-owner-prop-status" class="form-label">Statut</label>
+                <select id="select-owner-prop-status" class="form-select">
+                  <option value="Libre" selected>Libre (Vacant)</option>
+                  <option value="Maintenance">En Travaux (Maintenance)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-owner">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer le Propriétaire</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal: Add Property (Nouveau Bien) -->
+  <div class="modal-overlay" id="modal-property">
+    <div class="modal-card glass animate-slide-up">
+      <div class="modal-header">
+        <h3 id="modal-property-title">Nouveau Bien Immobilier</h3>
+        <button class="modal-close" id="btn-close-property-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-property">
+        <input type="hidden" id="input-property-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="input-property-name" class="form-label">Nom du Bien (Libellé)</label>
+            <input type="text" id="input-property-name" class="form-input" placeholder="ex. Villa Moderne Fann" required>
+          </div>
+          <div class="form-group">
+            <label for="input-property-address" class="form-label">Adresse / Quartier</label>
+            <input type="text" id="input-property-address" class="form-input" placeholder="ex. Almadies, Dakar" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="select-property-owner" class="form-label">Propriétaire (Bailleur)</label>
+              <select id="select-property-owner" class="form-select" required>
+                <!-- Dynamically populated -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="input-property-commission" class="form-label">Honoraires sur ce bien (%)</label>
+              <input type="number" id="input-property-commission" class="form-input" min="0" max="100" placeholder="ex. 10" required>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="select-property-type" class="form-label">Type de bien</label>
+            <select id="select-property-type" class="form-select" required>
+                <option value="Appartement" selected>Appartement</option>
+                <option value="Villa">Villa</option>
+                <option value="Magasin">Magasin</option>
+                <option value="Terrain">Terrain</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-property-caution" class="form-label">Caution (FCFA)</label>
+              <input type="number" id="input-property-caution" class="form-input" min="0" placeholder="ex. 300000" required>
+            </div>
+            <div class="form-group">
+              <label for="input-property-rent" class="form-label">Loyer Mensuel Hors Charges (FCFA)</label>
+              <input type="number" id="input-property-rent" class="form-input" placeholder="0" min="1" step="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="select-property-status" class="form-label">Statut Locatif Initial</label>
+            <select id="select-property-status" class="form-select" required>
+              <option value="Loué">Loué (Occupé)</option>
+              <option value="Libre" selected>Libre (Vacant)</option>
+              <option value="Maintenance">En Travaux (Maintenance)</option>
+            </select>
+          </div>
+          <!-- Dynamic Tenant Fields -->
+          <div id="tenant-fields-container" style="display: none; margin-top: 1rem;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="input-property-tenant-name" class="form-label">Nom du Locataire</label>
+                <input type="text" id="input-property-tenant-name" class="form-input" placeholder="ex. Bakary Diop">
+              </div>
+              <div class="form-group">
+                <label for="input-property-tenant-phone" class="form-label">Téléphone du Locataire</label>
+                <input type="text" id="input-property-tenant-phone" class="form-input" placeholder="ex. +221 70 123 45 67">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-property">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-property">Enregistrer le Bien</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add / Edit Transaction -->
+  <div class="modal-overlay" id="modal-transaction">
+    <div class="modal-card glass animate-slide-up">
+      <div class="modal-header">
+        <h3 id="modal-transaction-title">Nouvelle Dépense / Sortie</h3>
+        <button class="modal-close" id="btn-close-transaction-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-transaction">
+        <input type="hidden" id="input-tx-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Nature du Flux</label>
+            <div class="type-toggle-group">
+              <input type="radio" id="type-toggle-expense" name="tx-type" value="expense" checked>
+              <label for="type-toggle-expense" class="toggle-btn-label btn-expense">
+                Sortie (Reversements, Dépenses)
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="select-tx-motif" class="form-label">Motif de dépense</label>
+              <select id="select-tx-motif" class="form-select" required>
+                <option value="Entretien / Réparation">Entretien / Réparation</option>
+                <option value="Reversement Propriétaire">Reversement Propriétaire</option>
+                <option value="Frais Agence">Frais d'Agence</option>
+                <option value="Taxes et Impôts">Taxes et Impôts</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <input type="text" id="input-tx-motif-autre" class="form-input" placeholder="Précisez le motif..." style="display: none; margin-top: 0.5rem;">
+            </div>
+            <div class="form-group">
+              <label for="input-tx-description" class="form-label">Description (Libellé)</label>
+              <input type="text" id="input-tx-description" class="form-input" placeholder="ex. Plomberie F3" required>
+            </div>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-tx-amount" class="form-label">Montant (FCFA)</label>
+              <input type="number" id="input-tx-amount" class="form-input" placeholder="0" min="1" step="1" required>
+            </div>
+            <div class="form-group">
+              <label for="input-tx-date" class="form-label">Date du mouvement</label>
+              <input type="date" id="input-tx-date" class="form-input" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="select-tx-property" class="form-label">Bien Immobilier Associé (Optionnel)</label>
+            <select id="select-tx-property" class="form-select">
+              <option value="">Aucun bien spécifique</option>
+              <!-- Filled dynamically by JavaScript -->
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-transaction">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-transaction">Enregistrer le Mouvement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Relevé Financier (Premium Statement) -->
+  <div class="modal-overlay" id="modal-statement">
+    <div class="modal-card glass animate-slide-up" style="max-width: 780px; width: 95%; max-height: 90vh;">
+      <div class="modal-header no-print">
+        <h3>Relevé Financier Bailleur</h3>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="btn btn-secondary btn-sm" id="btn-print-statement">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            <span>Imprimer le Relevé</span>
+          </button>
+          <button class="modal-close" id="btn-close-statement-modal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="modal-body statement-print-area" id="statement-print-area" style="max-height: 70vh; overflow-y: auto; padding: 1.5rem 1rem;">
+        
+        <!-- Header Info (Company & Date) - dynamically injected -->
+        <div id="dynamic-statement-header"></div>
+
+        <!-- Bailleur Profile Info -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+          <p style="margin: 0 0 0.4rem 0; font-size: 0.95rem; font-weight: 600; color: white;">
+            Bailleur : <span id="statement-owner-name" style="color: var(--color-primary-hover);">Abdoulaye Cisse</span>
+          </p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);" id="statement-owner-contact">
+            Tél: +223 76 543 21 00 | Email: abdoulaye@email.com
+          </p>
+        </div>
+
+        <!-- Summary Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Loyers Encaissés</span>
+            <span id="statement-val-gross" style="font-size: 1rem; font-weight: 700; color: var(--color-green); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          </div>
+          <div style="background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Honoraires Agence</span>
+            <span id="statement-val-com" style="font-size: 1rem; font-weight: 700; color: var(--color-rose); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Fonds Reversés (Retirés)</span>
+            <span id="statement-val-withdrawn" style="font-size: 1rem; font-weight: 700; color: white; margin-top: 0.25rem; display: block;">0 FCFA</span>
+          </div>
+          <div style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.18); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Solde Net Disponible</span>
+            <span id="statement-val-balance" style="font-size: 1rem; font-weight: 700; color: var(--color-primary-hover); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          </div>
+        </div>
+
+        <!-- Ledger Table of Transactions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h5 style="font-size: 0.9rem; font-weight: 600; margin: 0; color: white;">Historique des Mouvements Financiers</h5>
+          <button class="btn btn-outline btn-sm no-print" id="btn-clear-statement">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            <span style="display: inline-block; vertical-align: middle;">Effacer</span>
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="table-statement-ledger" style="width: 100%; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-primary);">
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th class="text-right">Montant Brut</th>
+                <th class="text-right">Net Repayé / Retiré</th>
+              </tr>
+            </thead>
+            <tbody id="body-statement-ledger">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Effectuer un Retrait de Fonds (Bailleur) -->
+  <div class="modal-overlay" id="modal-withdrawal">
+    <div class="modal-card glass animate-slide-up" style="max-width: 420px; width: 90%;">
+      <div class="modal-header">
+        <h3>Retrait de Fonds</h3>
+        <button class="modal-close" id="btn-close-withdrawal-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-withdrawal">
+        <div class="modal-body">
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+            <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; display: block;">Solde Net Disponible</span>
+            <span id="withdrawal-available-balance" style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">0 FCFA</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="input-withdrawal-amount" class="form-label">Montant à Retirer (FCFA)</label>
+            <input type="number" id="input-withdrawal-amount" class="form-input" placeholder="0" min="1" step="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-withdrawal">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-withdrawal">Valider le Retrait</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Ajouter un Locataire -->
+  <div class="modal-overlay" id="modal-tenant">
+    <div class="modal-card glass animate-slide-up" style="max-width: 500px; width: 90%;">
+      <div class="modal-header">
+        <h3>Ajouter un Nouveau Locataire</h3>
+        <button class="modal-close" id="btn-close-tenant-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-tenant">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="select-tenant-property" class="form-label">Bien Immobilier Disponible</label>
+            <select id="select-tenant-property" class="form-select" required>
+              <option value="" disabled selected>Chargement des biens...</option>
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-tenant-rent" class="form-label">Loyer Mensuel (FCFA)</label>
+              <input type="text" id="input-tenant-rent" class="form-input" style="color: var(--color-text-muted);" readonly value="0 FCFA">
+            </div>
+            <div class="form-group">
+              <label for="input-tenant-caution" class="form-label">Caution Demandée (FCFA)</label>
+              <input type="number" id="input-tenant-caution" class="form-input" placeholder="0" min="0" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-tenant-name" class="form-label">Nom Complet du Locataire</label>
+            <input type="text" id="input-tenant-name" class="form-input" placeholder="ex. Fatoumata Coulibaly" required>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-tenant-phone" class="form-label">Téléphone</label>
+              <input type="text" id="input-tenant-phone" class="form-input" placeholder="ex. +223 70 123 456" required>
+            </div>
+            <div class="form-group">
+              <label for="input-tenant-lease-start" class="form-label">Date d'Entrée (Début)</label>
+              <input type="date" id="input-tenant-lease-start" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-tenant-address" class="form-label">Adresse Physique (Locataire)</label>
+            <input type="text" id="input-tenant-address" class="form-input" placeholder="ex. Badalabougou, Rue 120, Bamako" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-tenant">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-tenant">Valider l'Inscription</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Ajouter / Modifier un membre du Personnel -->
+  <div class="modal-overlay" id="modal-staff">
+    <div class="modal-card glass animate-slide-up" style="max-width: 480px; width: 90%;">
+      <div class="modal-header">
+        <h3 id="modal-staff-title">Nouveau Collaborateur</h3>
+        <button class="modal-close" id="btn-close-staff-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-staff">
+        <input type="hidden" id="input-staff-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="input-staff-name" class="form-label">Nom complet</label>
+            <input type="text" id="input-staff-name" class="form-input" placeholder="ex. Fatoumata Coulibaly" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-staff-phone" class="form-label">Téléphone</label>
+              <input type="text" id="input-staff-phone" class="form-input" placeholder="ex. +223 70 123 456" required>
+            </div>
+            <div class="form-group">
+              <label for="input-staff-email" class="form-label">Adresse Email</label>
+              <input type="email" id="input-staff-email" class="form-input" placeholder="ex. contact@auraimmo.ml" required>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="input-staff-password" class="form-label">Mot de passe de connexion</label>
+            <input type="password" id="input-staff-password" class="form-input" placeholder="Laissez vide lors d'une modification pour conserver l'actuel">
+          </div>
+          <div class="form-grid" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label for="select-staff-role" class="form-label">Rôle</label>
+              <select id="select-staff-role" class="form-select" required>
+                <option value="Administrateur">Administrateur</option>
+                <option value="Assistant" selected>Assistant</option>
+                <option value="Secrétaire">Secrétaire</option>
+                <option value="Comptable">Comptable</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="select-staff-status" class="form-label">Statut</label>
+              <select id="select-staff-status" class="form-select" required>
+                <option value="Actif" selected>Actif</option>
+                <option value="Inactif">Inactif</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-top: 1.5rem;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              Autorisations d'Accès (Pages)
+              <button type="button" class="btn btn-outline btn-sm" id="btn-staff-select-all" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; border-color: rgba(255,255,255,0.1);">Tout cocher</button>
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="dashboard" checked> Tableau de bord
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="owners"> Propriétaires
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="tenants"> Locataires
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="properties"> Biens Immobiliers
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="accounting"> Comptabilité
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="staff"> Personnel
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+                <input type="checkbox" class="staff-permission-cb" value="settings"> Paramètres
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-staff">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-staff">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmation Personnalisée -->
+  <div class="modal-overlay" id="modal-confirm-dialog" style="z-index: 10000;">
+    <div class="modal-card glass animate-slide-up" style="max-width: 400px; width: 90%; text-align: center;">
+      <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+        <button class="modal-close" id="btn-close-confirm-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding-top: 0; padding-bottom: 2rem;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(244, 63, 94, 0.1); color: var(--color-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <h4 id="confirm-dialog-title" style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem;">Êtes-vous sûr ?</h4>
+        <p id="confirm-dialog-message" style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
+          Cette action est irréversible.
+        </p>
+      </div>
+      <div class="modal-footer" style="justify-content: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
+        <button type="button" class="btn btn-outline" id="btn-confirm-cancel" style="min-width: 120px;">Annuler</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-ok" style="min-width: 120px; background: var(--color-rose); border-color: var(--color-rose); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">Oui, Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  
+  <script src="app.js?v=5"></script>
+</body>
+</html>
