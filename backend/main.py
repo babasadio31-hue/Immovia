@@ -38,11 +38,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="AuraImmo API", version="1.0.0", lifespan=lifespan)
 
-# Allow CORS for front-end access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # In production, replace with the frontend URL
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
