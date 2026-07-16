@@ -2925,16 +2925,38 @@ function handleTenantSubmit(e) {
 // Démarrage de l'application
 window.addEventListener('DOMContentLoaded', () => {
   async function startApp() {
-  const token = getAuthToken();
-  if (!token) {
-    window.location.href = 'login.html';
-    return;
+    const token = getAuthToken();
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    try {
+      // Fetch the REAL user from PostgreSQL via FastAPI
+      const currentUser = await API.getCurrentUser();
+      
+      await loadData();
+      
+      // Override the mock "Sadio Diallo" with the true user
+      state.staff = [currentUser];
+      
+      // Update sidebar
+      const avatarEl = document.getElementById('sidebar-user-avatar');
+      const nameEl = document.getElementById('sidebar-user-name');
+      const roleEl = document.getElementById('sidebar-user-role');
+      if (avatarEl) avatarEl.textContent = currentUser.name.substring(0, 2).toUpperCase();
+      if (nameEl) nameEl.textContent = currentUser.name;
+      if (roleEl) roleEl.textContent = currentUser.role || 'Administrateur';
+
+      // Call the original initApp logic synchronously now that data is loaded
+      initApp();
+    } catch (err) {
+      console.error("Erreur de session:", err);
+      removeAuthToken();
+      window.location.href = 'login.html';
+    }
   }
-  await loadData();
-  // Call the original initApp logic synchronously now that data is loaded
-  initApp();
-}
-startApp();
+  startApp();
 });
 
 // --- Rendu & Actions pour la page Personnel (Staff) ---
