@@ -342,10 +342,14 @@
                     
                     <div class="form-group">
                         <label for="password">Mot de passe</label>
-                        <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe" required>
+                        <div style="position: relative;">
+                            <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe" required style="padding-right: 2.5rem;">
+                            <button type="button" id="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; padding: 0;">
+                                <i class="uil uil-eye" id="eye-icon"></i>
+                            </button>
+                        </div>
+                        <a href="#" class="forgot-password">Mot de passe oublié ?</a>
                     </div>
-                    
-                    <a class="forgot-password">Mot de passe oublié ?</a>
                     
                     <div style="margin-bottom: 1.5rem; text-align: center;">
                         <a href="register.html" style="color: var(--color-primary); font-size: 0.9rem; text-decoration: none; font-weight: 600;">Nouveau ici ? Créer un compte</a>
@@ -386,12 +390,31 @@
                 // Redirect to main dashboard
                 window.location.href = 'index.html';
             } catch (err) {
-                errorDiv.textContent = err.message || 'Identifiants incorrects';
+                errorDiv.textContent = err.message || 'Erreur de connexion';
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = 'Se connecter';
             }
         });
+        
+        // Toggle password visibility
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        
+        if (togglePassword && passwordInput && eyeIcon) {
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                if (type === 'text') {
+                    eyeIcon.classList.remove('uil-eye');
+                    eyeIcon.classList.add('uil-eye-slash');
+                } else {
+                    eyeIcon.classList.remove('uil-eye-slash');
+                    eyeIcon.classList.add('uil-eye');
+                }
+            });
+        }
         
         // If already logged in, redirect to index
         if(getAuthToken()) {

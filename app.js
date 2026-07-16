@@ -2947,6 +2947,15 @@ window.addEventListener('DOMContentLoaded', () => {
       if (avatarEl) avatarEl.textContent = currentUser.name.substring(0, 2).toUpperCase();
       if (nameEl) nameEl.textContent = currentUser.name;
       if (roleEl) roleEl.textContent = currentUser.role || 'Administrateur';
+      
+      // Setup logout button
+      const btnLogout = document.getElementById('btn-logout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+          removeAuthToken();
+          window.location.href = 'login.html';
+        });
+      }
 
       // Call the original initApp logic synchronously now that data is loaded
       initApp();
