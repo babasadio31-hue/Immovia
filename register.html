@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - AuraImmo</title>
+    <title>Inscription - AuraImmo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Unicons -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
@@ -320,21 +320,26 @@
             </div>
             <div class="login-left-content">
                 <div class="badge">Bonjour !</div>
-                <h1>Bon retour sur votre<br>espace personnel !</h1>
-                <p>Nous sommes ravis de vous retrouver parmi nous.</p>
+                <h1>Créez votre<br>espace personnel !</h1>
+                <p>Rejoignez-nous pour gérer vos biens facilement.</p>
             </div>
         </div>
         
         <div class="login-right">
             <div class="login-right-inner">
                 <div class="login-header">
-                    <h2>Se connecter</h2>
-                    <p>Accédez à votre espace personnel</p>
+                    <h2>Créer un compte</h2>
+                    <p>Remplissez vos informations ci-dessous</p>
                 </div>
                 
                 <div id="login-error"></div>
 
-                <form id="login-form">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <input type="text" id="name" class="form-control" placeholder="Entrez votre nom" required>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" class="form-control" placeholder="Entrez votre email" required>
@@ -342,19 +347,17 @@
                     
                     <div class="form-group">
                         <label for="password">Mot de passe</label>
-                        <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe" required>
+                        <input type="password" id="password" class="form-control" placeholder="Entrez un mot de passe" required>
                     </div>
                     
-                    <a class="forgot-password">Mot de passe oublié ?</a>
-                    
-                    <div style="margin-bottom: 1.5rem; text-align: center;">
-                        <a href="register.html" style="color: var(--color-primary); font-size: 0.9rem; text-decoration: none; font-weight: 600;">Nouveau ici ? Créer un compte</a>
+                    <div style="margin-top: 1rem; margin-bottom: 2rem; text-align: center;">
+                        <a href="login.html" style="color: var(--color-primary); font-size: 0.9rem; text-decoration: none; font-weight: 600;">Vous avez déjà un compte ? Se connecter</a>
                     </div>
                     
-                    <button type="submit" class="btn-submit" id="btn-submit">Se connecter</button>
+                    <button type="submit" class="btn-submit" id="btn-submit">Créer le compte</button>
                 </form>
 
-                <div class="divider">OU SE CONNECTER AVEC</div>
+                <div class="divider">OU S'INSCRIRE AVEC</div>
 
                 <div class="social-login">
                     <button class="social-btn"><i class="uil uil-facebook-f"></i></button>
@@ -368,28 +371,32 @@
 
     <script src="api.js"></script>
     <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const btnSubmit = document.getElementById('btn-submit');
             const errorDiv = document.getElementById('login-error');
 
             btnSubmit.disabled = true;
-            btnSubmit.textContent = 'Connexion...';
+            btnSubmit.textContent = 'Création...';
             errorDiv.textContent = '';
 
             try {
-                // Call API (will set token in localStorage on success)
+                // Call API register
+                await API.register(name, email, password);
+                
+                // Login right after
                 await API.login(email, password);
                 
                 // Redirect to main dashboard
                 window.location.href = 'index.html';
             } catch (err) {
-                errorDiv.textContent = err.message || 'Identifiants incorrects';
+                errorDiv.textContent = err.message || 'Erreur lors de la création';
             } finally {
                 btnSubmit.disabled = false;
-                btnSubmit.textContent = 'Se connecter';
+                btnSubmit.textContent = 'Créer le compte';
             }
         });
         

@@ -63,3 +63,29 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 @router.get("/me", response_model=schemas.User)
 def read_users_me(current_user: models.User = Depends(get_current_active_user)):
     return current_user
+
+@router.post("/register", response_model=schemas.User)
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    hashed_password = security.get_password_hash(user.password)
+    import uuid
+    from datetime import date
+    
+    new_user = models.User(
+        id=str(uuid.uuid4()),
+        name=user.name,
+        email=user.email,
+        phone=user.phone,
+        password_hash=hashed_password,
+        role=user.role if user.role else "Manager",
+        status="Actif",
+        permissions=user.permissions,
+        date_added=str(date.today())
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

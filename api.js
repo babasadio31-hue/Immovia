@@ -56,6 +56,28 @@ async function apiFetch(endpoint, options = {}) {
 
 const API = {
   // Authentification
+  register: async (name, email, password) => {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        role: "Manager",
+        permissions: ["all"]
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.detail || 'Erreur lors de l\'inscription');
+    }
+    return await response.json();
+  },
+
   login: async (email, password) => {
     const formData = new URLSearchParams();
     formData.append('username', email);
