@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
             admin_user = models.User(
                 id="admin-001",
                 name="Administrateur",
-                email="admin@auraimmo.com",
+                email="admin@immovi.com",
                 password_hash=hashed_pwd,
                 role="Admin",
                 status="Actif",
@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
         db.close()
     yield
 
-app = FastAPI(title="AuraImmo API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Immovi API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,4 +56,4 @@ app.include_router(transactions.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Bienvenue sur l'API AuraImmo ! Le backend est en ligne."}
+    return {"message": "Bienvenue sur l'API Immovi ! Le backend est en ligne."}

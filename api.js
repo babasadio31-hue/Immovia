@@ -8,15 +8,15 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {
-  return localStorage.getItem('auraimmo_jwt');
+  return localStorage.getItem('immovi_jwt');
 }
 
 function setAuthToken(token) {
-  localStorage.setItem('auraimmo_jwt', token);
+  localStorage.setItem('immovi_jwt', token);
 }
 
 function removeAuthToken() {
-  localStorage.removeItem('auraimmo_jwt');
+  localStorage.removeItem('immovi_jwt');
 }
 
 // Fonction générique pour faire les appels API avec le token de sécurité

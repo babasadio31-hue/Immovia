@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AuraImmo - Gestionnaire Premium d'Agence Immobilière</title>
+  <title>Immovi - Gestionnaire Premium d'Agence Immobilière</title>
   <meta name="description" content="Gérez vos propriétaires, propriétés et transactions de loyers avec un tableau de bord moderne en glassmorphism.">
   
   <!-- Font Outfit de Google Fonts -->
@@ -16,6 +16,7 @@
   
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css?v=5">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
 </head>
 <body>
   
@@ -29,13 +30,13 @@
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </div>
-        <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: white;">AuraImmo</h2>
+        <img src="assets/logo.png" alt="Immovi Logo" style="height: 40px;">
         <p style="color: var(--color-text-muted); font-size: 0.9rem;">Connectez-vous à votre espace</p>
       </div>
       <form id="form-login">
         <div class="form-group" style="margin-bottom: 1rem;">
           <label class="form-label" for="login-email">Adresse Email</label>
-          <input type="email" id="login-email" class="form-input" required placeholder="ex. admin@auraimmo.ml">
+          <input type="email" id="login-email" class="form-input" required placeholder="ex. admin@immovi.ml">
         </div>
         <div class="form-group" style="margin-bottom: 1.5rem;">
           <label class="form-label" for="login-password">Mot de passe</label>
@@ -51,13 +52,7 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-brand">
-        <div class="logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </div>
-        <h1 class="logo-text" id="logo-title">AuraImmo</h1>
+        <img src="assets/logo.png" alt="Immovi Logo" style="height: 40px; margin-right: 10px;">
       </div>
       
       <nav class="sidebar-menu">
@@ -130,7 +125,7 @@
       <!-- Top Header -->
       <header class="top-header">
         <div class="welcome-text">
-          <h2 id="greeting-title">Gestion d'Agence AuraImmo</h2>
+          <h2 id="greeting-title">Gestion d'Agence Immovi</h2>
           <p class="subtitle">Vue d'ensemble et pilotage de vos parcs immobiliers.</p>
         </div>
         <div class="header-actions">
@@ -1085,7 +1080,7 @@
               <form id="form-settings-agency" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
                 <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
                   <label for="input-settings-name" class="form-label">Nom de l'agence</label>
-                  <input type="text" id="input-settings-name" class="form-input" placeholder="ex. AuraImmo S.A.R.L" required>
+                  <input type="text" id="input-settings-name" class="form-input" placeholder="ex. Immovi S.A.R.L" required>
                 </div>
                 <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
                   <label for="input-settings-address" class="form-label">Adresse physique</label>
@@ -1098,7 +1093,7 @@
                   </div>
                   <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <label for="input-settings-email" class="form-label">Email</label>
-                    <input type="email" id="input-settings-email" class="form-input" placeholder="ex. contact@auraimmo.ml" required>
+                    <input type="email" id="input-settings-email" class="form-input" placeholder="ex. contact@immovi.ml" required>
                   </div>
                 </div>
                 <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -1619,7 +1614,7 @@
             </div>
             <div class="form-group">
               <label for="input-staff-email" class="form-label">Adresse Email</label>
-              <input type="email" id="input-staff-email" class="form-input" placeholder="ex. contact@auraimmo.ml" required>
+              <input type="email" id="input-staff-email" class="form-input" placeholder="ex. contact@immovi.ml" required>
             </div>
           </div>
           <div class="form-group" style="margin-top: 1rem;">

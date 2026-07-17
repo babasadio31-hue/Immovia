@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AuraImmo - Moteur de Gestion d'Agence Immobilière (FCFA)
+   Immovi - Moteur de Gestion d'Agence Immobilière (FCFA)
    ========================================================================== */
 
 // État Global de l'Agence
@@ -31,10 +31,10 @@ function initApp() {
   let dataChanged = false;
   if (!state.agencySettings || Object.keys(state.agencySettings).length === 0) {
     state.agencySettings = {
-      name: 'AuraImmo S.A.R.L',
+      name: 'Immovi S.A.R.L',
       address: 'Rue du Golf, Immeuble Horizon, Bamako, Mali',
       phone: '+223 20 22 44 66',
-      email: 'contact@auraimmo.ml',
+      email: 'contact@immovi.ml',
       currency: 'FCFA',
       commissionRate: 10
     };
@@ -45,7 +45,7 @@ function initApp() {
   
   if (!state.staff || state.staff.length === 0) {
     state.staff = [
-      { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'admin@auraimmo.ml', password: 'admin', role: 'Administrateur', status: 'Actif', permissions: allPermissions, dateAdded: getPastDateString(120) }
+      { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'admin@immovi.ml', password: 'admin', role: 'Administrateur', status: 'Actif', permissions: allPermissions, dateAdded: getPastDateString(120) }
     ];
     dataChanged = true;
   } else {
@@ -60,7 +60,7 @@ function initApp() {
         dataChanged = true;
       }
       if (s.role === 'Administrateur') {
-        s.email = 'admin@auraimmo.ml'; // Forcer l'email admin pour faciliter les tests
+        s.email = 'admin@immovi.ml'; // Forcer l'email admin pour faciliter les tests
         s.password = 'admin';
         dataChanged = true;
       }
@@ -79,7 +79,7 @@ function initApp() {
   
   // Onglet initial
   switchTab('dashboard');
-  showToast('AuraImmo : Système chargé avec succès.', 'success');
+  showToast('Immovi : Système chargé avec succès.', 'success');
 }
 
 function applyUserSession(userId) {
@@ -120,7 +120,7 @@ function handleLogin(e) {
       showToast('Votre compte est inactif.', 'error');
       return;
     }
-    sessionStorage.setItem('auraimmo_session', user.id);
+    sessionStorage.setItem('immovi_session', user.id);
     document.getElementById('login-password').value = '';
     async function startApp() {
   const token = getAuthToken();
@@ -139,7 +139,7 @@ startApp(); // reload the app with session
 }
 
 function handleLogout() {
-  sessionStorage.removeItem('auraimmo_session');
+  sessionStorage.removeItem('immovi_session');
   location.reload(); // Reloads the page to clear memory state and show login
 }
 
@@ -156,7 +156,7 @@ async function loadData() {
     state.transactions = apiTransactions || [];
     state.tenants = apiTenants || [];
     
-    const savedState = localStorage.getItem('auraimmo_state');
+    const savedState = localStorage.getItem('immovi_state');
     if (savedState) {
         const local = JSON.parse(savedState);
         state.staff = local.staff || [];
@@ -215,17 +215,17 @@ function loadMockData() {
 
   // 4. Mock Personnel
   state.staff = [
-    { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'sadio.diallo@auraimmo.ml', role: 'Administrateur', status: 'Actif', dateAdded: getPastDate(120) },
-    { id: 'staff-2', name: 'Fatoumata Coulibaly', phone: '+223 76 999 888', email: 'fatou.coulibaly@auraimmo.ml', role: 'Comptable', status: 'Actif', dateAdded: getPastDate(90) },
-    { id: 'staff-3', name: 'Mamadou Sow', phone: '+223 78 555 444', email: 'mamadou.sow@auraimmo.ml', role: 'Assistant', status: 'Inactif', dateAdded: getPastDate(30) }
+    { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'sadio.diallo@immovi.ml', role: 'Administrateur', status: 'Actif', dateAdded: getPastDate(120) },
+    { id: 'staff-2', name: 'Fatoumata Coulibaly', phone: '+223 76 999 888', email: 'fatou.coulibaly@immovi.ml', role: 'Comptable', status: 'Actif', dateAdded: getPastDate(90) },
+    { id: 'staff-3', name: 'Mamadou Sow', phone: '+223 78 555 444', email: 'mamadou.sow@immovi.ml', role: 'Assistant', status: 'Inactif', dateAdded: getPastDate(30) }
   ];
 
   // 5. Mock Paramètres d'Agence
   state.agencySettings = {
-    name: 'AuraImmo S.A.R.L',
+    name: 'Immovi S.A.R.L',
     address: 'Rue du Golf, Immeuble Horizon, Bamako, Mali',
     phone: '+223 20 22 44 66',
-    email: 'contact@auraimmo.ml',
+    email: 'contact@immovi.ml',
     currency: 'FCFA',
     commissionRate: 10
   };
@@ -593,9 +593,9 @@ function setupEventListeners() {
 
   // Réinitialisation des données de l'agence
   document.getElementById('btn-reset-data').addEventListener('click', () => {
-    showCustomConfirm('Voulez-vous vraiment réinitialiser AuraImmo ? Toutes vos données d\'agence personnalisées seront définitivement effacées.', false, 'Réinitialisation').then(confirmed => {
+    showCustomConfirm('Voulez-vous vraiment réinitialiser Immovi ? Toutes vos données d\'agence personnalisées seront définitivement effacées.', false, 'Réinitialisation').then(confirmed => {
       if (confirmed) {
-        localStorage.removeItem('auraimmo_state');
+        localStorage.removeItem('immovi_state');
         state = { owners: [], properties: [], transactions: [] };
         loadMockData();
         saveData();
@@ -2290,7 +2290,7 @@ function exportToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', 'auraimmo_transactions.csv');
+  link.setAttribute('download', 'immovi_transactions.csv');
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -2303,7 +2303,7 @@ function exportToCSV() {
 // ==========================================================================
 
 function loadLogo() {
-  const customLogo = localStorage.getItem('auraimmo_custom_logo');
+  const customLogo = localStorage.getItem('immovi_custom_logo');
   const container = document.getElementById('receipt-logo-container');
   const resetBtn = document.getElementById('btn-reset-logo');
   const brandText = document.getElementById('receipt-brand-text');
@@ -2347,7 +2347,7 @@ function handleLogoUpload(e) {
   
   const reader = new FileReader();
   reader.onload = function(evt) {
-    localStorage.setItem('auraimmo_custom_logo', evt.target.result);
+    localStorage.setItem('immovi_custom_logo', evt.target.result);
     loadLogo();
     showToast('Le logo PNG a été enregistré avec succès.', 'success');
   };
@@ -2355,7 +2355,7 @@ function handleLogoUpload(e) {
 }
 
 function resetLogo() {
-  localStorage.removeItem('auraimmo_custom_logo');
+  localStorage.removeItem('immovi_custom_logo');
   loadLogo();
   showToast('Logo réinitialisé avec succès.', 'success');
 }
@@ -3231,10 +3231,10 @@ function renderGlobalPrintHeader() {
   const htmlContent = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid black; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
       <div style="font-size: 0.95rem; line-height: 1.5; color: black;">
-        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'AURAIMMO S.A.R.L'}</h4>
+        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
         <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
         <p style="margin: 0;">${settings.address || 'Rue du Golf, Immeuble Horizon, Bamako, Mali'}</p>
-        <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@auraimmo.ml'}</p>
+        <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
         ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
       </div>
       <div style="text-align: right;">
@@ -3257,10 +3257,10 @@ function renderGlobalPrintHeader() {
     dynamicStatementHeader.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid rgba(255,255,255,0.08); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
         <div>
-          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: white; margin: 0 0 0.3rem 0;">${settings.name || 'AURAIMMO S.A.R.L'}</h4>
+          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: white; margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || 'Rue du Golf, Bamako, Mali'}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@auraimmo.ml'}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
           ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
         </div>
         <div style="text-align: right;">
@@ -3283,7 +3283,7 @@ function exportAppSaveJSON() {
   
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `auraimmo_backup_${new Date().toISOString().split('T')[0]}.json`);
+  link.setAttribute('download', `immovi_backup_${new Date().toISOString().split('T')[0]}.json`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -3320,7 +3320,7 @@ function handleImportJSONFile(e) {
         switchTab('dashboard');
         showToast('Sauvegarde restaurée avec succès. L\'application a été mise à jour.', 'success');
       } else {
-        showToast('Fichier invalide : structure AuraImmo manquante.', 'error');
+        showToast('Fichier invalide : structure Immovi manquante.', 'error');
       }
     } catch (err) {
       console.error(err);
