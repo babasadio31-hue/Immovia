@@ -46,18 +46,18 @@
         </p>
         
         <div class="hero-actions">
-          <a href="login.html" class="btn btn-primary">
+          <a href="register.html" class="btn btn-primary">
             <i class="fa-solid fa-arrow-right"></i> Démarrer gratuitement
           </a>
-          <a href="#" class="btn btn-outline">
+          <button id="btn-open-contact" class="btn btn-outline" style="font-family: inherit;">
             Contactez-nous
-          </a>
+          </button>
         </div>
         
         <div class="hero-features">
           <span>Essai gratuit de 31 jours</span>
-          <span>Sans carte bancaire</span>
-          <span>Annulable à tout moment</span>
+          <span title="Aucun prélèvement avant la fin de l'essai">Carte requise (non débitée)</span>
+          <span>Prélèvement auto à la fin de l'essai</span>
         </div>
       </div>
 
@@ -117,7 +117,7 @@
     <div class="banner-content">
       <div class="banner-text">
         <span><strong>Profitez de 50% de réduction</strong> sur les fonctionnalités Premium pendant 3 mois — Offre limitée.</span>
-        <a href="#" class="banner-link"><i class="fa-solid fa-arrow-right"></i> Démarrer l'essai Premium</a>
+        <a href="register.html" class="banner-link"><i class="fa-solid fa-arrow-right"></i> Démarrer l'essai Premium</a>
       </div>
       
       <div class="logos-grid">
@@ -294,7 +294,7 @@
         <div class="footer-links">
           <h4>Entreprise</h4>
           <a href="#">À propos</a>
-          <a href="#">Contact</a>
+          <a href="#" onclick="document.getElementById('contact-modal').style.display='flex'; return false;">Contact</a>
           <a href="#">Confidentialité</a>
         </div>
       </div>
@@ -304,5 +304,70 @@
     </div>
   </footer>
 
+  <!-- Contact Modal -->
+  <div id="contact-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700;">Contactez-nous</h3>
+        <button id="btn-close-contact" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="color: #6B7280; margin-bottom: 1.5rem; font-size: 0.95rem;">Laissez-nous vos coordonnées et notre équipe vous recontactera très rapidement pour vous accompagner.</p>
+        <form id="contact-form">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem;">Nom complet</label>
+            <input type="text" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 8px; outline: none; font-family: inherit;">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem;">Email</label>
+            <input type="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 8px; outline: none; font-family: inherit;">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem;">Téléphone</label>
+            <input type="tel" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 8px; outline: none; font-family: inherit;">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem;">Message</label>
+            <textarea rows="4" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 8px; outline: none; font-family: inherit; resize: vertical;"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Envoyer le message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Contact Modal Logic
+    const btnOpenContact = document.getElementById('btn-open-contact');
+    const btnCloseContact = document.getElementById('btn-close-contact');
+    const contactModal = document.getElementById('contact-modal');
+    const contactForm = document.getElementById('contact-form');
+
+    if (btnOpenContact) {
+      btnOpenContact.addEventListener('click', (e) => {
+        e.preventDefault();
+        contactModal.style.display = 'flex';
+      });
+    }
+
+    if (btnCloseContact) {
+      btnCloseContact.addEventListener('click', () => {
+        contactModal.style.display = 'none';
+      });
+    }
+
+    contactModal.addEventListener('click', (e) => {
+      if (e.target === contactModal) {
+        contactModal.style.display = 'none';
+      }
+    });
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert("Votre message a bien été envoyé ! Nous vous contacterons sous peu.");
+      contactModal.style.display = 'none';
+      contactForm.reset();
+    });
+  </script>
 </body>
 </html>
