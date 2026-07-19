@@ -32,6 +32,9 @@
         <a href="login.html" class="btn-icon" aria-label="Espace Client">
           <i class="fa-regular fa-user"></i>
         </a>
+        <button class="btn-icon mobile-menu-toggle" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
     </header>
 
@@ -368,6 +371,17 @@
       alert("Votre message a bien été envoyé ! Nous vous contacterons sous peu.");
       contactModal.style.display = 'none';
       contactForm.reset();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const mobileToggle = document.querySelector('.mobile-menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+          navLinks.classList.toggle('active');
+        });
+      }
     });
   </script>
 </body>

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:////tmp/immovi.db")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///immovi.db")
 
 # Si c'est postgres, il faut remplacer 'postgres://' par 'postgresql://' pour SQLAlchemy
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):

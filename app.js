@@ -172,64 +172,7 @@ async function loadData() {
 
 function saveData() { /* API persistance used instead */ }
 
-function loadMockData() {
-  const getPastDate = (daysAgo) => {
-    const d = new Date();
-    d.setDate(d.getDate() - daysAgo);
-    return d.toISOString().split('T')[0];
-  };
 
-  // 1. Mock Propriétaires (Bailleurs)
-  state.owners = [
-    { id: 'owner-1', name: 'Amadou Diallo', phone: '+221 77 123 45 67', email: 'amadou@email.com', commissionRate: 10 },
-    { id: 'owner-2', name: 'Fatou Sow', phone: '+221 78 987 65 43', email: 'fatou@email.com', commissionRate: 12 },
-    { id: 'owner-3', name: 'Abdoulaye Cisse', phone: '+223 76 543 21 00', email: 'abdoulaye@email.com', commissionRate: 10 },
-    { id: 'owner-4', name: 'Mariama Ba', phone: '+221 76 888 11 22', email: 'mariama@email.com', commissionRate: 10 }
-  ];
-
-  // 2. Mock Biens Immobiliers
-  state.properties = [
-    { id: 'prop-1', name: 'Appartement F3 Almadies', address: 'Almadies, Dakar', ownerId: 'owner-1', rent: 600000, status: 'Loué' },
-    { id: 'prop-2', name: 'Villa Moderne Fann', address: 'Fann Résidence, Dakar', ownerId: 'owner-1', rent: 1200000, status: 'Loué' },
-    { id: 'prop-3', name: 'Studio Meublé Plateau', address: 'Plateau, Dakar', ownerId: 'owner-2', rent: 350000, status: 'Loué' },
-    { id: 'prop-4', name: 'Appartement F4 Mermoz', address: 'Mermoz, Dakar', ownerId: 'owner-2', rent: 600000, status: 'Libre' },
-    { id: 'prop-5', name: 'Appartement F2 GOLF', address: 'Golf, Bamako', ownerId: 'owner-3', rent: 25000, status: 'Loué' },
-    { id: 'prop-6', name: 'Duplex Ngor Standing', address: 'Ngor, Dakar', ownerId: 'owner-4', rent: 700000, status: 'Maintenance' },
-    { id: 'prop-7', name: 'Appartement F3 GOLF', address: 'Golf, Bamako', ownerId: 'owner-3', rent: 150000, status: 'Loué' },
-    { id: 'prop-8', name: 'Magasin GOLF', address: 'Golf, Bamako', ownerId: 'owner-3', rent: 150000, status: 'Loué' }
-  ];
-
-  // 3. Mock Transactions (Loyers encaissés / Frais de maintenance)
-  state.transactions = [
-    { id: 'tx-1', description: 'Loyer Juin - Appartement F3', amount: 600000, type: 'income', propertyId: 'prop-1', date: getPastDate(25) },
-    { id: 'tx-2', description: 'Loyer Juin - Villa Fann', amount: 1200000, type: 'income', propertyId: 'prop-2', date: getPastDate(24) },
-    { id: 'tx-3', description: 'Loyer Juin - Studio Plateau', amount: 350000, type: 'income', propertyId: 'prop-3', date: getPastDate(22) },
-    { id: 'tx-4', description: 'Plomberie & Fuite - Studio Plateau', amount: 45000, type: 'expense', propertyId: 'prop-3', date: getPastDate(20) },
-    { id: 'tx-5', description: 'Loyer Juin - Appartement F2 GOLF', amount: 25000, type: 'income', propertyId: 'prop-5', date: getPastDate(18) },
-    { id: 'tx-6', description: 'Rénovation Peinture - Duplex Ngor', amount: 250000, type: 'expense', propertyId: 'prop-6', date: getPastDate(15) },
-    { id: 'tx-7', description: 'Honoraires Syndic Mandat', amount: 150000, type: 'income', propertyId: 'prop-1', date: getPastDate(12) },
-    { id: 'tx-8', description: 'Entretien Climatisation - Villa Fann', amount: 80000, type: 'expense', propertyId: 'prop-2', date: getPastDate(10) },
-    { id: 'tx-9', description: 'Loyer Juin - Appartement F3 GOLF', amount: 125000, type: 'income', propertyId: 'prop-7', date: getPastDate(5) },
-    { id: 'tx-10', description: 'Loyer Juin - Magasin GOLF', amount: 100000, type: 'income', propertyId: 'prop-8', date: getPastDate(4) }
-  ];
-
-  // 4. Mock Personnel
-  state.staff = [
-    { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'sadio.diallo@immovi.ml', role: 'Administrateur', status: 'Actif', dateAdded: getPastDate(120) },
-    { id: 'staff-2', name: 'Fatoumata Coulibaly', phone: '+223 76 999 888', email: 'fatou.coulibaly@immovi.ml', role: 'Comptable', status: 'Actif', dateAdded: getPastDate(90) },
-    { id: 'staff-3', name: 'Mamadou Sow', phone: '+223 78 555 444', email: 'mamadou.sow@immovi.ml', role: 'Assistant', status: 'Inactif', dateAdded: getPastDate(30) }
-  ];
-
-  // 5. Mock Paramètres d'Agence
-  state.agencySettings = {
-    name: 'Immovi S.A.R.L',
-    address: 'Rue du Golf, Immeuble Horizon, Bamako, Mali',
-    phone: '+223 20 22 44 66',
-    email: 'contact@immovi.ml',
-    currency: 'FCFA',
-    commissionRate: 10
-  };
-}
 
 // ==========================================================================
 // Remplissage des Listes Déroulantes des Modales
@@ -593,15 +536,14 @@ function setupEventListeners() {
 
   // Réinitialisation des données de l'agence
   document.getElementById('btn-reset-data').addEventListener('click', () => {
-    showCustomConfirm('Voulez-vous vraiment réinitialiser Immovi ? Toutes vos données d\'agence personnalisées seront définitivement effacées.', false, 'Réinitialisation').then(confirmed => {
+    showCustomConfirm('Voulez-vous vraiment réinitialiser le cache local d\'Immovi ?', false, 'Réinitialisation').then(async confirmed => {
       if (confirmed) {
         localStorage.removeItem('immovi_state');
         state = { owners: [], properties: [], transactions: [] };
-        loadMockData();
-        saveData();
+        await loadData();
         populateDropdowns();
         switchTab('dashboard');
-        showToast('Données d\'agence réinitialisées avec succès.', 'warning');
+        showToast('Données d\'agence rechargées avec succès.', 'warning');
       }
     });
   });
@@ -1985,7 +1927,7 @@ function handleTransactionSubmit(e) {
   }
 }
 
-function handleOwnerSubmit(e) {
+async function handleOwnerSubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('input-owner-name').value.trim();
@@ -2000,7 +1942,6 @@ function handleOwnerSubmit(e) {
   }
 
   const newOwner = {
-    id: 'owner-' + Date.now(),
     name,
     phone,
     email,
@@ -2008,41 +1949,44 @@ function handleOwnerSubmit(e) {
     commissionRate
   };
 
-  state.owners.push(newOwner);
+  try {
+    const createdOwner = await API.createOwner(newOwner);
 
-  // Vérifier et ajouter le bien immobilier initial s'il a été rempli
-  const propName = document.getElementById('input-owner-prop-name').value.trim();
-  const propAddress = document.getElementById('input-owner-prop-address').value.trim();
-  const propType = document.getElementById('select-owner-prop-type').value;
-  const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
-  const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
-  const propStatus = document.getElementById('select-owner-prop-status').value;
+    // Vérifier et ajouter le bien immobilier initial s'il a été rempli
+    const propName = document.getElementById('input-owner-prop-name').value.trim();
+    const propAddress = document.getElementById('input-owner-prop-address').value.trim();
+    const propType = document.getElementById('select-owner-prop-type').value;
+    const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
+    const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
+    const propStatus = document.getElementById('select-owner-prop-status').value;
 
-  if (propName) {
-    const newProp = {
-      id: 'prop-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-      name: propName,
-      address: propAddress || 'Non spécifiée',
-      type: propType,
-      caution: propCaution,
-      ownerId: newOwner.id,
-      rent: propRent,
-      commissionRate: newOwner.commissionRate,
-      status: propStatus
-    };
-    state.properties.push(newProp);
+    if (propName) {
+      const newProp = {
+        name: propName,
+        address: propAddress || 'Non spécifiée',
+        type: propType,
+        caution: propCaution,
+        ownerId: createdOwner.id,
+        rent: propRent,
+        commissionRate: createdOwner.commissionRate,
+        status: propStatus
+      };
+      await API.createProperty(newProp);
+    }
+
+    await loadData();
+    populateDropdowns();
+    closeAllModals();
+    renderOwnersTable();
+    
+    let msg = `Bailleur ${name} enregistré avec succès.`;
+    if (propName) {
+      msg += ` Bien "${propName}" également ajouté.`;
+    }
+    showToast(msg, 'success');
+  } catch (err) {
+    showToast(err.message || 'Erreur lors de la création', 'error');
   }
-
-  saveData();
-  populateDropdowns();
-  closeAllModals();
-  renderOwnersTable();
-  
-  let msg = `Bailleur ${name} enregistré avec succès.`;
-  if (propName) {
-    msg += ` Bien "${propName}" également ajouté.`;
-  }
-  showToast(msg, 'success');
 }
 
 function handlePropertySubmit(e) {

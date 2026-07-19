@@ -2,9 +2,9 @@
 
 // TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
 // Si on est en local, on utilise localhost, sinon l'URL de production
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
-  ? 'https://immovia-production.up.railway.app/api' // On force l'API en ligne même en local pour l'instant
-  : 'https://immovia-production.up.railway.app/api'; 
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api'
+    : '/api'; 
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {

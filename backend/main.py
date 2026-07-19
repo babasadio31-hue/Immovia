@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 import os
 from contextlib import asynccontextmanager
@@ -54,6 +56,11 @@ app.include_router(properties.router)
 app.include_router(tenants.router)
 app.include_router(transactions.router)
 
-@app.get("/")
+@app.get("/api")
 def read_root():
     return {"message": "Bienvenue sur l'API Immovi ! Le backend est en ligne."}
+
+# Servir le frontend pour Railway
+import os
+frontend_path = os.path.join(os.path.dirname(__file__), "..")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
