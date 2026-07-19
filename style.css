@@ -1058,6 +1058,18 @@ body {
   box-shadow: 0 4px 12px var(--color-green-glow);
 }
 
+.type-toggle-group input[type="radio"]:checked + .toggle-btn-label.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+.type-toggle-group input[type="radio"]:checked + .toggle-btn-label.btn-purple {
+  background: #a855f7;
+  color: white;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
 /* ==========================================================================
    Notification Toast Popups
    ========================================================================== */
