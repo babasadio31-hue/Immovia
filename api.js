@@ -2,7 +2,9 @@
 
 // TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
 // Si on est en local, on utilise localhost, sinon l'URL de production
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isFile = window.location.protocol === 'file:';
+const API_BASE_URL = (isLocal || isFile)
     ? 'http://localhost:8000/api'
     : '/api'; 
 
