@@ -1216,9 +1216,9 @@
               <label class="form-label">Type de Transaction</label>
               <div class="type-toggle-group">
                 <input type="radio" id="owner-tx-location" name="owner_prop_transaction" value="Location" checked>
-                <label for="owner-tx-location" class="toggle-btn-label btn-primary">En Location</label>
+                <label for="owner-tx-location" class="toggle-btn-label btn-primary" onclick="toggleOwnerTx('Location')">En Location</label>
                 <input type="radio" id="owner-tx-vente" name="owner_prop_transaction" value="Vente">
-                <label for="owner-tx-vente" class="toggle-btn-label btn-purple">En Vente</label>
+                <label for="owner-tx-vente" class="toggle-btn-label btn-purple" onclick="toggleOwnerTx('Vente')">En Vente</label>
               </div>
             </div>
             <div class="form-group">
@@ -1308,9 +1308,9 @@
             <label class="form-label">Type de Transaction</label>
             <div class="type-toggle-group">
               <input type="radio" id="prop-tx-location" name="property_transaction" value="Location" checked>
-              <label for="prop-tx-location" class="toggle-btn-label btn-primary">En Location</label>
+              <label for="prop-tx-location" class="toggle-btn-label btn-primary" onclick="togglePropTx('Location')">En Location</label>
               <input type="radio" id="prop-tx-vente" name="property_transaction" value="Vente">
-              <label for="prop-tx-vente" class="toggle-btn-label btn-purple">En Vente</label>
+              <label for="prop-tx-vente" class="toggle-btn-label btn-purple" onclick="togglePropTx('Vente')">En Vente</label>
             </div>
           </div>
           <div class="form-group">
@@ -1772,9 +1772,33 @@
 
   <div class="toast-container" id="toast-container"></div>
   
-  <!-- Inclusion du fichier d'API -->
+    <!-- Inclusion du fichier d'API -->
   <script src="api.js"></script>
   <!-- Script Principal -->
-  <script src="app.js?v=9"></script>
+  <script>
+    function toggleOwnerTx(type) {
+      if (type === 'Location') {
+        document.getElementById('owner-tx-location').checked = true;
+        document.getElementById('owner-prop-location-fields').style.display = 'block';
+        document.getElementById('owner-prop-vente-fields').style.display = 'none';
+      } else {
+        document.getElementById('owner-tx-vente').checked = true;
+        document.getElementById('owner-prop-location-fields').style.display = 'none';
+        document.getElementById('owner-prop-vente-fields').style.display = 'block';
+      }
+    }
+    function togglePropTx(type) {
+      if (type === 'Location') {
+        document.getElementById('prop-tx-location').checked = true;
+        document.getElementById('property-location-fields').style.display = 'block';
+        document.getElementById('property-vente-fields').style.display = 'none';
+      } else {
+        document.getElementById('prop-tx-vente').checked = true;
+        document.getElementById('property-location-fields').style.display = 'none';
+        document.getElementById('property-vente-fields').style.display = 'block';
+      }
+    }
+  </script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
