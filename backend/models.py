@@ -40,7 +40,13 @@ class Property(Base):
     address = Column(String)
     surface = Column(Integer)
     units = Column(Integer)
-    status = Column(String) # Occupé, Vacant, En travaux
+    status = Column(String) # Occupé, Vacant, En travaux, Disponible à la vente, Vendu
+    transaction_type = Column(String, default="Location") # Location, Vente
+    price = Column(Float, nullable=True) # Loyer mensuel ou Prix de vente
+    caution_amount = Column(Float, nullable=True)
+    commission_rate = Column(Float, nullable=True)
+    tenant_name = Column(String, nullable=True)
+    tenant_phone = Column(String, nullable=True)
 
     owner = relationship("Owner", back_populates="properties")
     tenant = relationship("Tenant", back_populates="property", uselist=False, cascade="all, delete-orphan")

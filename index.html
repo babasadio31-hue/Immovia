@@ -1231,21 +1231,56 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="input-owner-prop-caution" class="form-label">Caution (FCFA)</label>
-                <input type="number" id="input-owner-prop-caution" class="form-input" min="0" placeholder="ex. 300000">
+                <label class="form-label">Type de Transaction</label>
+                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
+                  <label style="color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="radio" name="owner_prop_transaction" value="Location" checked>
+                    En Location
+                  </label>
+                  <label style="color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="radio" name="owner_prop_transaction" value="Vente">
+                    En Vente
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="input-owner-prop-rent" class="form-label">Loyer Mensuel (FCFA)</label>
-                <input type="number" id="input-owner-prop-rent" class="form-input" min="0" placeholder="ex. 150000">
+
+            <!-- Champs pour la LOCATION -->
+            <div id="owner-prop-location-fields">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-owner-prop-caution" class="form-label">Caution (FCFA)</label>
+                  <input type="number" id="input-owner-prop-caution" class="form-input" min="0" placeholder="ex. 300000">
+                </div>
+                <div class="form-group">
+                  <label for="input-owner-prop-rent" class="form-label">Loyer Mensuel (FCFA)</label>
+                  <input type="number" id="input-owner-prop-rent" class="form-input" min="0" placeholder="ex. 150000">
+                </div>
               </div>
               <div class="form-group">
-                <label for="select-owner-prop-status" class="form-label">Statut</label>
+                <label for="select-owner-prop-status" class="form-label">Statut Locatif</label>
                 <select id="select-owner-prop-status" class="form-select">
                   <option value="Libre" selected>Libre (Vacant)</option>
                   <option value="Maintenance">En Travaux (Maintenance)</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Champs pour la VENTE -->
+            <div id="owner-prop-vente-fields" style="display: none;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-owner-prop-price" class="form-label">Prix de Vente (FCFA)</label>
+                  <input type="number" id="input-owner-prop-price" class="form-input" min="0" placeholder="ex. 25000000">
+                </div>
+                <div class="form-group">
+                  <label for="select-owner-prop-sale-status" class="form-label">Statut de Vente</label>
+                  <select id="select-owner-prop-sale-status" class="form-select">
+                    <option value="Disponible à la vente" selected>Disponible à la vente</option>
+                    <option value="Sous compromis">Sous compromis</option>
+                    <option value="Vendu">Vendu</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -1300,37 +1335,71 @@
                 <option value="Magasin">Magasin</option>
                 <option value="Terrain">Terrain</option>
                 <option value="Autre">Autre</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="input-property-caution" class="form-label">Caution (FCFA)</label>
-              <input type="number" id="input-property-caution" class="form-input" min="0" placeholder="ex. 300000" required>
-            </div>
-            <div class="form-group">
-              <label for="input-property-rent" class="form-label">Loyer Mensuel Hors Charges (FCFA)</label>
-              <input type="number" id="input-property-rent" class="form-input" placeholder="0" min="1" step="1" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="select-property-status" class="form-label">Statut Locatif Initial</label>
-            <select id="select-property-status" class="form-select" required>
-              <option value="Loué">Loué (Occupé)</option>
-              <option value="Libre" selected>Libre (Vacant)</option>
-              <option value="Maintenance">En Travaux (Maintenance)</option>
             </select>
           </div>
-          <!-- Dynamic Tenant Fields -->
-          <div id="tenant-fields-container" style="display: none; margin-top: 1rem;">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Type de Transaction</label>
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
+              <label style="color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="property_transaction" value="Location" checked>
+                En Location
+              </label>
+              <label style="color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="property_transaction" value="Vente">
+                En Vente
+              </label>
+            </div>
+          </div>
+
+          <!-- Champs pour la LOCATION -->
+          <div id="property-location-fields">
             <div class="form-grid">
               <div class="form-group">
-                <label for="input-property-tenant-name" class="form-label">Nom du Locataire</label>
-                <input type="text" id="input-property-tenant-name" class="form-input" placeholder="ex. Bakary Diop">
+                <label for="input-property-caution" class="form-label">Caution (FCFA)</label>
+                <input type="number" id="input-property-caution" class="form-input" min="0" placeholder="ex. 300000" required>
               </div>
               <div class="form-group">
-                <label for="input-property-tenant-phone" class="form-label">Téléphone du Locataire</label>
-                <input type="text" id="input-property-tenant-phone" class="form-input" placeholder="ex. +221 70 123 45 67">
+                <label for="input-property-rent" class="form-label">Loyer Mensuel Hors Charges (FCFA)</label>
+                <input type="number" id="input-property-rent" class="form-input" placeholder="0" min="1" step="1" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="select-property-status" class="form-label">Statut Locatif Initial</label>
+              <select id="select-property-status" class="form-select" required>
+                <option value="Loué">Loué (Occupé)</option>
+                <option value="Libre" selected>Libre (Vacant)</option>
+                <option value="Maintenance">En Travaux (Maintenance)</option>
+              </select>
+            </div>
+            <!-- Dynamic Tenant Fields -->
+            <div id="tenant-fields-container" style="display: none; margin-top: 1rem;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-property-tenant-name" class="form-label">Nom du Locataire</label>
+                  <input type="text" id="input-property-tenant-name" class="form-input" placeholder="ex. Bakary Diop">
+                </div>
+                <div class="form-group">
+                  <label for="input-property-tenant-phone" class="form-label">Téléphone du Locataire</label>
+                  <input type="text" id="input-property-tenant-phone" class="form-input" placeholder="ex. +221 70 123 45 67">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Champs pour la VENTE -->
+          <div id="property-vente-fields" style="display: none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="input-property-price" class="form-label">Prix de Vente (FCFA)</label>
+                <input type="number" id="input-property-price" class="form-input" min="0" placeholder="ex. 25000000">
+              </div>
+              <div class="form-group">
+                <label for="select-property-sale-status" class="form-label">Statut de Vente</label>
+                <select id="select-property-sale-status" class="form-select">
+                  <option value="Disponible à la vente" selected>Disponible à la vente</option>
+                  <option value="Sous compromis">Sous compromis</option>
+                  <option value="Vendu">Vendu</option>
+                </select>
               </div>
             </div>
           </div>

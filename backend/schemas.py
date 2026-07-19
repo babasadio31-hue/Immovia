@@ -53,6 +53,12 @@ class PropertyBase(BaseModel):
     surface: int
     units: int
     status: str
+    transaction_type: str = "Location"
+    price: Optional[float] = None
+    caution_amount: Optional[float] = None
+    commission_rate: Optional[float] = None
+    tenant_name: Optional[str] = None
+    tenant_phone: Optional[str] = None
 
 class PropertyCreate(PropertyBase):
     id: str

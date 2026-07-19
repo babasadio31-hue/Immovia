@@ -519,6 +519,32 @@ function setupEventListeners() {
     }
   });
 
+  // Toggle Location/Vente fields for modal-owner
+  document.querySelectorAll('input[name="owner_prop_transaction"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'Location') {
+        document.getElementById('owner-prop-location-fields').style.display = 'block';
+        document.getElementById('owner-prop-vente-fields').style.display = 'none';
+      } else {
+        document.getElementById('owner-prop-location-fields').style.display = 'none';
+        document.getElementById('owner-prop-vente-fields').style.display = 'block';
+      }
+    });
+  });
+
+  // Toggle Location/Vente fields for modal-property
+  document.querySelectorAll('input[name="property_transaction"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'Location') {
+        document.getElementById('property-location-fields').style.display = 'block';
+        document.getElementById('property-vente-fields').style.display = 'none';
+      } else {
+        document.getElementById('property-location-fields').style.display = 'none';
+        document.getElementById('property-vente-fields').style.display = 'block';
+      }
+    });
+  });
+
   // Recherche / filtres transactions
   document.getElementById('input-search-transactions').addEventListener('input', filterAndRenderTransactionsTable);
   document.getElementById('select-filter-type').addEventListener('change', filterAndRenderTransactionsTable);
@@ -607,7 +633,9 @@ function setupEventListeners() {
   }
   
   const btnSettingsResetLogo = document.getElementById('btn-settings-reset-logo');
-  if (btnSettingsResetLogo) btnSettingsResetLogo.addEventListener('click', resetLogo);
+  if (btnSettingsResetLogo) {
+    btnSettingsResetLogo.addEventListener('click', resetLogo);
+  }
   
   const btnSettingsExport = document.getElementById('btn-settings-export-json');
   if (btnSettingsExport) btnSettingsExport.addEventListener('click', exportAppSaveJSON);
@@ -1956,20 +1984,25 @@ async function handleOwnerSubmit(e) {
     const propName = document.getElementById('input-owner-prop-name').value.trim();
     const propAddress = document.getElementById('input-owner-prop-address').value.trim();
     const propType = document.getElementById('select-owner-prop-type').value;
+    const propTransactionType = document.querySelector('input[name="owner_prop_transaction"]:checked').value;
     const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
     const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
+    const propPrice = parseInt(document.getElementById('input-owner-prop-price').value, 10) || 0;
     const propStatus = document.getElementById('select-owner-prop-status').value;
+    const propSaleStatus = document.getElementById('select-owner-prop-sale-status').value;
 
     if (propName) {
       const newProp = {
         name: propName,
         address: propAddress || 'Non spécifiée',
         type: propType,
-        caution: propCaution,
-        ownerId: createdOwner.id,
-        rent: propRent,
-        commissionRate: createdOwner.commissionRate,
-        status: propStatus
+        transaction_type: propTransactionType,
+        caution_amount: propCaution,
+        owner_id: createdOwner.id,
+        rent_amount: propRent,
+        price: propTransactionType === 'Location' ? propRent : propPrice,
+        commission_rate: createdOwner.commissionRate,
+        status: propTransactionType === 'Vente' ? propSaleStatus : propStatus
       };
       await API.createProperty(newProp);
     }
@@ -1989,50 +2022,59 @@ async function handleOwnerSubmit(e) {
   }
 }
 
-function handlePropertySubmit(e) {
+async function handlePropertySubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('input-property-name').value.trim();
   const address = document.getElementById('input-property-address').value.trim();
   const ownerId = document.getElementById('select-property-owner').value;
   const type = document.getElementById('select-property-type').value;
+  const transactionType = document.querySelector('input[name="property_transaction"]:checked').value;
   const caution = parseInt(document.getElementById('input-property-caution').value) || 0;
-  const rent = parseInt(document.getElementById('input-property-rent').value);
+  const rent = parseInt(document.getElementById('input-property-rent').value) || 0;
+  const price = parseInt(document.getElementById('input-property-price').value) || 0;
   const commissionRate = parseInt(document.getElementById('input-property-commission').value);
   const status = document.getElementById('select-property-status').value;
+  const saleStatus = document.getElementById('select-property-sale-status').value;
 
   let tenantName = '';
   let tenantPhone = '';
-  if (status === 'Loué') {
+  if (transactionType === 'Location' && status === 'Loué') {
     tenantName = document.getElementById('input-property-tenant-name').value.trim();
     tenantPhone = document.getElementById('input-property-tenant-phone').value.trim();
   }
 
-  if (!name || !address || !ownerId || isNaN(rent) || rent <= 0 || isNaN(commissionRate)) {
+  if (!name || !address || !ownerId || isNaN(commissionRate) || (transactionType === 'Location' && isNaN(rent)) || (transactionType === 'Vente' && isNaN(price))) {
     showToast('Fiche du bien immobilier incomplète.', 'error');
     return;
   }
 
   const newProp = {
-    id: 'prop-' + Date.now(),
     name,
     address,
     type,
-    caution,
-    ownerId,
-    rent,
-    commissionRate,
-    status,
-    tenantName,
-    tenantPhone
+    transaction_type: transactionType,
+    caution_amount: caution,
+    owner_id: ownerId,
+    rent_amount: rent,
+    price: transactionType === 'Location' ? rent : price,
+    commission_rate: commissionRate,
+    status: transactionType === 'Vente' ? saleStatus : status,
+    tenant_name: tenantName,
+    tenant_phone: tenantPhone
   };
 
-  state.properties.push(newProp);
-  saveData();
-  populateDropdowns();
-  closeAllModals();
-  renderPropertiesGrid();
-  showToast(`Bien "${name}" ajouté au catalogue de gestion.`, 'success');
+  try {
+    await API.createProperty(newProp);
+    await loadData();
+    populateDropdowns();
+    closeAllModals();
+    renderPropertiesGrid();
+    showToast(`Bien "${name}" ajouté au catalogue de gestion.`, 'success');
+  } catch (error) {
+    console.error(error);
+    showToast('Erreur lors de la création du bien.', 'error');
+  }
 }
 
 // ==========================================================================
