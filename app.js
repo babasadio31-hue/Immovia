@@ -152,9 +152,22 @@ async function loadData() {
       API.getTransactions()
     ]);
     state.owners = apiOwners || [];
-    state.properties = apiProperties || [];
-    state.transactions = apiTransactions || [];
-    state.tenants = apiTenants || [];
+    state.properties = (apiProperties || []).map(p => ({
+      ...p,
+      ownerId: p.owner_id,
+      rent: p.rent_amount !== null && p.rent_amount !== undefined ? p.rent_amount : (p.price || 0),
+      commissionRate: p.commission_rate
+    }));
+    state.transactions = (apiTransactions || []).map(t => ({
+      ...t,
+      propertyId: t.property_id
+    }));
+    state.tenants = (apiTenants || []).map(t => ({
+      ...t,
+      propertyId: t.property_id,
+      rent: t.rent_amount,
+      caution: t.caution_amount
+    }));
     
     const savedState = localStorage.getItem('immovi_state');
     if (savedState) {
@@ -2092,31 +2105,44 @@ async function handlePropertySubmit(e) {
 // ==========================================================================
 
 function deleteTransaction(id) {
-  showCustomConfirm('Voulez-vous supprimer ce flux financier ?').then(confirmed => {
+  showCustomConfirm('Voulez-vous supprimer ce flux financier ?').then(async confirmed => {
     if (confirmed) {
-      state.transactions = state.transactions.filter(tx => tx.id !== id);
-      saveData();
-      filterAndRenderTransactionsTable();
-      showToast('Mouvement supprimé.', 'warning');
+      try {
+        await API.deleteTransaction(id);
+        await loadInitialData();
+        showToast('Mouvement supprimé.', 'warning');
+      } catch(e) {
+        showToast(e.message, 'error');
+      }
     }
   });
 }
 
 function deleteTenant(propertyId) {
-  showCustomConfirm('Voulez-vous supprimer ce locataire ? Le bien associé deviendra vacant.').then(confirmed => {
+  showCustomConfirm('Voulez-vous supprimer ce locataire ? Le bien associé deviendra vacant.').then(async confirmed => {
     if (confirmed) {
       const prop = state.properties.find(p => p.id === propertyId);
       if (prop) {
-        prop.status = 'Libre';
-        prop.tenantName = '';
-        prop.tenantPhone = '';
-        saveData();
-        renderTenantsTable();
-        renderPropertiesGrid();
-        showToast('Locataire supprimé avec succès.', 'warning');
-        
-        if (document.getElementById('modal-owner').classList.contains('active')) {
-          openOwnerDossier(prop.ownerId);
+        try {
+          const tenant = state.tenants.find(t => t.propertyId === propertyId);
+          if (tenant) {
+            await API.deleteTenant(tenant.id);
+          }
+          await API.updateProperty(propertyId, {
+            ...prop,
+            status: 'Libre',
+            tenant_name: null,
+            tenant_phone: null
+          });
+          
+          await loadInitialData();
+          showToast('Locataire supprimé avec succès.', 'warning');
+          
+          if (document.getElementById('modal-owner').classList.contains('active')) {
+            openOwnerDossier(prop.ownerId);
+          }
+        } catch(e) {
+          showToast(e.message, 'error');
         }
       }
     }
@@ -2133,13 +2159,15 @@ function deleteOwner(id) {
     return;
   }
 
-  showCustomConfirm(`Supprimer définitivement la fiche de "${owner.name}" ?`).then(confirmed => {
+  showCustomConfirm(`Supprimer définitivement la fiche de "${owner.name}" ?`).then(async confirmed => {
     if (confirmed) {
-      state.owners = state.owners.filter(o => o.id !== id);
-      saveData();
-      populateDropdowns();
-      renderOwnersTable();
-      showToast('Propriétaire supprimé.', 'warning');
+      try {
+        await API.deleteOwner(id);
+        await loadInitialData();
+        showToast('Propriétaire supprimé.', 'warning');
+      } catch(e) {
+        showToast(e.message, 'error');
+      }
     }
   });
 }
@@ -2148,16 +2176,15 @@ function deleteProperty(id) {
   const prop = state.properties.find(p => p.id === id);
   if (!prop) return;
 
-  showCustomConfirm(`Retirer le bien "${prop.name}" du mandat de gestion ?`).then(confirmed => {
+  showCustomConfirm(`Retirer le bien "${prop.name}" du mandat de gestion ?`).then(async confirmed => {
     if (confirmed) {
-      state.properties = state.properties.filter(p => p.id !== id);
-      // Nettoyer également les transactions associées pour éviter les données orphelines
-      state.transactions = state.transactions.filter(t => t.propertyId !== id);
-      
-      saveData();
-      populateDropdowns();
-      renderPropertiesGrid();
-      showToast('Bien immobilier retiré du catalogue.', 'warning');
+      try {
+        await API.deleteProperty(id);
+        await loadInitialData();
+        showToast('Bien immobilier retiré du catalogue.', 'warning');
+      } catch(e) {
+        showToast(e.message, 'error');
+      }
     }
   });
 }
@@ -2691,14 +2718,18 @@ function handleWithdrawalSubmit(e) {
 }
 
 function deleteWithdrawalTransaction(txId) {
-  showCustomConfirm("Voulez-vous supprimer ce retrait ? Cela annulera le retrait et remettra les fonds dans le solde disponible.").then(confirmed => {
+  showCustomConfirm("Voulez-vous supprimer ce retrait ? Cela annulera le retrait et remettra les fonds dans le solde disponible.").then(async confirmed => {
     if (confirmed) {
-      state.transactions = state.transactions.filter(t => t.id !== txId);
-      saveData();
-      if (state.activeOwnerId) {
-        openOwnerDossier(state.activeOwnerId);
+      try {
+        await API.deleteTransaction(txId);
+        await loadInitialData();
+        if (state.activeOwnerId) {
+          openOwnerDossier(state.activeOwnerId);
+        }
+        showToast("Retrait annulé et fonds réapprovisionnés.", "warning");
+      } catch(e) {
+        showToast(e.message, 'error');
       }
-      showToast("Retrait annulé et fonds réapprovisionnés.", "warning");
     }
   });
 }
