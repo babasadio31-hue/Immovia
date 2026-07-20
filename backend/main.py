@@ -34,6 +34,35 @@ async def lifespan(app: FastAPI):
             )
             db.add(admin_user)
             db.commit()
+
+        # Schema upgrade for new columns in properties table
+        from sqlalchemy import text
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN transaction_type VARCHAR DEFAULT 'Location'"))
+        except Exception:
+            pass
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN price FLOAT"))
+        except Exception:
+            pass
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN caution_amount FLOAT"))
+        except Exception:
+            pass
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN commission_rate FLOAT"))
+        except Exception:
+            pass
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN tenant_name VARCHAR"))
+        except Exception:
+            pass
+        try:
+            db.execute(text("ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR"))
+        except Exception:
+            pass
+        db.commit()
+
     finally:
         db.close()
     yield
