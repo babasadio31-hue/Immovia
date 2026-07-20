@@ -2742,7 +2742,11 @@ function renderAccounting() {
         tbodyEntrees.appendChild(tr);
       }
     } else {
-      grossOutflows += tx.amount;
+      const isOwnerWithdrawal = (tx.description.includes('Reversement') || tx.description.includes('Retrait'));
+      
+      if (!isOwnerWithdrawal) {
+        grossOutflows += tx.amount;
+      }
       
       const filterSortiesType = document.getElementById('sorties-filter-type');
       const filterType = filterSortiesType ? filterSortiesType.value : 'all';
