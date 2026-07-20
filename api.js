@@ -46,10 +46,20 @@ async function apiFetch(endpoint, options = {}) {
     throw new Error('Session expirée');
   }
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || 'Une erreur est survenue avec le serveur');
-  }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      let msg = 'Une erreur est survenue avec le serveur';
+      if (errorData.detail) {
+        if (Array.isArray(errorData.detail)) {
+           msg = errorData.detail.map(e => `${e.loc ? e.loc.join('.') : ''}: ${e.msg}`).join(', ');
+        } else {
+           msg = errorData.detail;
+        }
+      } else if (errorData.message) {
+           msg = errorData.message;
+      }
+      throw new Error(msg);
+    }
 
   return response.json();
 }

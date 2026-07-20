@@ -1970,6 +1970,7 @@ async function handleOwnerSubmit(e) {
   }
 
   const newOwner = {
+    type: "Particulier",
     name,
     phone,
     email,
@@ -2002,7 +2003,9 @@ async function handleOwnerSubmit(e) {
         rent_amount: propRent,
         price: propTransactionType === 'Location' ? propRent : propPrice,
         commission_rate: createdOwner.commissionRate,
-        status: propTransactionType === 'Vente' ? propSaleStatus : propStatus
+        status: propTransactionType === 'Vente' ? propSaleStatus : propStatus,
+        surface: 0,
+        units: 1
       };
       await API.createProperty(newProp);
     }
@@ -2051,15 +2054,17 @@ async function handlePropertySubmit(e) {
 
   const newProp = {
     name,
-    address,
+    address: address || 'Non spécifiée',
     type,
     transaction_type: transactionType,
-    caution_amount: caution,
     owner_id: ownerId,
+    caution_amount: caution,
     rent_amount: rent,
     price: transactionType === 'Location' ? rent : price,
-    commission_rate: commissionRate,
+    commission_rate: isNaN(commissionRate) ? null : commissionRate,
     status: transactionType === 'Vente' ? saleStatus : status,
+    surface: 0,
+    units: 1,
     tenant_name: tenantName,
     tenant_phone: tenantPhone
   };
