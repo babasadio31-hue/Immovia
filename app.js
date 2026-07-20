@@ -1984,7 +1984,7 @@ async function handleOwnerSubmit(e) {
     const propName = document.getElementById('input-owner-prop-name').value.trim();
     const propAddress = document.getElementById('input-owner-prop-address').value.trim();
     const propType = document.getElementById('select-owner-prop-type').value;
-    const propTransactionType = document.querySelector('input[name="owner_prop_transaction"]:checked').value;
+    const propTransactionType = 'Location';
     const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
     const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
     const propPrice = parseInt(document.getElementById('input-owner-prop-price').value, 10) || 0;
@@ -2029,7 +2029,7 @@ async function handlePropertySubmit(e) {
   const address = document.getElementById('input-property-address').value.trim();
   const ownerId = document.getElementById('select-property-owner').value;
   const type = document.getElementById('select-property-type').value;
-  const transactionType = document.querySelector('input[name="property_transaction"]:checked').value;
+  const transactionType = 'Location';
   const caution = parseInt(document.getElementById('input-property-caution').value) || 0;
   const rent = parseInt(document.getElementById('input-property-rent').value) || 0;
   const price = parseInt(document.getElementById('input-property-price').value) || 0;
