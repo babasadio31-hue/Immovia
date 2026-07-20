@@ -977,7 +977,12 @@ function renderOwnersTable() {
       <td class="text-right" style="font-weight: 600; color: var(--color-green);">${formatCurrency(totalRentValue)}</td>
       <td class="text-center no-print">
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
-          <button class="btn-icon-only danger" onclick="deleteOwner('${owner.id}')" title="Supprimer">
+          <button class="btn-icon-only info" onclick="openEditOwnerModal('${owner.id}')" title="Modifier">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </button>
+            <button class="btn-icon-only danger" onclick="deleteOwner('${owner.id}')" title="Supprimer">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
             </svg>
@@ -1985,8 +1990,10 @@ async function handleOwnerSubmit(e) {
     return;
   }
 
+  const editId = document.getElementById('input-owner-id').value;
+
   const newOwner = {
-    id: 'own-' + Date.now(),
+    id: editId || ('own-' + Date.now()),
     type: "Particulier",
     name,
     phone,
@@ -1996,7 +2003,13 @@ async function handleOwnerSubmit(e) {
   };
 
   try {
-    const createdOwner = await API.createOwner(newOwner);
+    let createdOwner;
+    if (editId) {
+      createdOwner = await API.updateOwner(editId, newOwner);
+      document.getElementById('input-owner-id').value = '';
+    } else {
+      createdOwner = await API.createOwner(newOwner);
+    }
 
     // Vérifier et ajouter le bien immobilier initial s'il a été rempli
     const propName = document.getElementById('input-owner-prop-name').value.trim();
@@ -2070,8 +2083,10 @@ async function handlePropertySubmit(e) {
     return;
   }
 
+  const editId = document.getElementById('input-property-id').value;
+
   const newProp = {
-    id: 'prop-' + Date.now(),
+    id: editId || ('prop-' + Date.now()),
     name,
     address: address || 'Non spécifiée',
     type,
@@ -2089,7 +2104,12 @@ async function handlePropertySubmit(e) {
   };
 
   try {
-    await API.createProperty(newProp);
+    if (editId) {
+      await API.updateProperty(editId, newProp);
+      document.getElementById('input-property-id').value = '';
+    } else {
+      await API.createProperty(newProp);
+    }
     await loadData();
     populateDropdowns();
     closeAllModals();
@@ -2102,7 +2122,81 @@ async function handlePropertySubmit(e) {
 }
 
 // ==========================================================================
-// Suppressions
+
+// ==========================================================================
+// Edition (Bailleurs, Biens, Locataires)
+// ==========================================================================
+
+function openEditOwnerModal(id) {
+  const owner = state.owners.find(o => o.id === id);
+  if (!owner) return;
+  document.getElementById('input-owner-id').value = owner.id;
+  document.getElementById('input-owner-name').value = owner.name || '';
+  document.getElementById('input-owner-phone').value = owner.phone || '';
+  document.getElementById('input-owner-email').value = owner.email || '';
+  document.getElementById('input-owner-address').value = owner.address || '';
+  document.getElementById('input-owner-commission').value = owner.commissionRate || '';
+  
+  // Masquer l'ajout rapide de bien
+  const quickProp = document.getElementById('owner-quick-property');
+  if(quickProp) quickProp.style.display = 'none';
+  
+  document.getElementById('modal-owner').classList.add('active');
+}
+
+function openEditPropertyModal(id) {
+  const prop = state.properties.find(p => p.id === id);
+  if (!prop) return;
+  document.getElementById('input-property-id').value = prop.id;
+  document.getElementById('input-property-name').value = prop.name || '';
+  document.getElementById('input-property-address').value = prop.address || '';
+  document.getElementById('select-property-owner').value = prop.ownerId || '';
+  document.getElementById('select-property-type').value = prop.type || '';
+  
+  const radioLocation = document.querySelector('input[name="property_transaction"][value="Location"]');
+  const radioVente = document.querySelector('input[name="property_transaction"][value="Vente"]');
+  if (prop.transaction_type === "Vente") {
+    radioVente.checked = true;
+    document.getElementById('property-location-fields').style.display = 'none';
+    document.getElementById('property-vente-fields').style.display = 'block';
+    document.getElementById('input-property-price').value = prop.price || '';
+    if (document.getElementById('select-property-sale-status')) {
+      document.getElementById('select-property-sale-status').value = prop.status || 'Disponible à la vente';
+    }
+  } else {
+    radioLocation.checked = true;
+    document.getElementById('property-location-fields').style.display = 'block';
+    document.getElementById('property-vente-fields').style.display = 'none';
+    document.getElementById('input-property-caution').value = prop.caution_amount || '';
+    document.getElementById('input-property-rent').value = prop.rent_amount || '';
+    document.getElementById('select-property-status').value = prop.status || 'Libre';
+  }
+  
+  document.getElementById('input-property-commission').value = prop.commissionRate || '';
+  document.getElementById('modal-property').classList.add('active');
+}
+
+function openEditTenantModal(id) {
+  const tenant = state.tenants.find(t => t.id === id);
+  if (!tenant) return;
+  document.getElementById('input-tenant-id').value = tenant.id;
+  document.getElementById('select-tenant-property').value = tenant.propertyId || '';
+  document.getElementById('input-tenant-name').value = tenant.name || '';
+  document.getElementById('input-tenant-phone').value = tenant.phone || '';
+  document.getElementById('input-tenant-email').value = tenant.email || '';
+  document.getElementById('input-tenant-cni').value = tenant.cni || '';
+  document.getElementById('input-tenant-rent').value = tenant.rent || '';
+  document.getElementById('input-tenant-caution').value = tenant.caution || '';
+  document.getElementById('input-tenant-entry').value = tenant.entry_date || '';
+  
+  document.getElementById('modal-tenant').classList.add('active');
+}
+
+// Exposer globalement
+window.openEditOwnerModal = openEditOwnerModal;
+window.openEditPropertyModal = openEditPropertyModal;
+window.openEditTenantModal = openEditTenantModal;
+\n// Suppressions
 // ==========================================================================
 
 function deleteTransaction(id) {

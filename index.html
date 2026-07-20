@@ -1185,6 +1185,7 @@
         </button>
       </div>
       <form id="form-owner">
+        <input type="hidden" id="input-owner-id">
         <div class="modal-body">
           <div class="form-group">
             <label for="input-owner-name" class="form-label">Nom complet / Raison Sociale</label>
@@ -1334,7 +1335,7 @@
             </div>
             <div class="form-group">
               <label for="input-property-commission" class="form-label">Honoraires sur ce bien (%)</label>
-              <input type="number" id="input-property-commission" class="form-input" min="0" max="100" placeholder="ex. 10" required>
+              <input type="number" id="input-property-commission" class="form-input" min="0" max="100" placeholder="ex. 10">
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 1.25rem;">
@@ -1353,11 +1354,11 @@
             <div class="form-grid">
               <div class="form-group">
                 <label for="input-property-caution" class="form-label">Caution (FCFA)</label>
-                <input type="number" id="input-property-caution" class="form-input" min="0" placeholder="ex. 300000" required>
+                <input type="number" id="input-property-caution" class="form-input" min="0" placeholder="ex. 300000">
               </div>
               <div class="form-group">
                 <label for="input-property-rent" class="form-label">Loyer Mensuel Hors Charges (FCFA)</label>
-                <input type="number" id="input-property-rent" class="form-input" placeholder="0" min="1" step="1" required>
+                <input type="number" id="input-property-rent" class="form-input" placeholder="0" min="1" step="1">
               </div>
             </div>
             <div class="form-group">
@@ -1607,6 +1608,7 @@
         </button>
       </div>
       <form id="form-tenant">
+        <input type="hidden" id="input-tenant-id">
         <div class="modal-body">
           <div class="form-group">
             <label for="select-tenant-property" class="form-label">Bien Immobilier Disponible</label>
