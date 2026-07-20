@@ -2279,15 +2279,30 @@ function openEditPropertyModal(id) {
 function openEditTenantModal(id) {
   const tenant = state.tenants.find(t => t.id === id);
   if (!tenant) return;
-  document.getElementById('input-tenant-id').value = tenant.id;
-  document.getElementById('select-tenant-property').value = tenant.propertyId || '';
-  document.getElementById('input-tenant-name').value = tenant.name || '';
-  document.getElementById('input-tenant-phone').value = tenant.phone || '';
-  document.getElementById('input-tenant-email').value = tenant.email || '';
-  document.getElementById('input-tenant-cni').value = tenant.cni || '';
-  document.getElementById('input-tenant-rent').value = tenant.rent || '';
-  document.getElementById('input-tenant-caution').value = tenant.caution || '';
-  document.getElementById('input-tenant-entry').value = tenant.entry_date || '';
+  
+  const elId = document.getElementById('input-tenant-id');
+  if(elId) elId.value = tenant.id;
+  
+  const elProp = document.getElementById('select-tenant-property');
+  if(elProp) elProp.value = tenant.propertyId || '';
+  
+  const elName = document.getElementById('input-tenant-name');
+  if(elName) elName.value = tenant.name || '';
+  
+  const elPhone = document.getElementById('input-tenant-phone');
+  if(elPhone) elPhone.value = tenant.phone || '';
+  
+  const elAddress = document.getElementById('input-tenant-address');
+  if(elAddress) elAddress.value = tenant.address || '';
+  
+  const elRent = document.getElementById('input-tenant-rent');
+  if(elRent) elRent.value = tenant.rent || '';
+  
+  const elCaution = document.getElementById('input-tenant-caution');
+  if(elCaution) elCaution.value = tenant.caution || '';
+  
+  const elLeaseStart = document.getElementById('input-tenant-lease-start');
+  if(elLeaseStart) elLeaseStart.value = tenant.entry_date || tenant.leaseStart || '';
   
   document.getElementById('modal-tenant').classList.add('active');
 }
@@ -2623,16 +2638,18 @@ function renderTenantsTable() {
         <td><a class="owner-click-link" onclick="openOwnerDossier('${prop.ownerId}')">${ownerName}</a></td>
         <td class="text-right" style="font-weight: 700; color: var(--color-green);">${formatCurrency(prop.rent)}</td>
         <td class="text-center no-print">
-          ${tenant.id ? `<button class="btn-icon-only info" onclick="openEditTenantModal('${tenant.id}')" title="Modifier ce locataire" style="margin-right: 5px;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+          ${tenant.id ? `<button class="btn-icon-only info" onclick="openEditTenantModal('${tenant.id}')" title="Modifier ce locataire">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
               </svg>
             </button>` : ''}
             <button class="btn-icon-only" onclick="deleteTenant('${prop.id}')" title="Supprimer ce locataire">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-rose);">
-              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-            </svg>
-          </button>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-rose);">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
