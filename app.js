@@ -3512,34 +3512,7 @@ window.deleteStaff = deleteStaff;
 // Settings Tabs and Theme Management
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-  const settingsTabBtns = document.querySelectorAll('.settings-tab-btn');
-  settingsTabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Deactivate all
-      settingsTabBtns.forEach(b => {
-        b.classList.remove('active');
-        b.style.borderBottomColor = 'transparent';
-        b.style.color = 'var(--color-text-muted)';
-      });
-      document.querySelectorAll('#view-settings .settings-tab-content').forEach(c => {
-        c.style.display = 'none';
-        c.classList.remove('active');
-      });
-      
-      // Activate clicked
-      btn.classList.add('active');
-      btn.style.borderBottomColor = 'var(--color-primary)';
-      btn.style.color = 'var(--color-text-primary)';
-      const targetId = btn.getAttribute('data-settings-target');
-      const targetContent = document.getElementById(targetId);
-      if (targetContent) {
-        targetContent.style.display = 'block';
-        targetContent.classList.add('active');
-      }
-    });
-  });
-});
+
 
 window.setThemeOption = function(theme) {
   state.agencySettings = state.agencySettings || {};
