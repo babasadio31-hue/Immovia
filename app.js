@@ -3208,7 +3208,7 @@ async function handleTenantSubmit(e) {
   
       await API.updateProperty(propId, {
         ...prop,
-        status: 'Loue',
+        status: 'Loué',
         tenant_name: name,
         tenant_phone: phone
       });
