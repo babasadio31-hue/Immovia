@@ -152,10 +152,22 @@ async function loadData() {
       API.getTenants(),
       API.getTransactions()
     ]);
-    state.owners = (apiOwners || []).map(o => ({
-        ...o,
-        commissionRate: o.commission_rate
-      }));
+    state.owners = (apiOwners || []).map(o => {
+        let cr = 10;
+        let actualNotes = o.notes || "";
+        if (o.notes && o.notes.startsWith('{')) {
+          try {
+            const parsed = JSON.parse(o.notes);
+            if (parsed.commissionRate !== undefined) cr = parsed.commissionRate;
+            if (parsed.notes !== undefined) actualNotes = parsed.notes;
+          } catch(e) {}
+        }
+        return {
+          ...o,
+          commissionRate: cr,
+          notes: actualNotes
+        };
+      });
     state.properties = (apiProperties || []).map(p => ({
       ...p,
       ownerId: p.owner_id,
@@ -426,9 +438,8 @@ function setupEventListeners() {
               phone: owner.phone,
               email: owner.email || "",
               address: owner.address || "Non spécifiée",
-              notes: owner.notes || "",
-              avatar_url: owner.avatar_url || "",
-              commission_rate: owner.commissionRate
+              notes: JSON.stringify({ commissionRate: owner.commissionRate, notes: owner.notes || "" }),
+              avatar_url: owner.avatar_url || ""
             });
             saveData();
             openOwnerDossier(state.activeOwnerId); // Refresh dossier
@@ -2056,6 +2067,18 @@ async function handleOwnerSubmit(e) {
   }
 
   const editId = document.getElementById('input-owner-id').value;
+  let existingNotes = "";
+  if (editId) {
+    const existingOwner = state.owners.find(o => o.id === editId);
+    if (existingOwner) {
+      try {
+        const parsed = JSON.parse(existingOwner.notes);
+        existingNotes = parsed.notes || "";
+      } catch (e) {
+        existingNotes = existingOwner.notes || "";
+      }
+    }
+  }
 
   const newOwner = {
     id: editId || ('own-' + Date.now()),
@@ -2064,7 +2087,7 @@ async function handleOwnerSubmit(e) {
     phone,
     email,
     address,
-    commission_rate: commissionRate
+    notes: JSON.stringify({ commissionRate: commissionRate, notes: existingNotes })
   };
 
   try {
