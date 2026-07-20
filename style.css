@@ -1696,3 +1696,94 @@ body {
   --color-primary: #7c3aed;
   --color-primary-hover: #6d28d9;
 }
+
+/* ==========================================================================
+   THEME CLAIR OVERRIDES
+   ========================================================================== */
+:root.theme-light .sidebar {
+  background: rgba(255, 255, 255, 0.95);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root.theme-light .sidebar-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root.theme-light .logo-text {
+  background: linear-gradient(135deg, #1e293b 30%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+:root.theme-light .user-info h4 {
+  color: var(--color-text-primary) !important;
+}
+
+:root.theme-light .menu-btn {
+  color: var(--color-text-muted);
+}
+
+:root.theme-light .menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:root.theme-light .menu-btn.active {
+  color: var(--color-primary);
+  background: rgba(124, 58, 237, 0.1);
+}
+
+:root.theme-light .card,
+:root.theme-light .modal,
+:root.theme-light .glass,
+:root.theme-light .tab-content {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+:root.theme-light .form-input,
+:root.theme-light .form-select,
+:root.theme-light .form-textarea {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--color-text-primary);
+}
+
+:root.theme-light .form-input:focus,
+:root.theme-light .form-select:focus,
+:root.theme-light .form-textarea:focus {
+  background: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+:root.theme-light .data-table th {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root.theme-light .data-table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+:root.theme-light .data-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+:root.theme-light .stat-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+:root.theme-light .top-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+:root.theme-light .page-title h1,
+:root.theme-light .page-title p {
+  color: var(--color-text-primary);
+}
+
+:root.theme-light [style*="border-top: 1px solid rgba(255,255,255,0.05)"],
+:root.theme-light [style*="border-bottom: 1px solid rgba(255,255,255,0.05)"] {
+  border-color: rgba(0,0,0,0.05) !important;
+}
