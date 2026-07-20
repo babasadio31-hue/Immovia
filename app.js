@@ -3119,57 +3119,63 @@ function openTenantModal() {
 }
 
 async function handleTenantSubmit(e) {
-  e.preventDefault();
-  const propId = document.getElementById('select-tenant-property').value;
-  const name = document.getElementById('input-tenant-name').value.trim();
-  const phone = document.getElementById('input-tenant-phone').value.trim();
-  const leaseStart = document.getElementById('input-tenant-lease-start').value;
-  const address = document.getElementById('input-tenant-address').value.trim();
-  const caution = parseInt(document.getElementById('input-tenant-caution').value, 10) || 0;
+    e.preventDefault();
+    const editId = document.getElementById('input-tenant-id') ? document.getElementById('input-tenant-id').value : '';
+    const propId = document.getElementById('select-tenant-property').value;
+    const name = document.getElementById('input-tenant-name').value.trim();
+    const phone = document.getElementById('input-tenant-phone').value.trim();
+    const leaseStart = document.getElementById('input-tenant-entry') ? document.getElementById('input-tenant-entry').value : document.getElementById('input-tenant-lease-start').value;
+    const address = document.getElementById('input-tenant-address') ? document.getElementById('input-tenant-address').value.trim() : '';
+    const caution = parseInt(document.getElementById('input-tenant-caution').value, 10) || 0;
 
-  if (!propId || !name || !phone) {
-    showToast('Veuillez remplir les informations obligatoires.', 'error');
-    return;
-  }
+    if (!propId || !name || !phone) {
+      showToast('Veuillez remplir les informations obligatoires.', 'error');
+      return;
+    }
 
-  const prop = state.properties.find(p => p.id === propId);
-  if (!prop) {
-    showToast('Bien introuvable.', 'error');
-    return;
-  }
+    const prop = state.properties.find(p => p.id === propId);
+    if (!prop) {
+      showToast('Bien introuvable.', 'error');
+      return;
+    }
 
-  try {
-          const newTenant = {
-        id: 'ten-' + Date.now(),
-        property_id: propId,
-        name,
-        phone,
-        email: '',
-        address: address || 'Non spǸcifiǸe',
-        entry_date: leaseStart || new Date().toISOString().split('T')[0],
-        rent_amount: prop.rent_amount || prop.price || 0,
-        caution_amount: caution,
-        status: 'Actif'
+    try {
+      const newTenant = {
+          id: editId || ('ten-' + Date.now()),
+          property_id: propId,
+          name,
+          phone,
+          email: '',
+          address: address || 'Non specifiee',
+          entry_date: leaseStart || new Date().toISOString().split('T')[0],
+          rent_amount: prop.rent_amount || prop.price || 0,
+          caution_amount: caution,
+          status: 'Actif'
       };
-
-    await API.createTenant(newTenant);
-
-    await API.updateProperty(propId, {
-      ...prop,
-      status: 'Loué',
-      tenant_name: name,
-      tenant_phone: phone
-    });
-
-    document.getElementById('modal-tenant').classList.remove('active');
-    showToast(`Le locataire ${name} a été enregistré avec succès pour le bien ${prop.name}.`, 'success');
-    
-    await loadData();
-    renderTenantsTable();
-    renderPropertiesGrid();
-  } catch (err) {
-    showToast(err.message || 'Erreur lors de l\'enregistrement du locataire.', 'error');
-  }
+  
+      if (editId) {
+          await API.updateTenant(editId, newTenant);
+          if(document.getElementById('input-tenant-id')) document.getElementById('input-tenant-id').value = '';
+      } else {
+          await API.createTenant(newTenant);
+      }
+  
+      await API.updateProperty(propId, {
+        ...prop,
+        status: 'Loue',
+        tenant_name: name,
+        tenant_phone: phone
+      });
+  
+      document.getElementById('modal-tenant').classList.remove('active');
+      showToast(`Le locataire ${name} a ete enregistre avec succes pour le bien ${prop.name}.`, 'success');
+      
+      await loadData();
+      renderTenantsTable();
+      renderPropertiesGrid();
+    } catch (err) {
+      showToast(err.message || 'Erreur lors de l\'enregistrement du locataire.', 'error');
+    }
 }
 
 // Démarrage de l'application
