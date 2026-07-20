@@ -1151,7 +1151,7 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
   
   tr.innerHTML = `
     <td>
-      <select class="form-select receipt-tenant-select" style="width: 100%; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.15); padding: 0.35rem 0.5rem; color: white;">
+      <select class="form-select receipt-tenant-select" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);">
         ${selectOptionsHtml}
       </select>
     </td>
@@ -1159,10 +1159,10 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
       <input type="text" class="form-input receipt-rent-input text-right" style="width: 100%; border: none; background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-muted);" readonly value="0 FCFA">
     </td>
     <td>
-      <input type="text" class="form-input receipt-month-input text-center" style="width: 100%; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.15); padding: 0.35rem 0.5rem; color: white;" value="${getCurrentMonthString()}">
+      <input type="text" class="form-input receipt-month-input text-center" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="${getCurrentMonthString()}">
     </td>
     <td>
-      <input type="number" class="form-input receipt-paid-input text-right" style="width: 100%; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.15); padding: 0.35rem 0.5rem; color: white;" min="0" value="${paidAmount !== null ? paidAmount : 0}">
+      <input type="number" class="form-input receipt-paid-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" min="0" value="${paidAmount !== null ? paidAmount : 0}">
     </td>
     <td>
       <input type="text" class="form-input receipt-reliquat-input text-right" style="width: 100%; border: none; background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-muted);" readonly value="0 FCFA">
@@ -1549,7 +1549,7 @@ function openOwnerDossier(ownerId) {
           if (prop && prop.commissionRate !== undefined && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
             
           const netRepayeDisplay = t.type === 'income'
-            ? `<span style="color: white;">+${formatCurrency(t.amount - (t.amount * rate / 100))}</span>`
+            ? `<span style="color: var(--color-text-primary);">+${formatCurrency(t.amount - (t.amount * rate / 100))}</span>`
             : `<span class="value-rose">-${formatCurrency(t.amount)}</span>`;
             
           tbodyStatement.innerHTML += `
@@ -3012,10 +3012,10 @@ function openTenantDossier(propertyId) {
       
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 600; color: white; vertical-align: middle;">${m.name}</td>
+        <td style="font-weight: 600; color: var(--color-text-primary); vertical-align: middle;">${m.name}</td>
         <td class="text-right" style="color: var(--color-text-muted); vertical-align: middle;">${formatCurrency(prop.rent)}</td>
         <td class="text-right ${paidThisMonth > 0 ? 'value-green' : ''}" style="font-weight: 600; vertical-align: middle;">
-          <input type="number" class="form-input tenant-paid-month-input text-right" style="width: 130px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); padding: 0.25rem 0.5rem; color: white; font-weight: 700; display: inline-block;" data-month="${m.name}" value="${paidThisMonth}">
+          <input type="number" class="form-input tenant-paid-month-input text-right" style="width: 130px; background: transparent; border: 1px solid var(--glass-border); padding: 0.25rem 0.5rem; color: var(--color-text-primary); font-weight: 700; display: inline-block;" data-month="${m.name}" value="${paidThisMonth}">
         </td>
         <td class="text-right" style="color: var(--color-text-muted); vertical-align: middle;">${totalPaidDisplay}</td>
         <td class="text-right" style="color: ${solde > 0 ? 'var(--color-green)' : (solde < 0 ? 'var(--color-rose)' : 'white')}; vertical-align: middle;">${soldeDisplay}</td>
@@ -3234,7 +3234,7 @@ function renderStaffTable() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="font-weight: 600; color: white;">${member.name}</td>
+      <td style="font-weight: 600; color: var(--color-text-primary);">${member.name}</td>
       <td><span class="badge ${roleClass}">${member.role}</span></td>
       <td>${member.phone}</td>
       <td>${member.email}</td>
@@ -3461,16 +3461,16 @@ function renderGlobalPrintHeader() {
   
   const logoHtml = settings.logoBase64
     ? `<img src="${settings.logoBase64}" alt="Logo Agence" style="max-height: 50px; border-radius: 8px;">`
-    : `<div style="background: var(--color-primary) !important; color: white !important; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: white !important;">
+    : `<div style="background: var(--color-primary) !important; color: var(--color-text-primary) !important; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-primary) !important;">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
        </div>`;
 
   const htmlContent = `
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid black; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-      <div style="font-size: 0.95rem; line-height: 1.5; color: black;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--color-text-primary); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+      <div style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-primary);">
         <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
         <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
         <p style="margin: 0;">${settings.address || 'Rue du Golf, Immeuble Horizon, Bamako, Mali'}</p>
@@ -3488,16 +3488,16 @@ function renderGlobalPrintHeader() {
   if (globalHeaderContainer) globalHeaderContainer.innerHTML = htmlContent;
   
   if (dynamicReceiptHeader) {
-    const whiteContent = htmlContent.replace(/color: black;/g, 'color: white;').replace(/color: #4b5563;/g, 'color: var(--color-primary-hover);').replace(/border-bottom: 2px solid black;/g, 'border-bottom: 1px solid rgba(255,255,255,0.08);');
+    const whiteContent = htmlContent;
     dynamicReceiptHeader.innerHTML = whiteContent;
   }
 
   const dynamicStatementHeader = document.getElementById('dynamic-statement-header');
   if (dynamicStatementHeader) {
     dynamicStatementHeader.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid rgba(255,255,255,0.08); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--glass-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
         <div>
-          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: white; margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
+          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || 'Rue du Golf, Bamako, Mali'}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
