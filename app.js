@@ -3315,7 +3315,7 @@ function renderSettingsView() {
   const commissionInput = document.getElementById('input-settings-commission');
   const nifInput = document.getElementById('input-settings-nif');
   const sloganInput = document.getElementById('input-settings-slogan');
-    const themeInput = document.getElementById('input-settings-theme');
+    
 
   if (nameInput) nameInput.value = settings.name || '';
   if (addressInput) addressInput.value = settings.address || '';
@@ -3325,7 +3325,7 @@ function renderSettingsView() {
   if (commissionInput) commissionInput.value = settings.commissionRate || 10;
   if (nifInput) nifInput.value = settings.nif || '';
   if (sloganInput) sloganInput.value = settings.slogan || '';
-    if (themeInput) themeInput.value = settings.theme || 'dark';
+    
 }
 
 function handleSettingsAgencySubmit(e) {
@@ -3366,11 +3366,6 @@ function handleLogoUpload(e) {
     state.agencySettings = state.agencySettings || {};
     state.agencySettings.logoBase64 = evt.target.result;
     saveData();
-    if (theme === 'light') {
-      document.documentElement.classList.add('theme-light');
-    } else {
-      document.documentElement.classList.remove('theme-light');
-    }
     renderGlobalPrintHeader();
     showToast('Le logo a été mis à jour.', 'success');
   };
@@ -3381,11 +3376,6 @@ function resetLogo() {
   if (state.agencySettings) {
     delete state.agencySettings.logoBase64;
     saveData();
-    if (theme === 'light') {
-      document.documentElement.classList.add('theme-light');
-    } else {
-      document.documentElement.classList.remove('theme-light');
-    }
     renderGlobalPrintHeader();
     showToast('Le logo par défaut a été restauré.', 'success');
   }
@@ -3517,3 +3507,61 @@ window.openTenantDossier = openTenantDossier;
 window.toggleStaffStatus = toggleStaffStatus;
 window.openEditStaffModal = openEditStaffModal;
 window.deleteStaff = deleteStaff;
+
+// ==========================================================================
+// Settings Tabs and Theme Management
+// ==========================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  const settingsTabBtns = document.querySelectorAll('.settings-tab-btn');
+  settingsTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Deactivate all
+      settingsTabBtns.forEach(b => {
+        b.classList.remove('active');
+        b.style.borderBottomColor = 'transparent';
+        b.style.color = 'var(--color-text-muted)';
+      });
+      document.querySelectorAll('#view-settings .settings-tab-content').forEach(c => {
+        c.style.display = 'none';
+        c.classList.remove('active');
+      });
+      
+      // Activate clicked
+      btn.classList.add('active');
+      btn.style.borderBottomColor = 'var(--color-primary)';
+      btn.style.color = 'var(--color-text-primary)';
+      const targetId = btn.getAttribute('data-settings-target');
+      const targetContent = document.getElementById(targetId);
+      if (targetContent) {
+        targetContent.style.display = 'block';
+        targetContent.classList.add('active');
+      }
+    });
+  });
+});
+
+window.setThemeOption = function(theme) {
+  state.agencySettings = state.agencySettings || {};
+  state.agencySettings.theme = theme;
+  saveData();
+  applyThemeUI();
+};
+
+function applyThemeUI() {
+  const theme = (state.agencySettings && state.agencySettings.theme) ? state.agencySettings.theme : 'dark';
+  
+  if (theme === 'light') {
+    document.documentElement.classList.add('theme-light');
+    const cl = document.getElementById('theme-card-light');
+    const cd = document.getElementById('theme-card-dark');
+    if (cl) cl.style.borderColor = 'var(--color-primary)';
+    if (cd) cd.style.borderColor = 'transparent';
+  } else {
+    document.documentElement.classList.remove('theme-light');
+    const cl = document.getElementById('theme-card-light');
+    const cd = document.getElementById('theme-card-dark');
+    if (cl) cl.style.borderColor = 'transparent';
+    if (cd) cd.style.borderColor = 'var(--color-primary)';
+  }
+}
