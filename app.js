@@ -1001,10 +1001,10 @@ function renderOwnersTable() {
 
   state.owners.forEach(owner => {
     const ownerPropertiesCount = state.properties.filter(p => p.ownerId === owner.id).length;
-    const propertiesLocation = state.properties.filter(p => p.ownerId === owner.id && p.transaction === 'Location');
+    const propertiesLocation = state.properties.filter(p => p.ownerId === owner.id && p.transaction_type === 'Location');
       const totalRentValue = propertiesLocation.reduce((sum, p) => sum + p.rent, 0);
 
-      const propertiesVente = state.properties.filter(p => p.ownerId === owner.id && p.transaction === 'Vente');
+      const propertiesVente = state.properties.filter(p => p.ownerId === owner.id && p.transaction_type === 'Vente');
       const totalSaleValue = propertiesVente.reduce((sum, p) => sum + p.rent, 0);
 
     const tr = document.createElement('tr');
