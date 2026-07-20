@@ -1305,7 +1305,7 @@ function recalculateReceiptSummary() {
     totalPaid += paid;
     totalReliquats += reliquat;
     fraisGerance += (paid * rowCommissionRate) / 100;
-  });
+  }
   
   const netReverser = totalPaid - fraisGerance;
   
@@ -3086,7 +3086,7 @@ function openTenantDossier(propertyId) {
     // Attacher les écouteurs d'événements pour la modification des loyers mensuels
     const paidInputs = tbody.querySelectorAll('.tenant-paid-month-input');
     paidInputs.forEach(input => {
-      input.addEventListener('change', (e) => {
+      input.addEventListener('change', async (e) => {
         const monthName = input.getAttribute('data-month');
         const newAmount = parseInt(input.value, 10) || 0;
         
