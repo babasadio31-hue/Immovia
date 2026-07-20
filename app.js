@@ -2196,7 +2196,7 @@ function openEditTenantModal(id) {
 window.openEditOwnerModal = openEditOwnerModal;
 window.openEditPropertyModal = openEditPropertyModal;
 window.openEditTenantModal = openEditTenantModal;
-\n// Suppressions
+// Suppressions
 // ==========================================================================
 
 function deleteTransaction(id) {
