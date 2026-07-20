@@ -35,6 +35,7 @@ class OwnerBase(BaseModel):
     address: str
     notes: Optional[str] = None
     avatar_url: Optional[str] = None
+    commission_rate: Optional[float] = None
 
 class OwnerCreate(OwnerBase):
     id: str

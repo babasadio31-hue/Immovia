@@ -18,6 +18,12 @@ models.Base.metadata.create_all(bind=database.engine)
 async def lifespan(app: FastAPI):
     # Setup default admin user on startup if no users exist
     db = database.SessionLocal()
+    
+    try:
+        db.execute(text("ALTER TABLE owners ADD COLUMN commission_rate FLOAT"))
+        db.commit()
+    except Exception:
+        db.rollback()
     try:
         user_count = db.query(models.User).count()
         if user_count == 0:

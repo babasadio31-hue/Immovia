@@ -27,6 +27,7 @@ class Owner(Base):
     address = Column(String)
     notes = Column(String)
     avatar_url = Column(String, nullable=True)
+    commission_rate = Column(Float, nullable=True)
 
     properties = relationship("Property", back_populates="owner", cascade="all, delete-orphan")
 

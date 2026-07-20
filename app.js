@@ -152,7 +152,10 @@ async function loadData() {
       API.getTenants(),
       API.getTransactions()
     ]);
-    state.owners = apiOwners || [];
+    state.owners = (apiOwners || []).map(o => ({
+        ...o,
+        commissionRate: o.commission_rate
+      }));
     state.properties = (apiProperties || []).map(p => ({
       ...p,
       ownerId: p.owner_id,
@@ -417,10 +420,15 @@ function setupEventListeners() {
           try {
             owner.commissionRate = newRate;
             await API.updateOwner(owner.id, {
+              type: owner.type || "Particulier",
               name: owner.name,
+              cni: owner.cni || "",
               phone: owner.phone,
-              email: owner.email,
-              commissionRate: owner.commissionRate
+              email: owner.email || "",
+              address: owner.address || "Non spécifiée",
+              notes: owner.notes || "",
+              avatar_url: owner.avatar_url || "",
+              commission_rate: owner.commissionRate
             });
             saveData();
             openOwnerDossier(state.activeOwnerId); // Refresh dossier
@@ -2056,7 +2064,7 @@ async function handleOwnerSubmit(e) {
     phone,
     email,
     address,
-    commissionRate
+    commission_rate: commissionRate
   };
 
   try {
