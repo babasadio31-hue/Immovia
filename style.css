@@ -1723,6 +1723,25 @@ body {
   color: var(--color-text-muted);
 }
 
+
+:root.theme-light .btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-text-primary);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+:root.theme-light .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+:root.theme-light .btn-outline {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+:root.theme-light .btn-outline:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
 :root.theme-light .menu-btn:hover {
   background: rgba(0, 0, 0, 0.05);
 }
