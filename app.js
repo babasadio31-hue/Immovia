@@ -409,15 +409,25 @@ function setupEventListeners() {
 
   const editOwnerCommission = document.getElementById('input-edit-owner-commission');
   if (editOwnerCommission) {
-    editOwnerCommission.addEventListener('change', (e) => {
+    editOwnerCommission.addEventListener('change', async (e) => {
       const newRate = parseInt(e.target.value);
       if (!isNaN(newRate) && state.activeOwnerId) {
         const owner = state.owners.find(o => o.id === state.activeOwnerId);
         if (owner) {
-          owner.commissionRate = newRate;
-          saveData();
-          openOwnerDossier(state.activeOwnerId); // Refresh dossier
-          showToast(`Honoraires mis à jour (${newRate}%)`, 'success');
+          try {
+            owner.commissionRate = newRate;
+            await API.updateOwner(owner.id, {
+              name: owner.name,
+              phone: owner.phone,
+              email: owner.email,
+              commissionRate: owner.commissionRate
+            });
+            saveData();
+            openOwnerDossier(state.activeOwnerId); // Refresh dossier
+            showToast(`Honoraires mis à jour (${newRate}%)`, 'success');
+          } catch (err) {
+            showToast(err.message, 'error');
+          }
         }
       }
     });
@@ -1015,8 +1025,8 @@ function renderOwnersTable() {
       <td>${owner.phone}</td>
       <td>${owner.email}</td>
       <td class="text-center" style="font-weight: 600;">${ownerPropertiesCount}</td>
-      <td class="text-right" style="font-weight: 600; color: var(--color-green);">${formatCurrency(totalRentValue)}</td>
-        <td class="text-right" style="font-weight: 600; color: var(--color-primary);">${formatCurrency(totalSaleValue)}</td>
+      <td class="text-center" style="font-weight: 600; color: var(--color-green);">${formatCurrency(totalRentValue)}</td>
+        <td class="text-center" style="font-weight: 600; color: var(--color-primary);">${formatCurrency(totalSaleValue)}</td>
         <td class="text-center no-print">
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
           <button class="btn-icon-only info" onclick="openEditOwnerModal('${owner.id}')" title="Modifier">
