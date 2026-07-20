@@ -1067,8 +1067,19 @@ function renderOwnersTable() {
 
 // Helper pour simuler la résolution automatique des locataires selon le bien occupé
 function getTenantForProperty(propertyId) {
-  const prop = state.properties.find(p => p.id === propertyId);
-  if (prop && prop.tenantName && prop.leaseStart) {
+    const realTenant = state.tenants.find(t => t.propertyId === propertyId || t.property_id === propertyId);
+    if (realTenant) {
+      return {
+        name: realTenant.name,
+        phone: realTenant.phone || 'Non renseignǸ',
+        address: realTenant.address || 'Non renseignǸe',
+        leaseStart: realTenant.entry_date || realTenant.leaseStart || '2026-03-15',
+        caution: realTenant.caution_amount || realTenant.caution || 0
+      };
+    }
+
+    const prop = state.properties.find(p => p.id === propertyId);
+    if (prop && prop.tenantName && prop.leaseStart) {
     return {
       name: prop.tenantName,
       phone: prop.tenantPhone || 'Non renseigné',
