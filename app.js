@@ -1001,9 +1001,11 @@ function renderOwnersTable() {
 
   state.owners.forEach(owner => {
     const ownerPropertiesCount = state.properties.filter(p => p.ownerId === owner.id).length;
-    const totalRentValue = state.properties
-      .filter(p => p.ownerId === owner.id)
-      .reduce((sum, p) => sum + p.rent, 0);
+    const propertiesLocation = state.properties.filter(p => p.ownerId === owner.id && p.transaction === 'Location');
+      const totalRentValue = propertiesLocation.reduce((sum, p) => sum + p.rent, 0);
+
+      const propertiesVente = state.properties.filter(p => p.ownerId === owner.id && p.transaction === 'Vente');
+      const totalSaleValue = propertiesVente.reduce((sum, p) => sum + p.rent, 0);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -1014,7 +1016,8 @@ function renderOwnersTable() {
       <td>${owner.email}</td>
       <td class="text-center" style="font-weight: 600;">${ownerPropertiesCount}</td>
       <td class="text-right" style="font-weight: 600; color: var(--color-green);">${formatCurrency(totalRentValue)}</td>
-      <td class="text-center no-print">
+        <td class="text-right" style="font-weight: 600; color: var(--color-primary);">${formatCurrency(totalSaleValue)}</td>
+        <td class="text-center no-print">
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
           <button class="btn-icon-only info" onclick="openEditOwnerModal('${owner.id}')" title="Modifier">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
