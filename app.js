@@ -2284,7 +2284,25 @@ function openEditTenantModal(id) {
   if(elId) elId.value = tenant.id;
   
   const elProp = document.getElementById('select-tenant-property');
-  if(elProp) elProp.value = tenant.propertyId || '';
+  if(elProp) {
+    const propExists = Array.from(elProp.options).some(opt => opt.value === tenant.propertyId);
+    if (!propExists && tenant.propertyId) {
+      const prop = state.properties.find(p => p.id === tenant.propertyId);
+      if (prop) {
+        const option = document.createElement('option');
+        option.value = prop.id;
+        option.textContent = `${prop.name} - ${prop.rent_amount || prop.price} FCFA / mois`;
+        elProp.appendChild(option);
+      }
+    }
+    elProp.value = tenant.propertyId || '';
+  }
+  
+  const elEmail = document.getElementById('input-tenant-email');
+  if(elEmail) elEmail.value = tenant.email || '';
+  
+  const elCni = document.getElementById('input-tenant-cni');
+  if(elCni) elCni.value = tenant.cni || '';
   
   const elName = document.getElementById('input-tenant-name');
   if(elName) elName.value = tenant.name || '';
@@ -3113,6 +3131,8 @@ function openTenantDossier(propertyId) {
 }
 
 function openTenantModal() {
+  const elId = document.getElementById('input-tenant-id');
+  if(elId) elId.value = '';
   const form = document.getElementById('form-tenant');
   if (form) form.reset();
   
@@ -3147,6 +3167,8 @@ async function handleTenantSubmit(e) {
     const propId = document.getElementById('select-tenant-property').value;
     const name = document.getElementById('input-tenant-name').value.trim();
     const phone = document.getElementById('input-tenant-phone').value.trim();
+    const email = document.getElementById('input-tenant-email') ? document.getElementById('input-tenant-email').value.trim() : '';
+    const cni = document.getElementById('input-tenant-cni') ? document.getElementById('input-tenant-cni').value.trim() : '';
     const leaseStart = document.getElementById('input-tenant-entry') ? document.getElementById('input-tenant-entry').value : document.getElementById('input-tenant-lease-start').value;
     const address = document.getElementById('input-tenant-address') ? document.getElementById('input-tenant-address').value.trim() : '';
     const caution = parseInt(document.getElementById('input-tenant-caution').value, 10) || 0;
@@ -3168,7 +3190,8 @@ async function handleTenantSubmit(e) {
           property_id: propId,
           name,
           phone,
-          email: '',
+          email: email,
+          cni: cni,
           address: address || 'Non specifiee',
           entry_date: leaseStart || new Date().toISOString().split('T')[0],
           rent_amount: prop.rent_amount || prop.price || 0,
