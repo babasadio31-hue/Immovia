@@ -3128,17 +3128,18 @@ async function handleTenantSubmit(e) {
   }
 
   try {
-    const newTenant = {
-      id: 'ten-' + Date.now(),
-      property_id: propId,
-      name,
-      phone,
-      address: address || 'Non spécifiée',
-      lease_start: leaseStart || new Date().toISOString().split('T')[0],
-      rent_amount: prop.rent_amount || prop.price || 0,
-      caution_amount: caution,
-      status: 'Actif'
-    };
+          const newTenant = {
+        id: 'ten-' + Date.now(),
+        property_id: propId,
+        name,
+        phone,
+        email: '',
+        address: address || 'Non spǸcifiǸe',
+        entry_date: leaseStart || new Date().toISOString().split('T')[0],
+        rent_amount: prop.rent_amount || prop.price || 0,
+        caution_amount: caution,
+        status: 'Actif'
+      };
 
     await API.createTenant(newTenant);
 

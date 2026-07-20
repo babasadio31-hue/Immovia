@@ -73,11 +73,11 @@ class TenantBase(BaseModel):
     property_id: str
     name: str
     phone: str
-    email: str
-    address: str
+    email: Optional[str] = None
+    address: Optional[str] = None
     rent_amount: float
     caution_amount: float
-    entry_date: str
+    entry_date: Optional[str] = None
 
 class TenantCreate(TenantBase):
     id: str
