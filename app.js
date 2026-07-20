@@ -1285,7 +1285,7 @@ function recalculateReceiptSummary() {
   const activeOwner = state.owners.find(o => o.id === state.activeOwnerId);
   const defaultCommissionRate = activeOwner ? activeOwner.commissionRate : 10;
   
-  rows.forEach(row => {
+  for (const row of rows) {
     const paidInput = row.querySelector('.receipt-paid-input');
     const reliquatInput = row.querySelector('.receipt-reliquat-input');
     const tenantSelect = row.querySelector('.receipt-tenant-select');
@@ -2821,7 +2821,7 @@ function renderAccounting() {
 }
 
 // Enregistrer les flux du reçu interactif
-function handleSaveReceipt() {
+async function handleSaveReceipt() {
   const rows = document.querySelectorAll('#body-receipt-table .receipt-row');
   if (rows.length === 0) {
     showToast('Aucun flux à enregistrer dans le reçu.', 'error');
@@ -2832,7 +2832,7 @@ function handleSaveReceipt() {
   let duplicatedCount = 0;
   let totalCommissionsAdded = 0;
   
-  rows.forEach(row => {
+  for (const row of rows) {
     const tenantSelect = row.querySelector('.receipt-tenant-select');
     const propertyId = tenantSelect.value;
     const paidInput = row.querySelector('.receipt-paid-input');
@@ -2868,15 +2868,15 @@ function handleSaveReceipt() {
           date: getTodayDateString()
         };
         
-        state.transactions.push(newTx);
+        await API.createTransaction(newTx);
         totalCommissionsAdded += commission;
         savedCount++;
       }
     }
-  });
+  }
   
   if (savedCount > 0) {
-    saveData();
+    await loadData();
     calculateKPIs(); // Mettre à jour les compteurs du dashboard
     
     let msg = `Enregistré avec succès : ${savedCount} flux de loyers.`;
@@ -2911,7 +2911,7 @@ function handleClearReceiptTable() {
   }
 }
 
-function handleWithdrawalSubmit(e) {
+async function handleWithdrawalSubmit(e) {
   e.preventDefault();
   const amount = parseInt(document.getElementById('input-withdrawal-amount').value, 10);
   if (!amount || amount <= 0) {
@@ -2955,8 +2955,8 @@ function handleWithdrawalSubmit(e) {
     date: getTodayDateString()
   };
 
-  state.transactions.push(newWithdrawal);
-  saveData();
+  await API.createTransaction(newWithdrawal);
+  await loadData();
   
   document.getElementById('modal-withdrawal').classList.remove('active');
   showToast(`Le retrait de ${formatCurrency(amount)} a été enregistré avec succès.`, 'success');
@@ -3101,10 +3101,11 @@ function openTenantDossier(propertyId) {
         if (tx) {
           if (newAmount === 0) {
             // Supprimer la transaction si le montant est mis à 0
-            state.transactions = state.transactions.filter(t => t.id !== tx.id);
+            await API.deleteTransaction(tx.id);
             showToast(`Transaction de loyer pour ${monthName} supprimée.`, 'warning');
           } else {
             tx.amount = newAmount;
+            await API.updateTransaction(tx.id, tx);
             showToast(`Transaction de loyer pour ${monthName} mise à jour : ${formatCurrency(newAmount)}`, 'success');
           }
         } else if (newAmount > 0) {
@@ -3117,11 +3118,11 @@ function openTenantDossier(propertyId) {
             propertyId: prop.id,
             date: getTodayDateString()
           };
-          state.transactions.push(newTx);
+          await API.createTransaction(newTx);
           showToast(`Loyer pour ${monthName} enregistré : ${formatCurrency(newAmount)}`, 'success');
         }
         
-        saveData();
+        await loadData();
         calculateKPIs();
         openTenantDossier(prop.id); // Re-rendre tout le dossier pour recalculer les cumuls
       });
