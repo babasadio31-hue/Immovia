@@ -1908,7 +1908,7 @@ function closeAllModals() {
 // Soumissions de Données & Formulaires
 // ==========================================================================
 
-function handleTransactionSubmit(e) {
+async function handleTransactionSubmit(e) {
   e.preventDefault();
   
   const motifElement = document.getElementById('select-tx-motif');
@@ -1934,24 +1934,26 @@ function handleTransactionSubmit(e) {
     return;
   }
 
-  const newTx = {
-    id: 'tx-' + Date.now(),
-    description,
-    amount,
-    type,
-    propertyId,
-    date
-  };
+  try {
+    const newTx = {
+      id: 'tx-' + Date.now(),
+      property_id: propertyId || null,
+      description,
+      amount,
+      type,
+      date,
+      motif: finalMotif || null
+    };
 
-  state.transactions.push(newTx);
-  saveData();
-  closeAllModals();
-  showToast('Flux financier enregistré.', 'success');
-
-  // Si on est sur le tableau de bord ou l'onglet transactions, recharger la page active
-  const activeTabBtn = document.querySelector('.menu-btn.active');
-  if (activeTabBtn) {
-    switchTab(activeTabBtn.getAttribute('data-tab'));
+    await API.createTransaction(newTx);
+    
+    closeAllModals();
+    document.getElementById('form-transaction').reset();
+    showToast('Flux financier enregistré.', 'success');
+    
+    await loadInitialData();
+  } catch (err) {
+    showToast(err.message || 'Erreur lors de la transaction.', 'error');
   }
 }
 
@@ -1970,6 +1972,7 @@ async function handleOwnerSubmit(e) {
   }
 
   const newOwner = {
+    id: 'own-' + Date.now(),
     type: "Particulier",
     name,
     phone,
@@ -1994,6 +1997,7 @@ async function handleOwnerSubmit(e) {
 
     if (propName) {
       const newProp = {
+        id: 'prop-' + Date.now(),
         name: propName,
         address: propAddress || 'Non spécifiée',
         type: propType,
@@ -2053,6 +2057,7 @@ async function handlePropertySubmit(e) {
   }
 
   const newProp = {
+    id: 'prop-' + Date.now(),
     name,
     address: address || 'Non spécifiée',
     type,
@@ -2881,7 +2886,7 @@ function openTenantModal() {
   document.getElementById('modal-tenant').classList.add('active');
 }
 
-function handleTenantSubmit(e) {
+async function handleTenantSubmit(e) {
   e.preventDefault();
   const propId = document.getElementById('select-tenant-property').value;
   const name = document.getElementById('input-tenant-name').value.trim();
@@ -2890,26 +2895,45 @@ function handleTenantSubmit(e) {
   const address = document.getElementById('input-tenant-address').value.trim();
   const caution = parseInt(document.getElementById('input-tenant-caution').value, 10) || 0;
 
-  if (!propId) {
-    showToast('Veuillez choisir un bien immobilier.', 'error');
+  if (!propId || !name || !phone) {
+    showToast('Veuillez remplir les informations obligatoires.', 'error');
     return;
   }
 
   const prop = state.properties.find(p => p.id === propId);
-  if (prop) {
-    prop.status = 'Loué';
-    prop.tenantName = name;
-    prop.tenantPhone = phone;
-    prop.tenantAddress = address;
-    prop.leaseStart = leaseStart;
-    prop.caution = caution;
-    
-    saveData();
+  if (!prop) {
+    showToast('Bien introuvable.', 'error');
+    return;
+  }
+
+  try {
+    const newTenant = {
+      id: 'ten-' + Date.now(),
+      property_id: propId,
+      name,
+      phone,
+      address: address || 'Non spécifiée',
+      lease_start: leaseStart || new Date().toISOString().split('T')[0],
+      rent_amount: prop.rent_amount || prop.price || 0,
+      caution_amount: caution,
+      status: 'Actif'
+    };
+
+    await API.createTenant(newTenant);
+
+    await API.updateProperty(propId, {
+      ...prop,
+      status: 'Loué',
+      tenant_name: name,
+      tenant_phone: phone
+    });
+
     document.getElementById('modal-tenant').classList.remove('active');
     showToast(`Le locataire ${name} a été enregistré avec succès pour le bien ${prop.name}.`, 'success');
     
-    renderTenantsTable();
-    populateDropdowns();
+    await loadInitialData();
+  } catch (err) {
+    showToast(err.message || 'Erreur lors de l\'enregistrement du locataire.', 'error');
   }
 }
 
