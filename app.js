@@ -183,7 +183,17 @@ async function loadData() {
   }
 }
 
-function saveData() { /* API persistance used instead */ }
+function saveData() {
+  try {
+    const toSave = {
+      agencySettings: state.agencySettings,
+      staff: state.staff
+    };
+    localStorage.setItem('immovi_state', JSON.stringify(toSave));
+  } catch (e) {
+    console.error("Erreur de sauvegarde locale:", e);
+  }
+}
 
 
 
@@ -3305,6 +3315,7 @@ function renderSettingsView() {
   const commissionInput = document.getElementById('input-settings-commission');
   const nifInput = document.getElementById('input-settings-nif');
   const sloganInput = document.getElementById('input-settings-slogan');
+    const themeInput = document.getElementById('input-settings-theme');
 
   if (nameInput) nameInput.value = settings.name || '';
   if (addressInput) addressInput.value = settings.address || '';
@@ -3314,6 +3325,7 @@ function renderSettingsView() {
   if (commissionInput) commissionInput.value = settings.commissionRate || 10;
   if (nifInput) nifInput.value = settings.nif || '';
   if (sloganInput) sloganInput.value = settings.slogan || '';
+    if (themeInput) themeInput.value = settings.theme || 'dark';
 }
 
 function handleSettingsAgencySubmit(e) {
@@ -3354,6 +3366,11 @@ function handleLogoUpload(e) {
     state.agencySettings = state.agencySettings || {};
     state.agencySettings.logoBase64 = evt.target.result;
     saveData();
+    if (theme === 'light') {
+      document.documentElement.classList.add('theme-light');
+    } else {
+      document.documentElement.classList.remove('theme-light');
+    }
     renderGlobalPrintHeader();
     showToast('Le logo a été mis à jour.', 'success');
   };
@@ -3364,6 +3381,11 @@ function resetLogo() {
   if (state.agencySettings) {
     delete state.agencySettings.logoBase64;
     saveData();
+    if (theme === 'light') {
+      document.documentElement.classList.add('theme-light');
+    } else {
+      document.documentElement.classList.remove('theme-light');
+    }
     renderGlobalPrintHeader();
     showToast('Le logo par défaut a été restauré.', 'success');
   }
