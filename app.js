@@ -1964,7 +1964,8 @@ async function handleTransactionSubmit(e) {
     document.getElementById('form-transaction').reset();
     showToast('Flux financier enregistré.', 'success');
     
-    await loadInitialData();
+    await loadData();
+    filterAndRenderTransactionsTable();
   } catch (err) {
     showToast(err.message || 'Erreur lors de la transaction.', 'error');
   }
@@ -2109,7 +2110,8 @@ function deleteTransaction(id) {
     if (confirmed) {
       try {
         await API.deleteTransaction(id);
-        await loadInitialData();
+        await loadData();
+        filterAndRenderTransactionsTable();
         showToast('Mouvement supprimé.', 'warning');
       } catch(e) {
         showToast(e.message, 'error');
@@ -2135,7 +2137,9 @@ function deleteTenant(propertyId) {
             tenant_phone: null
           });
           
-          await loadInitialData();
+          await loadData();
+          renderTenantsTable();
+          renderPropertiesGrid();
           showToast('Locataire supprimé avec succès.', 'warning');
           
           if (document.getElementById('modal-owner').classList.contains('active')) {
@@ -2163,7 +2167,9 @@ function deleteOwner(id) {
     if (confirmed) {
       try {
         await API.deleteOwner(id);
-        await loadInitialData();
+        await loadData();
+        populateDropdowns();
+        renderOwnersTable();
         showToast('Propriétaire supprimé.', 'warning');
       } catch(e) {
         showToast(e.message, 'error');
@@ -2180,7 +2186,9 @@ function deleteProperty(id) {
     if (confirmed) {
       try {
         await API.deleteProperty(id);
-        await loadInitialData();
+        await loadData();
+        populateDropdowns();
+        renderPropertiesGrid();
         showToast('Bien immobilier retiré du catalogue.', 'warning');
       } catch(e) {
         showToast(e.message, 'error');
@@ -2722,7 +2730,7 @@ function deleteWithdrawalTransaction(txId) {
     if (confirmed) {
       try {
         await API.deleteTransaction(txId);
-        await loadInitialData();
+        await loadData();
         if (state.activeOwnerId) {
           openOwnerDossier(state.activeOwnerId);
         }
@@ -2962,7 +2970,9 @@ async function handleTenantSubmit(e) {
     document.getElementById('modal-tenant').classList.remove('active');
     showToast(`Le locataire ${name} a été enregistré avec succès pour le bien ${prop.name}.`, 'success');
     
-    await loadInitialData();
+    await loadData();
+    renderTenantsTable();
+    renderPropertiesGrid();
   } catch (err) {
     showToast(err.message || 'Erreur lors de l\'enregistrement du locataire.', 'error');
   }
