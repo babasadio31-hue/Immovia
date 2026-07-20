@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 import os
 from contextlib import asynccontextmanager
+from sqlalchemy import text
 
 # Load environment variables
 load_dotenv()
