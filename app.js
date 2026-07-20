@@ -73,6 +73,7 @@ function initApp() {
   setupEventListeners();
   populateDropdowns();
   renderGlobalPrintHeader();
+    applyThemeUI();
   
   // Date du jour par défaut
   document.getElementById('input-tx-date').value = getTodayDateString();
