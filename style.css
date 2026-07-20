@@ -1520,11 +1520,34 @@ body {
     padding: 10mm;
   }
   
-  html, body, .app-container, .main-content, .view-wrapper, .tab-view, .table-container, .table-responsive, .data-table {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-  }
+  html, body {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+    .app-container, .main-content, .view-wrapper, .tab-view, .table-container, .table-responsive {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+    .data-table {
+      width: 100% !important;
+      max-width: 100% !important;
+      table-layout: fixed !important;
+      box-sizing: border-box !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
   
   /* Force table cells to wrap to prevent truncation on paper */
   .data-table th, .data-table td, .data-table td.text-right {
@@ -1532,7 +1555,14 @@ body {
     word-break: break-word !important;
   }
 
-  /* Force badges to print correctly */
+  
+    /* Force table inputs to shrink to fit column */
+    .data-table input, .data-table select {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    /* Force badges to print correctly */
   .badge {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
