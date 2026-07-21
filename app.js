@@ -819,7 +819,8 @@ function calculateKPIs() {
       if (prop) {
         const owner = state.owners.find(o => o.id === prop.ownerId);
         if (owner) {
-          totalCommissions += (tx.amount * owner.commissionRate) / 100;
+          let rate = prop.commissionRate !== undefined && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+          totalCommissions += (tx.amount * rate) / 100;
         }
       }
     }
@@ -1891,7 +1892,8 @@ function renderTrendsBarChart() {
           if (prop) {
             const owner = state.owners.find(o => o.id === prop.ownerId);
             if (owner) {
-              commissionsDataset[index] += (tx.amount * owner.commissionRate) / 100;
+              let rate = prop.commissionRate !== undefined && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+              commissionsDataset[index] += (tx.amount * rate) / 100;
             }
           }
         } else {
