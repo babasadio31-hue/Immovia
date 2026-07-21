@@ -669,10 +669,18 @@ function setupEventListeners() {
   document.getElementById('select-filter-type').addEventListener('change', filterAndRenderTransactionsTable);
   document.getElementById('select-sort-order').addEventListener('change', filterAndRenderTransactionsTable);
   
-  // Recherche locataires & comptabilité
+  // Recherche locataires, propriétaires, biens & comptabilité
   const searchTenantsInput = document.getElementById('input-search-tenants');
   if (searchTenantsInput) {
     searchTenantsInput.addEventListener('input', renderTenantsTable);
+  }
+  const searchOwnersInput = document.getElementById('input-search-owners');
+  if (searchOwnersInput) {
+    searchOwnersInput.addEventListener('input', renderOwnersTable);
+  }
+  const searchPropertiesInput = document.getElementById('input-search-properties');
+  if (searchPropertiesInput) {
+    searchPropertiesInput.addEventListener('input', renderPropertiesGrid);
   }
   const searchAccountingInput = document.getElementById('input-search-accounting');
   if (searchAccountingInput) {
@@ -1066,14 +1074,27 @@ function renderDashboardOverviewChart() {
 
 function renderOwnersTable() {
   const tbody = document.getElementById('body-owners-table');
+  if (!tbody) return;
   tbody.innerHTML = '';
 
-  if (state.owners.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun bailleur enregistré.</td></tr>';
+  const searchInput = document.getElementById('input-search-owners');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const filteredOwners = state.owners.filter(owner => {
+    if (!searchTerm) return true;
+    const nameMatch = (owner.name || '').toLowerCase().includes(searchTerm);
+    const phoneMatch = (owner.phone || '').toLowerCase().includes(searchTerm);
+    const emailMatch = (owner.email || '').toLowerCase().includes(searchTerm);
+    const addressMatch = (owner.address || '').toLowerCase().includes(searchTerm);
+    return nameMatch || phoneMatch || emailMatch || addressMatch;
+  });
+
+  if (filteredOwners.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Aucun bailleur trouvé.</td></tr>';
     return;
   }
 
-  state.owners.forEach(owner => {
+  filteredOwners.forEach(owner => {
     const ownerPropertiesCount = state.properties.filter(p => p.ownerId === owner.id).length;
     const propertiesLocation = state.properties.filter(p => p.ownerId === owner.id && p.transaction_type === 'Location');
       const totalRentValue = propertiesLocation.reduce((sum, p) => sum + p.rent, 0);
@@ -1632,14 +1653,34 @@ function openOwnerDossier(ownerId) {
 
 function renderPropertiesGrid() {
   const container = document.getElementById('grid-detailed-properties');
+  if (!container) return;
   container.innerHTML = '';
 
-  if (state.properties.length === 0) {
-    container.innerHTML = '<div class="empty-state">Aucun bien immobilier sous contrat.</div>';
+  const searchInput = document.getElementById('input-search-properties');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const filteredProperties = state.properties.filter(prop => {
+    if (!searchTerm) return true;
+    const propNameMatch = (prop.name || '').toLowerCase().includes(searchTerm);
+    const addressMatch = (prop.address || '').toLowerCase().includes(searchTerm);
+    const statusMatch = (prop.status || '').toLowerCase().includes(searchTerm);
+    const typeMatch = (prop.transaction_type || '').toLowerCase().includes(searchTerm);
+
+    const owner = state.owners.find(o => o.id === prop.ownerId);
+    const ownerNameMatch = owner ? (owner.name || '').toLowerCase().includes(searchTerm) : false;
+
+    const tenant = getTenantForProperty(prop.id);
+    const tenantNameMatch = tenant ? (tenant.name || '').toLowerCase().includes(searchTerm) : false;
+
+    return propNameMatch || addressMatch || statusMatch || typeMatch || ownerNameMatch || tenantNameMatch;
+  });
+
+  if (filteredProperties.length === 0) {
+    container.innerHTML = '<div class="empty-state">Aucun bien immobilier correspondant.</div>';
     return;
   }
 
-  state.properties.forEach(prop => {
+  filteredProperties.forEach(prop => {
     // Récupérer le propriétaire
     const owner = state.owners.find(o => o.id === prop.ownerId);
     const ownerName = owner ? owner.name : 'Inconnu';
