@@ -3423,10 +3423,6 @@ window.addEventListener('DOMContentLoaded', () => {
       removeAuthToken();
       window.location.href = 'login.html';
     }
-      console.error("Erreur de session:", err);
-      removeAuthToken();
-      window.location.href = 'login.html';
-    }
   }
   startApp();
 });
