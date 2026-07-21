@@ -792,7 +792,49 @@ function setupEventListeners() {
 // Contrôleur de Tabulations
 // ==========================================================================
 
+function applyUserPermissions(user) {
+  if (!user) return;
+  state.currentUser = user;
+
+  const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
+  let userPerms = user.permissions || [];
+  if (isSuperAdmin) {
+    userPerms = ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'settings'];
+  }
+
+  // Filtrer l'affichage des boutons du menu latéral
+  document.querySelectorAll('.sidebar-menu .menu-btn').forEach(btn => {
+    const tab = btn.getAttribute('data-tab');
+    if (tab) {
+      if (isSuperAdmin || userPerms.includes(tab)) {
+        btn.style.display = 'flex';
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+  });
+
+  // Si l'onglet actif est interdit, basculer sur le premier onglet autorisé
+  const activeBtn = document.querySelector('.sidebar-menu .menu-btn.active');
+  const activeTab = activeBtn ? activeBtn.getAttribute('data-tab') : 'dashboard';
+  if (!isSuperAdmin && !userPerms.includes(activeTab)) {
+    const firstAllowed = userPerms[0] || 'dashboard';
+    switchTab(firstAllowed);
+  }
+}
+
 function switchTab(tabName) {
+  if (state.currentUser) {
+    const user = state.currentUser;
+    const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
+    const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'settings'] : (user.permissions || ['dashboard']);
+    
+    if (!isSuperAdmin && !userPerms.includes(tabName)) {
+      showToast("Accès restreint : Vous n'avez pas l'autorisation d'accéder à cette section.", "error");
+      return;
+    }
+  }
+
   document.querySelectorAll('.menu-btn').forEach(btn => {
     if (btn.getAttribute('data-tab') === tabName) {
       btn.classList.add('active');
@@ -3386,20 +3428,26 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       await loadData();
       
-      // Set real authenticated user with Administrateur role
+      // Set real authenticated user with role and permissions intact
       if (currentUser) {
-        currentUser.role = currentUser.role || 'Administrateur';
-        if (!currentUser.status) currentUser.status = 'Actif';
-        if (!currentUser.phone) currentUser.phone = 'Compte Utilisateur';
-        const existingIdx = state.staff.findIndex(s => s.email.toLowerCase() === currentUser.email.toLowerCase());
-        if (existingIdx >= 0) {
-          state.staff[existingIdx] = { ...state.staff[existingIdx], ...currentUser };
+        // Look up member in state.staff for exact permissions/role set by admin
+        const existingStaff = state.staff.find(s => s.email && currentUser.email && s.email.toLowerCase() === currentUser.email.toLowerCase());
+        if (existingStaff) {
+          currentUser.role = existingStaff.role || currentUser.role || 'Agent Premium';
+          currentUser.permissions = existingStaff.permissions || currentUser.permissions || ['dashboard'];
+          const idx = state.staff.findIndex(s => s.email && currentUser.email && s.email.toLowerCase() === currentUser.email.toLowerCase());
+          state.staff[idx] = { ...existingStaff, ...currentUser };
         } else {
+          currentUser.role = currentUser.role || 'Administrateur';
+          currentUser.permissions = currentUser.permissions || ['all'];
           state.staff.unshift(currentUser);
         }
       }
       
-      // Update sidebar
+      // Apply permission-based menu filtering
+      applyUserPermissions(currentUser);
+      
+      // Update sidebar profile display
       const avatarEl = document.getElementById('sidebar-user-avatar');
       const nameEl = document.getElementById('sidebar-user-name');
       const roleEl = document.getElementById('sidebar-user-role');

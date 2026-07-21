@@ -90,7 +90,7 @@ const API = {
     return await response.json();
   },
 
-  createStaffUser: async (name, email, password, role = 'Administrateur', permissions = ['all']) => {
+  createStaffUser: async (name, email, password, role = 'Agent Premium', permissions = ['dashboard']) => {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -100,8 +100,8 @@ const API = {
         name,
         email,
         password,
-        role: role || "Administrateur",
-        permissions: permissions && permissions.length > 0 ? permissions : ["all"]
+        role: role || "Agent Premium",
+        permissions: permissions && permissions.length > 0 ? permissions : ["dashboard"]
       }),
     });
 
