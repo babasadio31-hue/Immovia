@@ -186,8 +186,10 @@ async function loadData() {
       caution: t.caution_amount
     }));
     
+    const currentTheme = localStorage.getItem('immovi_theme') || (state.agencySettings && state.agencySettings.theme) || 'dark';
     if (apiSettings && apiSettings.name) {
       state.agencySettings = {
+        ...state.agencySettings,
         name: apiSettings.name,
         address: apiSettings.address,
         phone: apiSettings.phone,
@@ -196,7 +198,8 @@ async function loadData() {
         commissionRate: apiSettings.commission_rate !== null && apiSettings.commission_rate !== undefined ? apiSettings.commission_rate : 10,
         nif: apiSettings.nif || '',
         slogan: apiSettings.slogan || '',
-        logoBase64: apiSettings.logo_base64 || null
+        logoBase64: apiSettings.logo_base64 || null,
+        theme: currentTheme
       };
     } else {
       const savedState = localStorage.getItem('immovi_state');
@@ -204,11 +207,15 @@ async function loadData() {
           const local = JSON.parse(savedState);
           state.staff = local.staff || [];
           if (local.agencySettings && local.agencySettings.name) {
-            state.agencySettings = local.agencySettings;
+            state.agencySettings = {
+              ...local.agencySettings,
+              theme: currentTheme
+            };
           }
       }
     }
     renderGlobalPrintHeader();
+    applyThemeUI();
   } catch (e) {
     console.error("Erreur API:", e);
   }
@@ -3774,12 +3781,14 @@ window.deleteStaff = deleteStaff;
 window.setThemeOption = function(theme) {
   state.agencySettings = state.agencySettings || {};
   state.agencySettings.theme = theme;
+  localStorage.setItem('immovi_theme', theme);
   saveData();
   applyThemeUI();
 };
 
 function applyThemeUI() {
-  const theme = (state.agencySettings && state.agencySettings.theme) ? state.agencySettings.theme : 'dark';
+  const storedTheme = localStorage.getItem('immovi_theme');
+  const theme = storedTheme || (state.agencySettings && state.agencySettings.theme ? state.agencySettings.theme : 'dark');
   
   if (theme === 'light') {
     document.documentElement.classList.add('theme-light');
