@@ -1876,3 +1876,10 @@ body {
 :root.theme-light .modal-card [style*="rgba(255,255,255,0.05)"] {
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
+
+/* ================= AUTOMATIC LINE-BREAK / WRAP FONT RESIZING ================= */
+.wrapped-text,
+[data-wrapped="true"] {
+  font-size: 8px !important;
+  line-height: 1.15 !important;
+}

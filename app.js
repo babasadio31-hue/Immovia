@@ -814,6 +814,7 @@ function switchTab(tabName) {
   } else if (tabName === 'settings') {
     renderSettingsView();
   }
+  setTimeout(adjustWrappedText, 50);
 }
 
 // ==========================================================================
@@ -3804,3 +3805,40 @@ function applyThemeUI() {
     if (cd) cd.style.borderColor = 'var(--color-primary)';
   }
 }
+
+// ==========================================================================
+// Détection et Réduction Automatique des Textes avec Retour à la Ligne (8px)
+// ==========================================================================
+
+function adjustWrappedText() {
+  const selectors = '.kpi-value, .kpi-label, .card-title, .subtitle, h1, h2, h3, h4, h5, .recent-desc, .recent-amount, .badge, .data-table td, .data-table th, .form-label, .page-title h1, .page-title p, .stat-card, [data-wrap-check]';
+  const elements = document.querySelectorAll(selectors);
+  
+  elements.forEach(el => {
+    if (el.children.length > 0 && !el.classList.contains('kpi-value') && !el.classList.contains('card-title') && !el.classList.contains('badge')) {
+      return;
+    }
+    
+    el.classList.remove('wrapped-text');
+    el.removeAttribute('data-wrapped');
+    
+    const computedStyle = window.getComputedStyle(el);
+    let lineHeight = parseFloat(computedStyle.lineHeight);
+    const fontSize = parseFloat(computedStyle.fontSize);
+    
+    if (isNaN(lineHeight) || lineHeight <= 0) {
+      lineHeight = fontSize * 1.25;
+    }
+    
+    const rectHeight = el.getBoundingClientRect().height;
+    if (rectHeight > lineHeight * 1.35 && fontSize > 8) {
+      el.classList.add('wrapped-text');
+      el.setAttribute('data-wrapped', 'true');
+    }
+  });
+}
+
+window.addEventListener('resize', () => requestAnimationFrame(adjustWrappedText));
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(adjustWrappedText, 300);
+});
