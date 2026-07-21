@@ -2864,7 +2864,7 @@ async function handleSaveReceipt() {
           description: `Loyer ${month} - ${prop.name} (Reçu)`,
           amount: paidAmount,
           type: 'income',
-          propertyId: propertyId,
+          property_id: propertyId,
           date: getTodayDateString()
         };
         
@@ -2951,7 +2951,7 @@ async function handleWithdrawalSubmit(e) {
     description: `Retrait de fonds : ${owner.name}`,
     amount: amount,
     type: 'expense',
-    propertyId: ownerProperties[0].id,
+    property_id: ownerProperties[0].id,
     date: getTodayDateString()
   };
 
@@ -3115,7 +3115,7 @@ function openTenantDossier(propertyId) {
             description: `Loyer ${monthName} - ${prop.name}`,
             amount: newAmount,
             type: 'income',
-            propertyId: prop.id,
+            property_id: prop.id,
             date: getTodayDateString()
           };
           await API.createTransaction(newTx);
