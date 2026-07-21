@@ -194,6 +194,7 @@ async function loadData() {
         state.staff = [];
         state.agencySettings = {};
     }
+    renderGlobalPrintHeader();
   } catch (e) {
     console.error("Erreur API:", e);
   }
@@ -3576,6 +3577,16 @@ function renderGlobalPrintHeader() {
   const settings = state.agencySettings || {};
   const globalHeaderContainer = document.getElementById('global-print-header');
   const dynamicReceiptHeader = document.getElementById('dynamic-receipt-header');
+  
+  // Mettre à jour le grand titre de l'en-tête selon le nom de l'agence configuré
+  const greetingTitle = document.getElementById('greeting-title');
+  if (greetingTitle) {
+    const rawName = (settings.name && settings.name.trim()) ? settings.name.trim() : 'Immovi S.A.R.L';
+    const displayTitle = rawName.toLowerCase().includes('gestion')
+      ? rawName
+      : `Gestion d'Agence ${rawName}`;
+    greetingTitle.textContent = displayTitle;
+  }
   
   const logoHtml = settings.logoBase64
     ? `<img src="${settings.logoBase64}" alt="Logo Agence" style="max-height: 50px; border-radius: 8px;">`
