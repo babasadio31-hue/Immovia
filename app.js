@@ -59,8 +59,8 @@ function initApp() {
         s.permissions = s.role === 'Administrateur' ? allPermissions : ['dashboard'];
         dataChanged = true;
       }
-      if (s.role === 'Administrateur') {
-        s.email = 'admin@immovi.ml'; // Forcer l'email admin pour faciliter les tests
+      if (s.id === 'staff-1') {
+        s.email = 'admin@immovi.ml';
         s.password = 'admin';
         dataChanged = true;
       }
@@ -3375,15 +3375,20 @@ window.addEventListener('DOMContentLoaded', () => {
       
       await loadData();
       
-      // Override the mock "Sadio Diallo" with the true user
-      state.staff = [currentUser];
+      // Set real authenticated user with Administrateur role
+      if (currentUser) {
+        currentUser.role = currentUser.role || 'Administrateur';
+        if (!currentUser.status) currentUser.status = 'Actif';
+        if (!currentUser.phone) currentUser.phone = 'Compte Utilisateur';
+        state.staff = [currentUser];
+      }
       
       // Update sidebar
       const avatarEl = document.getElementById('sidebar-user-avatar');
       const nameEl = document.getElementById('sidebar-user-name');
       const roleEl = document.getElementById('sidebar-user-role');
-      if (avatarEl) avatarEl.textContent = currentUser.name.substring(0, 2).toUpperCase();
-      if (nameEl) nameEl.textContent = currentUser.name;
+      if (avatarEl && currentUser.name) avatarEl.textContent = currentUser.name.substring(0, 2).toUpperCase();
+      if (nameEl && currentUser.name) nameEl.textContent = currentUser.name;
       if (roleEl) roleEl.textContent = currentUser.role || 'Administrateur';
       
       // Setup logout button

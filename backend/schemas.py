@@ -12,8 +12,8 @@ class UserBase(BaseModel):
     email: str
     name: str
     phone: Optional[str] = None
-    role: str
-    permissions: Any = []
+    role: Optional[str] = "Administrateur"
+    permissions: Any = ["all"]
 
 class UserCreate(UserBase):
     password: str

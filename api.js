@@ -78,7 +78,7 @@ const API = {
         name,
         email,
         password,
-        role: "Manager",
+        role: "Administrateur",
         permissions: ["all"]
       }),
     });
