@@ -1456,9 +1456,8 @@ function openOwnerDossier(ownerId) {
   
   // Calculer la somme des retraits récents (type expense et datant de moins de 9 jours)
   const recentWithdrawals = state.transactions.filter(t => 
-    t.type === 'expense' && 
-    ownerPropIds.includes(t.propertyId) && 
-    (t.description.includes('Reversement') || t.description.includes('Retrait')) &&
+      t.type === 'expense' && 
+      ownerPropIds.includes(t.propertyId) && 
     (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
   );
   const sumRecentWithdrawals = recentWithdrawals.reduce((sum, w) => sum + w.amount, 0);
@@ -1473,10 +1472,9 @@ function openOwnerDossier(ownerId) {
   if (tbodyWithdrawals) {
     tbodyWithdrawals.innerHTML = '';
     const ownerWithdrawals = state.transactions.filter(t => 
-      t.type === 'expense' && 
-      ownerPropIds.includes(t.propertyId) && 
-      (t.description.includes('Reversement') || t.description.includes('Retrait'))
-    );
+        t.type === 'expense' && 
+        ownerPropIds.includes(t.propertyId)
+      );
     if (ownerWithdrawals.length === 0) {
       tbodyWithdrawals.innerHTML = '<tr><td colspan="5" class="text-center">Aucun retrait effectué.</td></tr>';
     } else {
@@ -1531,10 +1529,9 @@ function openOwnerDossier(ownerId) {
     }, 0);
     
     const ownerWithdrawals = state.transactions.filter(t => 
-      t.type === 'expense' && 
-      ownerPropIds.includes(t.propertyId) && 
-      (t.description.includes('Reversement') || t.description.includes('Retrait'))
-    );
+        t.type === 'expense' && 
+        ownerPropIds.includes(t.propertyId)
+      );
     const sumWithdrawn = ownerWithdrawals.reduce((sum, w) => sum + w.amount, 0);
     const sumBalance = pendingNet;
     
@@ -2754,11 +2751,11 @@ function renderAccounting() {
         tbodyEntrees.appendChild(tr);
       }
     } else {
-      const isOwnerWithdrawal = (tx.description.includes('Reversement') || tx.description.includes('Retrait'));
-      
-      if (!isOwnerWithdrawal) {
-        grossOutflows += tx.amount;
-      }
+        const isOwnerExpense = !!tx.propertyId;
+        
+        if (!isOwnerExpense) {
+          grossOutflows += tx.amount;
+        }
       
       const filterSortiesType = document.getElementById('sorties-filter-type');
       const filterType = filterSortiesType ? filterSortiesType.value : 'all';
@@ -2945,9 +2942,8 @@ async function handleWithdrawalSubmit(e) {
   const pendingBrut = recentIncomes.reduce((sum, t) => sum + t.amount, 0);
   const pendingCom = (pendingBrut * owner.commissionRate) / 100;
   const recentWithdrawals = state.transactions.filter(t => 
-    t.type === 'expense' && 
-    ownerPropIds.includes(t.propertyId) && 
-    (t.description.includes('Reversement') || t.description.includes('Retrait')) &&
+      t.type === 'expense' && 
+      ownerPropIds.includes(t.propertyId) && 
     (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
   );
   const sumRecentWithdrawals = recentWithdrawals.reduce((sum, w) => sum + w.amount, 0);
