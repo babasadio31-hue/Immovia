@@ -478,10 +478,12 @@ function setupEventListeners() {
   });
 
   document.getElementById('btn-clear-statement')?.addEventListener('click', () => {
-    showCustomConfirm("Voulez-vous supprimer définitivement tout l'historique financier de ce bailleur ? Cette action est irréversible.").then(confirmed => {
+    showCustomConfirm("Voulez-vous supprimer définitivement tout l'historique financier de ce bailleur ? Cette action est irréversible.").then(async confirmed => {
       if (confirmed) {
         const ownerProperties = state.properties.filter(p => p.ownerId === state.activeOwnerId);
         const ownerPropIds = ownerProperties.map(p => p.id);
+        const txToDelete = state.transactions.filter(tx => ownerPropIds.includes(tx.propertyId));
+        await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => !ownerPropIds.includes(tx.propertyId));
         saveData();
         document.getElementById('modal-statement').classList.remove('active');
@@ -492,8 +494,10 @@ function setupEventListeners() {
   });
 
   document.getElementById('btn-clear-entrees').addEventListener('click', () => {
-    showCustomConfirm("Voulez-vous supprimer définitivement toutes les entrées financières (Recettes) ? Cette action est irréversible.").then(confirmed => {
+    showCustomConfirm("Voulez-vous supprimer définitivement toutes les entrées financières (Recettes) ? Cette action est irréversible.").then(async confirmed => {
       if (confirmed) {
+        const txToDelete = state.transactions.filter(tx => tx.type === 'income');
+        await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => tx.type !== 'income');
         saveData();
         renderAccounting();
@@ -503,8 +507,10 @@ function setupEventListeners() {
   });
 
   document.getElementById('btn-clear-sorties').addEventListener('click', () => {
-    showCustomConfirm("Voulez-vous supprimer définitivement toutes les sorties financières (Dépenses) ? Cette action est irréversible.").then(confirmed => {
+    showCustomConfirm("Voulez-vous supprimer définitivement toutes les sorties financières (Dépenses) ? Cette action est irréversible.").then(async confirmed => {
       if (confirmed) {
+        const txToDelete = state.transactions.filter(tx => tx.type === 'expense');
+        await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => tx.type !== 'expense');
         saveData();
         renderAccounting();
