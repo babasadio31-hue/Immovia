@@ -823,7 +823,7 @@ function calculateKPIs() {
       if (prop) {
         const owner = state.owners.find(o => o.id === prop.ownerId);
         if (owner) {
-          let rate = prop.commissionRate !== undefined && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+          let rate = prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
           totalCommissions += (tx.amount * rate) / 100;
         }
       }
@@ -1308,7 +1308,7 @@ function recalculateReceiptSummary() {
     let rowCommissionRate = defaultCommissionRate;
     if (selectedPropId) {
       const prop = state.properties.find(p => p.id === selectedPropId);
-      if (prop && prop.commissionRate !== undefined && !isNaN(prop.commissionRate)) {
+      if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) {
         rowCommissionRate = prop.commissionRate;
       }
     }
@@ -1454,7 +1454,7 @@ function openOwnerDossier(ownerId) {
   const pendingCom = recentIncomes.reduce((sum, t) => {
     let rate = owner.commissionRate;
     const prop = state.properties.find(p => p.id === t.propertyId);
-    if (prop && prop.commissionRate !== undefined && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+    if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
     return sum + (t.amount * rate) / 100;
   }, 0);
   
@@ -1528,7 +1528,7 @@ function openOwnerDossier(ownerId) {
     const sumCom = ownerIncomes.reduce((sum, t) => {
       let rate = owner.commissionRate;
       const prop = state.properties.find(p => p.id === t.propertyId);
-      if (prop && prop.commissionRate !== undefined && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+      if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
       return sum + (t.amount * rate) / 100;
     }, 0);
     
@@ -1566,7 +1566,7 @@ function openOwnerDossier(ownerId) {
             
           let rate = owner.commissionRate;
           const prop = state.properties.find(p => p.id === t.propertyId);
-          if (prop && prop.commissionRate !== undefined && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+          if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
             
           const netRepayeDisplay = t.type === 'income'
             ? `<span style="color: var(--color-text-primary);">+${formatCurrency(t.amount - (t.amount * rate / 100))}</span>`
@@ -1904,7 +1904,7 @@ function renderTrendsBarChart() {
           if (prop) {
             const owner = state.owners.find(o => o.id === prop.ownerId);
             if (owner) {
-              let rate = prop.commissionRate !== undefined && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+              let rate = prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
               commissionsDataset[index] += (tx.amount * rate) / 100;
             }
           }
@@ -2764,7 +2764,7 @@ function renderAccounting() {
       if (owner) {
         ownerName = owner.name;
         ownerId = owner.id;
-        let rate = prop.commissionRate !== undefined && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+        let rate = prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
         commission = (tx.amount * rate) / 100;
       }
     }
