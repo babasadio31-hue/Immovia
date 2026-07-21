@@ -2201,8 +2201,8 @@ async function handlePropertySubmit(e) {
     tenantPhone = document.getElementById('input-property-tenant-phone').value.trim();
   }
 
-  if (!name || !address || !ownerId || (transactionType === 'Location' && isNaN(rent)) || (transactionType === 'Vente' && isNaN(price))) {
-    showToast('Fiche du bien immobilier incomplète.', 'error');
+  if (!name || !address || !ownerId || (transactionType === 'Location' && (!rent || rent <= 0)) || (transactionType === 'Vente' && (!price || price <= 0))) {
+    showToast('Fiche du bien immobilier incomplète (loyer ou prix manquant/invalide).', 'error');
     return;
   }
 
@@ -2249,8 +2249,7 @@ async function handlePropertySubmit(e) {
             amount: price,
             description: 'Vente du bien: ' + name,
             motif: 'income-other',
-            propertyId: newProp.id,
-            tenantId: null
+            property_id: newProp.id
           };
           await API.createTransaction(saleTx);
         }
