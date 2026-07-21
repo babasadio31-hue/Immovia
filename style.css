@@ -106,8 +106,9 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 3rem;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+  padding: 0.25rem 0;
 }
 
 .logo-icon {
