@@ -1613,18 +1613,28 @@ function renderPropertiesGrid() {
     let statusColor = 'bar-purple';
     let alertText = '';
     
-    if (prop.status === 'Loué') {
-      statusColor = 'bar-green';
-      alertText = '<span class="value-green" style="font-size: 0.75rem; font-weight: 600;">Occupé (Loué)</span>';
-    } else if (prop.status === 'Libre') {
-      statusColor = 'bar-orange';
-      alertText = '<span class="value-rose" style="font-size: 0.75rem; font-weight: 600;">Vacant</span>';
-    } else if (prop.status === 'Maintenance') {
-      statusColor = 'bar-rose';
-      alertText = '<span class="value-rose" style="font-size: 0.75rem; font-weight: 600;">En Travaux</span>';
-    }
-
-    const card = document.createElement('div');
+    if (prop.transaction_type === 'Vente') {
+        if (prop.status === 'Vendu') {
+          statusColor = 'bar-purple';
+          alertText = '<span class="value-purple" style="font-size: 0.75rem; font-weight: 600;">Vendu</span>';
+        } else {
+          statusColor = 'bar-blue';
+          alertText = '<span class="value-blue" style="font-size: 0.75rem; font-weight: 600;">En vente</span>';
+        }
+      } else {
+        if (prop.status === 'Loué') {
+          statusColor = 'bar-green';
+          alertText = '<span class="value-green" style="font-size: 0.75rem; font-weight: 600;">Occupé (Loué)</span>';
+        } else if (prop.status === 'Libre') {
+          statusColor = 'bar-orange';
+          alertText = '<span class="value-rose" style="font-size: 0.75rem; font-weight: 600;">Vacant</span>';
+        } else if (prop.status === 'Maintenance') {
+          statusColor = 'bar-rose';
+          alertText = '<span class="value-rose" style="font-size: 0.75rem; font-weight: 600;">En Travaux</span>';
+        }
+      }
+  
+      const card = document.createElement('div');
     card.className = 'goal-card';
     card.style.margin = '0';
     card.innerHTML = `
@@ -2221,6 +2231,28 @@ async function handlePropertySubmit(e) {
     } else {
       await API.createProperty(newProp);
     }
+      
+      if (transactionType === 'Vente' && saleStatus === 'Vendu') {
+        const existingSaleTx = state.transactions.find(tx => 
+          tx.propertyId === newProp.id && 
+          tx.type === 'income' && 
+          tx.description.includes('Vente')
+        );
+        
+        if (!existingSaleTx) {
+          const saleTx = {
+            id: 'tx-' + Date.now(),
+            date: new Date().toISOString().split('T')[0],
+            type: 'income',
+            amount: price,
+            description: 'Vente du bien: ' + name,
+            motif: 'income-other',
+            propertyId: newProp.id,
+            tenantId: null
+          };
+          await API.createTransaction(saleTx);
+        }
+      }
     await loadData();
     populateDropdowns();
     closeAllModals();
