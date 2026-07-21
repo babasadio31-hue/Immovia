@@ -397,24 +397,30 @@ function setupEventListeners() {
   // Retour à la liste des propriétaires
   document.getElementById('btn-back-to-owners').addEventListener('click', () => switchTab('owners'));
 
-  // Filtre et Impression Sorties
-  const filterSortiesType = document.getElementById('sorties-filter-type');
-  const filterSortiesDay = document.getElementById('sorties-filter-day');
-  const filterSortiesMonth = document.getElementById('sorties-filter-month');
-  const filterSortiesYear = document.getElementById('sorties-filter-year');
-  
-  if (filterSortiesType) {
-    filterSortiesType.addEventListener('change', (e) => {
-      const val = e.target.value;
-      if (filterSortiesDay) filterSortiesDay.style.display = val === 'day' ? 'block' : 'none';
-      if (filterSortiesMonth) filterSortiesMonth.style.display = val === 'month' ? 'block' : 'none';
-      if (filterSortiesYear) filterSortiesYear.style.display = val === 'year' ? 'block' : 'none';
-      renderAccounting();
-    });
+  // Helper pour lier les filtres de date (Dashboard, Entrées, Sorties)
+  function setupDateFilterControls(typeId, dayId, monthId, yearId, callback) {
+    const filterType = document.getElementById(typeId);
+    const filterDay = document.getElementById(dayId);
+    const filterMonth = document.getElementById(monthId);
+    const filterYear = document.getElementById(yearId);
+    
+    if (filterType) {
+      filterType.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (filterDay) filterDay.style.display = val === 'day' ? 'block' : 'none';
+        if (filterMonth) filterMonth.style.display = val === 'month' ? 'block' : 'none';
+        if (filterYear) filterYear.style.display = val === 'year' ? 'block' : 'none';
+        callback();
+      });
+    }
+    if (filterDay) filterDay.addEventListener('change', callback);
+    if (filterMonth) filterMonth.addEventListener('change', callback);
+    if (filterYear) filterYear.addEventListener('input', callback);
   }
-  if (filterSortiesDay) filterSortiesDay.addEventListener('change', () => renderAccounting());
-  if (filterSortiesMonth) filterSortiesMonth.addEventListener('change', () => renderAccounting());
-  if (filterSortiesYear) filterSortiesYear.addEventListener('input', () => renderAccounting());
+
+  setupDateFilterControls('sorties-filter-type', 'sorties-filter-day', 'sorties-filter-month', 'sorties-filter-year', () => renderAccounting());
+  setupDateFilterControls('entrees-filter-type', 'entrees-filter-day', 'entrees-filter-month', 'entrees-filter-year', () => renderAccounting());
+  setupDateFilterControls('dashboard-filter-type', 'dashboard-filter-day', 'dashboard-filter-month', 'dashboard-filter-year', () => renderDashboard());
   const btnPrintSorties = document.getElementById('btn-print-sorties');
   if (btnPrintSorties) {
     btnPrintSorties.addEventListener('click', () => {
@@ -839,15 +845,17 @@ function calculateKPIs() {
   state.transactions.forEach(tx => {
     // Si c'est un loyer perçu (income)
     if (tx.type === 'income') {
-      totalCollectedRents += tx.amount;
-      
-      // Trouver le bien associé pour récupérer le commissionRate du bailleur
-      const prop = state.properties.find(p => p.id === tx.propertyId);
-      if (prop) {
-        const owner = state.owners.find(o => o.id === prop.ownerId);
-        if (owner) {
-          let rate = prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
-          totalCommissions += (tx.amount * rate) / 100;
+      if (matchesDateFilter(tx.date, 'dashboard-filter-type', 'dashboard-filter-day', 'dashboard-filter-month', 'dashboard-filter-year')) {
+        totalCollectedRents += tx.amount;
+        
+        // Trouver le bien associé pour récupérer le commissionRate du bailleur
+        const prop = state.properties.find(p => p.id === tx.propertyId);
+        if (prop) {
+          const owner = state.owners.find(o => o.id === prop.ownerId);
+          if (owner) {
+            let rate = prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate) ? prop.commissionRate : owner.commissionRate;
+            totalCommissions += (tx.amount * rate) / 100;
+          }
         }
       }
     }
@@ -874,6 +882,7 @@ function renderRecentTransactionsList() {
   container.innerHTML = '';
 
   const recent = [...state.transactions]
+    .filter(tx => matchesDateFilter(tx.date, 'dashboard-filter-type', 'dashboard-filter-day', 'dashboard-filter-month', 'dashboard-filter-year'))
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
@@ -973,7 +982,9 @@ function renderDashboardOverviewChart() {
   }
 
   // Ordonner chronologiquement les transactions
-  const sortedTx = [...state.transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sortedTx = [...state.transactions]
+    .filter(tx => matchesDateFilter(tx.date, 'dashboard-filter-type', 'dashboard-filter-day', 'dashboard-filter-month', 'dashboard-filter-year'))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
   
   let runningCommissions = 0;
   const labels = [];
@@ -2750,6 +2761,34 @@ function renderTenantsTable() {
   }
 }
 
+// Helper pour vérifier le filtre par date (Par jour, Par mois, Par année)
+function matchesDateFilter(txDateStr, filterTypeId, dayId, monthId, yearId) {
+  const filterEl = document.getElementById(filterTypeId);
+  const filterType = filterEl ? filterEl.value : 'all';
+  if (filterType === 'all') return true;
+  if (!txDateStr) return false;
+  
+  const txDate = new Date(txDateStr);
+  if (filterType === 'day') {
+    const dayVal = document.getElementById(dayId) ? document.getElementById(dayId).value : '';
+    return dayVal ? txDateStr === dayVal : true;
+  } else if (filterType === 'month') {
+    const monthVal = document.getElementById(monthId) ? document.getElementById(monthId).value : '';
+    if (monthVal) {
+      const [y, m] = monthVal.split('-');
+      return txDate.getFullYear() === parseInt(y) && (txDate.getMonth() + 1) === parseInt(m);
+    }
+    return true;
+  } else if (filterType === 'year') {
+    const yearVal = document.getElementById(yearId) ? document.getElementById(yearId).value : '';
+    if (yearVal) {
+      return txDate.getFullYear() === parseInt(yearVal);
+    }
+    return true;
+  }
+  return true;
+}
+
 // ==========================================================================
 // Rendu : Onglet Comptabilité
 // ==========================================================================
@@ -2793,14 +2832,17 @@ function renderAccounting() {
     }
     
     if (tx.type === 'income') {
-      grossInflows += tx.amount;
-      agencyCommissions += commission;
-      netOwner = tx.amount - commission;
+      const matchesPeriod = matchesDateFilter(tx.date, 'entrees-filter-type', 'entrees-filter-day', 'entrees-filter-month', 'entrees-filter-year');
+      if (matchesPeriod) {
+        grossInflows += tx.amount;
+        agencyCommissions += commission;
+        netOwner = tx.amount - commission;
+      }
       
       // Filtres
       const matchesSearch = tx.description.toLowerCase().includes(searchTerm) ||
                             ownerName.toLowerCase().includes(searchTerm);
-      if (matchesSearch) {
+      if (matchesSearch && matchesPeriod) {
         matchingEntreesCount++;
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -2813,35 +2855,11 @@ function renderAccounting() {
         tbodyEntrees.appendChild(tr);
       }
     } else {
-        const isOwnerExpense = !!tx.propertyId;
-        
-        if (!isOwnerExpense) {
-          grossOutflows += tx.amount;
-        }
+      const matchesPeriod = matchesDateFilter(tx.date, 'sorties-filter-type', 'sorties-filter-day', 'sorties-filter-month', 'sorties-filter-year');
+      const isOwnerExpense = !!tx.propertyId;
       
-      const filterSortiesType = document.getElementById('sorties-filter-type');
-      const filterType = filterSortiesType ? filterSortiesType.value : 'all';
-      
-      let matchesPeriod = true;
-      if (filterType !== 'all') {
-        const txDate = new Date(tx.date);
-        if (filterType === 'day') {
-          const dayVal = document.getElementById('sorties-filter-day').value;
-          if (dayVal) {
-            matchesPeriod = tx.date === dayVal;
-          }
-        } else if (filterType === 'month') {
-          const monthVal = document.getElementById('sorties-filter-month').value;
-          if (monthVal) {
-            const [y, m] = monthVal.split('-');
-            matchesPeriod = txDate.getFullYear() === parseInt(y) && (txDate.getMonth() + 1) === parseInt(m);
-          }
-        } else if (filterType === 'year') {
-          const yearVal = document.getElementById('sorties-filter-year').value;
-          if (yearVal) {
-            matchesPeriod = txDate.getFullYear() === parseInt(yearVal);
-          }
-        }
+      if (!isOwnerExpense && matchesPeriod) {
+        grossOutflows += tx.amount;
       }
       
       // Filtres
