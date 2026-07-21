@@ -377,6 +377,19 @@
 
     <script src="api.js"></script>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedPlan = urlParams.get('plan') || 'premium';
+
+        if (selectedPlan === 'premium') {
+            const headerDiv = document.querySelector('.login-header');
+            if (headerDiv) {
+                const badge = document.createElement('div');
+                badge.style.cssText = 'background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 500;';
+                badge.innerHTML = '✨ <strong>Plan Premium (15.000 FCFA/mois)</strong> — 31 jours d\'essai offerts (Carte enregistrée via <strong>Moneroh</strong>, 0 FCFA débité aujourd\'hui).';
+                headerDiv.appendChild(badge);
+            }
+        }
+
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -386,7 +399,7 @@
             const errorDiv = document.getElementById('login-error');
 
             btnSubmit.disabled = true;
-            btnSubmit.textContent = 'Création...';
+            btnSubmit.textContent = 'Création du compte...';
             errorDiv.textContent = '';
 
             try {
@@ -395,6 +408,19 @@
                 
                 // Login right after
                 await API.login(email, password);
+
+                if (selectedPlan === 'premium') {
+                    btnSubmit.textContent = 'Initialisation Moneroh (Essai 31 jours)...';
+                    try {
+                        const sub = await API.createSubscriptionCheckout('premium');
+                        if (sub && sub.checkout_url) {
+                            window.location.href = sub.checkout_url;
+                            return;
+                        }
+                    } catch (subErr) {
+                        console.warn("Moneroh checkout redirect warning:", subErr);
+                    }
+                }
                 
                 // Redirect to main dashboard
                 window.location.href = 'index.html';

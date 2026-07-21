@@ -160,4 +160,8 @@ const API = {
   // Paramètres Agence (Settings)
   getSettings: () => apiFetch('/settings/'),
   updateSettings: (settings) => apiFetch('/settings/', { method: 'PUT', body: JSON.stringify(settings) }),
+
+  // Abonnements SaaS & Paiements Moneroh
+  createSubscriptionCheckout: (plan = 'premium') => apiFetch(`/subscriptions/checkout?plan=${plan}`, { method: 'POST' }),
+  getSubscriptionStatus: () => apiFetch('/subscriptions/status'),
 };
