@@ -3807,7 +3807,7 @@ function applyThemeUI() {
 }
 
 // ==========================================================================
-// Détection et Réduction Automatique des Textes avec Retour à la Ligne (8px)
+// Détection et Réduction Automatique des Textes avec Retour à la Ligne (12px)
 // ==========================================================================
 
 function adjustWrappedText() {
@@ -3831,7 +3831,7 @@ function adjustWrappedText() {
     }
     
     const rectHeight = el.getBoundingClientRect().height;
-    if (rectHeight > lineHeight * 1.35 && fontSize > 8) {
+    if (rectHeight > lineHeight * 1.35 && fontSize > 12) {
       el.classList.add('wrapped-text');
       el.setAttribute('data-wrapped', 'true');
     }
