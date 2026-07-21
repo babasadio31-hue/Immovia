@@ -134,4 +134,8 @@ const API = {
   createTransaction: (trans) => apiFetch('/transactions/', { method: 'POST', body: JSON.stringify(trans) }),
   updateTransaction: (id, trans) => apiFetch(`/transactions/${id}`, { method: 'PUT', body: JSON.stringify(trans) }),
   deleteTransaction: (id) => apiFetch(`/transactions/${id}`, { method: 'DELETE' }),
+
+  // Paramètres Agence (Settings)
+  getSettings: () => apiFetch('/settings/'),
+  updateSettings: (settings) => apiFetch('/settings/', { method: 'PUT', body: JSON.stringify(settings) }),
 };

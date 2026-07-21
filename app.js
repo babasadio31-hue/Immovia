@@ -146,11 +146,12 @@ function handleLogout() {
 
 async function loadData() {
   try {
-    const [apiOwners, apiProperties, apiTenants, apiTransactions] = await Promise.all([
-      API.getOwners(),
-      API.getProperties(),
-      API.getTenants(),
-      API.getTransactions()
+    const [apiOwners, apiProperties, apiTenants, apiTransactions, apiSettings] = await Promise.all([
+      API.getOwners().catch(() => []),
+      API.getProperties().catch(() => []),
+      API.getTenants().catch(() => []),
+      API.getTransactions().catch(() => []),
+      API.getSettings().catch(() => null)
     ]);
     state.owners = (apiOwners || []).map(o => {
         let cr = 10;
@@ -185,14 +186,27 @@ async function loadData() {
       caution: t.caution_amount
     }));
     
-    const savedState = localStorage.getItem('immovi_state');
-    if (savedState) {
-        const local = JSON.parse(savedState);
-        state.staff = local.staff || [];
-        state.agencySettings = local.agencySettings || {};
+    if (apiSettings && apiSettings.name) {
+      state.agencySettings = {
+        name: apiSettings.name,
+        address: apiSettings.address,
+        phone: apiSettings.phone,
+        email: apiSettings.email,
+        currency: apiSettings.currency || 'FCFA',
+        commissionRate: apiSettings.commission_rate !== null && apiSettings.commission_rate !== undefined ? apiSettings.commission_rate : 10,
+        nif: apiSettings.nif || '',
+        slogan: apiSettings.slogan || '',
+        logoBase64: apiSettings.logo_base64 || null
+      };
     } else {
-        state.staff = [];
-        state.agencySettings = {};
+      const savedState = localStorage.getItem('immovi_state');
+      if (savedState) {
+          const local = JSON.parse(savedState);
+          state.staff = local.staff || [];
+          if (local.agencySettings && local.agencySettings.name) {
+            state.agencySettings = local.agencySettings;
+          }
+      }
     }
     renderGlobalPrintHeader();
   } catch (e) {
@@ -3520,7 +3534,7 @@ function renderSettingsView() {
     
 }
 
-function handleSettingsAgencySubmit(e) {
+async function handleSettingsAgencySubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('input-settings-name').value.trim();
@@ -3545,6 +3559,21 @@ function handleSettingsAgencySubmit(e) {
   };
 
   saveData();
+  try {
+    await API.updateSettings({
+      name: state.agencySettings.name,
+      address: state.agencySettings.address,
+      phone: state.agencySettings.phone,
+      email: state.agencySettings.email,
+      currency: state.agencySettings.currency,
+      commission_rate: state.agencySettings.commissionRate,
+      nif: state.agencySettings.nif,
+      slogan: state.agencySettings.slogan,
+      logo_base64: state.agencySettings.logoBase64 || null
+    });
+  } catch (err) {
+    console.error("Erreur sauvegarde API settings:", err);
+  }
   renderGlobalPrintHeader();
   showToast("Paramètres de l'agence enregistrés avec succès.", 'success');
 }
@@ -3554,20 +3583,46 @@ function handleLogoUpload(e) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(evt) {
+  reader.onload = async function(evt) {
     state.agencySettings = state.agencySettings || {};
     state.agencySettings.logoBase64 = evt.target.result;
     saveData();
+    try {
+      await API.updateSettings({
+        name: state.agencySettings.name || 'Immovi S.A.R.L',
+        address: state.agencySettings.address || '',
+        phone: state.agencySettings.phone || '',
+        email: state.agencySettings.email || '',
+        currency: state.agencySettings.currency || 'FCFA',
+        commission_rate: state.agencySettings.commissionRate || 10,
+        nif: state.agencySettings.nif || '',
+        slogan: state.agencySettings.slogan || '',
+        logo_base64: state.agencySettings.logoBase64
+      });
+    } catch (err) {}
     renderGlobalPrintHeader();
     showToast('Le logo a été mis à jour.', 'success');
   };
   reader.readAsDataURL(file);
 }
 
-function resetLogo() {
+async function resetLogo() {
   if (state.agencySettings) {
     delete state.agencySettings.logoBase64;
     saveData();
+    try {
+      await API.updateSettings({
+        name: state.agencySettings.name || 'Immovi S.A.R.L',
+        address: state.agencySettings.address || '',
+        phone: state.agencySettings.phone || '',
+        email: state.agencySettings.email || '',
+        currency: state.agencySettings.currency || 'FCFA',
+        commission_rate: state.agencySettings.commissionRate || 10,
+        nif: state.agencySettings.nif || '',
+        slogan: state.agencySettings.slogan || '',
+        logo_base64: null
+      });
+    } catch (err) {}
     renderGlobalPrintHeader();
     showToast('Le logo par défaut a été restauré.', 'success');
   }
