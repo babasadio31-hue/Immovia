@@ -1613,7 +1613,8 @@ function renderPropertiesGrid() {
     let statusColor = 'bar-purple';
     let alertText = '';
     
-    if (prop.transaction_type === 'Vente') {
+    const isVente = prop.transaction_type === 'Vente' || prop.transaction_type === 'vente' || ['Vendu', 'Disponible à la vente', 'Sous compromis'].includes(prop.status);
+    if (isVente) {
         if (prop.status === 'Vendu') {
           statusColor = 'bar-purple';
           alertText = '<span class="value-purple" style="font-size: 0.75rem; font-weight: 600;">Vendu</span>';
@@ -2188,7 +2189,8 @@ async function handlePropertySubmit(e) {
   const caution = parseInt(document.getElementById('input-property-caution').value) || 0;
   const rent = parseInt(document.getElementById('input-property-rent').value) || 0;
   const price = parseInt(document.getElementById('input-property-price').value) || 0;
-  const commissionRate = parseInt(document.getElementById('input-property-commission').value);
+  const commissionVal = document.getElementById('input-property-commission').value;
+  const commissionRate = commissionVal !== '' ? parseFloat(commissionVal) : null;
   const status = document.getElementById('select-property-status').value;
   const saleStatus = document.getElementById('select-property-sale-status').value;
 
@@ -2199,7 +2201,7 @@ async function handlePropertySubmit(e) {
     tenantPhone = document.getElementById('input-property-tenant-phone').value.trim();
   }
 
-  if (!name || !address || !ownerId || isNaN(commissionRate) || (transactionType === 'Location' && isNaN(rent)) || (transactionType === 'Vente' && isNaN(price))) {
+  if (!name || !address || !ownerId || (transactionType === 'Location' && isNaN(rent)) || (transactionType === 'Vente' && isNaN(price))) {
     showToast('Fiche du bien immobilier incomplète.', 'error');
     return;
   }
@@ -2298,7 +2300,9 @@ function openEditPropertyModal(id) {
   
   const radioLocation = document.querySelector('input[name="property_transaction"][value="Location"]');
   const radioVente = document.querySelector('input[name="property_transaction"][value="Vente"]');
-  if (prop.transaction_type === "Vente") {
+  const isVente = prop.transaction_type === "Vente" || prop.transaction_type === "vente" || ['Vendu', 'Disponible à la vente', 'Sous compromis'].includes(prop.status);
+  
+  if (isVente) {
     radioVente.checked = true;
     document.getElementById('property-location-fields').style.display = 'none';
     document.getElementById('property-vente-fields').style.display = 'block';
