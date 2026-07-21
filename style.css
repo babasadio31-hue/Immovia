@@ -751,9 +751,13 @@ body {
   border: 1px solid var(--glass-border);
   padding: 0.65rem 1rem 0.65rem 2.8rem;
   border-radius: 12px;
-  color: white;
+  color: var(--color-text-primary);
   font-family: var(--font-main);
   transition: var(--transition-smooth);
+}
+
+.search-box input::placeholder {
+  color: var(--color-text-muted);
 }
 
 .search-box input:focus {
@@ -1792,15 +1796,25 @@ body {
 
 :root.theme-light .form-input,
 :root.theme-light .form-select,
-:root.theme-light .form-textarea {
-  background: rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: var(--color-text-primary);
+:root.theme-light .form-textarea,
+:root.theme-light .search-box input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #0f172a !important;
+}
+
+:root.theme-light .search-box input::placeholder {
+  color: #64748b !important;
+}
+
+:root.theme-light .search-icon {
+  color: #64748b !important;
 }
 
 :root.theme-light .form-input:focus,
 :root.theme-light .form-select:focus,
-:root.theme-light .form-textarea:focus {
+:root.theme-light .form-textarea:focus,
+:root.theme-light .search-box input:focus {
   background: #fff;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
