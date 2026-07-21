@@ -1836,3 +1836,43 @@ body {
 :root.theme-light [style*="border-bottom: 1px solid rgba(255,255,255,0.05)"] {
   border-color: rgba(0,0,0,0.05) !important;
 }
+
+/* ================= THEME CLAIR MODAL OVERRIDES ================= */
+:root.theme-light .modal-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+:root.theme-light .modal-header {
+  border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+:root.theme-light .modal-footer {
+  border-top-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+:root.theme-light .modal-header h3,
+:root.theme-light .modal-card h4,
+:root.theme-light .modal-card h2 {
+  color: var(--color-text-primary) !important;
+}
+
+:root.theme-light .modal-close {
+  color: var(--color-text-muted) !important;
+}
+
+:root.theme-light .modal-close:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Handle inline styles for dark mode inside light mode modals */
+:root.theme-light .modal-card [style*="rgba(255,255,255,0.02)"] {
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+:root.theme-light .modal-card [style*="rgba(255,255,255,0.03)"] {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+:root.theme-light .modal-card [style*="rgba(255,255,255,0.05)"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
