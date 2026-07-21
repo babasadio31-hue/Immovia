@@ -792,6 +792,28 @@ function setupEventListeners() {
 // Contrôleur de Tabulations
 // ==========================================================================
 
+// Helper pour vérifier si un onglet ou une sous-vue (ex: dossier propriétaire, quittance, etc.) est autorisé
+function isTabAllowed(tabName, userPerms, isSuperAdmin) {
+  if (isSuperAdmin) return true;
+  if (!userPerms || userPerms.length === 0) return tabName === 'dashboard';
+  
+  const subViewParentMap = {
+    'owner-details': 'owners',
+    'tenant-dossier': 'tenants',
+    'tenant-details': 'tenants',
+    'property-details': 'properties',
+    'transactions': 'accounting',
+    'analytics': 'accounting',
+    'sorties': 'accounting',
+    'entrées': 'accounting',
+    'statement': 'owners',
+    'receipt': 'owners'
+  };
+
+  const parentCategory = subViewParentMap[tabName] || tabName;
+  return userPerms.includes(parentCategory) || userPerms.includes(tabName);
+}
+
 function applyUserPermissions(user) {
   if (!user) return;
   state.currentUser = user;
@@ -806,7 +828,7 @@ function applyUserPermissions(user) {
   document.querySelectorAll('.sidebar-menu .menu-btn').forEach(btn => {
     const tab = btn.getAttribute('data-tab');
     if (tab) {
-      if (isSuperAdmin || userPerms.includes(tab)) {
+      if (isTabAllowed(tab, userPerms, isSuperAdmin)) {
         btn.style.display = 'flex';
       } else {
         btn.style.display = 'none';
@@ -817,7 +839,7 @@ function applyUserPermissions(user) {
   // Si l'onglet actif est interdit, basculer sur le premier onglet autorisé
   const activeBtn = document.querySelector('.sidebar-menu .menu-btn.active');
   const activeTab = activeBtn ? activeBtn.getAttribute('data-tab') : 'dashboard';
-  if (!isSuperAdmin && !userPerms.includes(activeTab)) {
+  if (!isTabAllowed(activeTab, userPerms, isSuperAdmin)) {
     const firstAllowed = userPerms[0] || 'dashboard';
     switchTab(firstAllowed);
   }
@@ -829,7 +851,7 @@ function switchTab(tabName) {
     const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
     const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'settings'] : (user.permissions || ['dashboard']);
     
-    if (!isSuperAdmin && !userPerms.includes(tabName)) {
+    if (!isTabAllowed(tabName, userPerms, isSuperAdmin)) {
       showToast("Accès restreint : Vous n'avez pas l'autorisation d'accéder à cette section.", "error");
       return;
     }
