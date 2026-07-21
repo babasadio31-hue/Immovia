@@ -2067,6 +2067,8 @@ async function handleTransactionSubmit(e) {
     
     await loadData();
     filterAndRenderTransactionsTable();
+    renderAccounting();
+    renderDashboard();
   } catch (err) {
     showToast(err.message || 'Erreur lors de la transaction.', 'error');
   }
@@ -2347,6 +2349,8 @@ function deleteTransaction(id) {
         await API.deleteTransaction(id);
         await loadData();
         filterAndRenderTransactionsTable();
+        renderAccounting();
+        renderDashboard();
         showToast('Mouvement supprimé.', 'warning');
       } catch(e) {
         showToast(e.message, 'error');
@@ -2977,6 +2981,8 @@ function deleteWithdrawalTransaction(txId) {
       try {
         await API.deleteTransaction(txId);
         await loadData();
+        renderAccounting();
+        renderDashboard();
         if (state.activeOwnerId) {
           openOwnerDossier(state.activeOwnerId);
         }
