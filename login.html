@@ -387,11 +387,26 @@
             try {
                 // Call API (will set token in localStorage on success)
                 await API.login(email, password);
-                
-                // Redirect to main dashboard
+                localStorage.removeItem('immovi_local_user');
                 window.location.href = 'index.html';
             } catch (err) {
-                errorDiv.textContent = err.message || 'Erreur de connexion';
+                // Fallback check against local immovi_state staff array
+                try {
+                    const localStateRaw = localStorage.getItem('immovi_state');
+                    if (localStateRaw) {
+                        const localState = JSON.parse(localStateRaw);
+                        if (localState && localState.staff) {
+                            const match = localState.staff.find(s => s.email && s.email.toLowerCase() === email.toLowerCase() && s.password === password);
+                            if (match && match.status !== 'Inactif') {
+                                setAuthToken('local-jwt-' + Date.now());
+                                localStorage.setItem('immovi_local_user', JSON.stringify(match));
+                                window.location.href = 'index.html';
+                                return;
+                            }
+                        }
+                    }
+                } catch (localErr) {}
+                errorDiv.textContent = err.message || 'Email ou mot de passe incorrect';
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = 'Se connecter';

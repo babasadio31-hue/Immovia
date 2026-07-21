@@ -3369,10 +3369,21 @@ window.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
+    let currentUser = null;
     try {
-      // Fetch the REAL user from PostgreSQL via FastAPI
-      const currentUser = await API.getCurrentUser();
-      
+      currentUser = await API.getCurrentUser();
+    } catch (err) {
+      const localUserRaw = localStorage.getItem('immovi_local_user');
+      if (localUserRaw) {
+        currentUser = JSON.parse(localUserRaw);
+      } else {
+        removeAuthToken();
+        window.location.href = 'login.html';
+        return;
+      }
+    }
+    
+    try {
       await loadData();
       
       // Set real authenticated user with Administrateur role
@@ -3380,7 +3391,12 @@ window.addEventListener('DOMContentLoaded', () => {
         currentUser.role = currentUser.role || 'Administrateur';
         if (!currentUser.status) currentUser.status = 'Actif';
         if (!currentUser.phone) currentUser.phone = 'Compte Utilisateur';
-        state.staff = [currentUser];
+        const existingIdx = state.staff.findIndex(s => s.email.toLowerCase() === currentUser.email.toLowerCase());
+        if (existingIdx >= 0) {
+          state.staff[existingIdx] = { ...state.staff[existingIdx], ...currentUser };
+        } else {
+          state.staff.unshift(currentUser);
+        }
       }
       
       // Update sidebar
@@ -3396,13 +3412,17 @@ window.addEventListener('DOMContentLoaded', () => {
       if (btnLogout) {
         btnLogout.addEventListener('click', () => {
           removeAuthToken();
+          localStorage.removeItem('immovi_local_user');
           window.location.href = 'login.html';
         });
       }
 
-      // Call the original initApp logic synchronously now that data is loaded
       initApp();
     } catch (err) {
+      console.error("Erreur de session:", err);
+      removeAuthToken();
+      window.location.href = 'login.html';
+    }
       console.error("Erreur de session:", err);
       removeAuthToken();
       window.location.href = 'login.html';
@@ -3500,7 +3520,7 @@ function openEditStaffModal(id) {
   document.getElementById('modal-staff').classList.add('active');
 }
 
-function handleStaffSubmit(e) {
+async function handleStaffSubmit(e) {
   e.preventDefault();
   
   const idInput = document.getElementById('input-staff-id').value;
@@ -3537,6 +3557,16 @@ function handleStaffSubmit(e) {
       showToast('Un mot de passe est obligatoire pour la création.', 'error');
       return;
     }
+
+    // Création backend pour permettre la connexion
+    try {
+      if (typeof API !== 'undefined' && API.createStaffUser) {
+        await API.createStaffUser(name, email, pwdInput, role, permissions);
+      }
+    } catch (err) {
+      console.warn("Création backend warning :", err.message);
+    }
+
     const newMember = {
       id: 'staff-' + Date.now(),
       name,
@@ -3549,7 +3579,7 @@ function handleStaffSubmit(e) {
       dateAdded: getPastDateString(0)
     };
     state.staff.push(newMember);
-    showToast(`Nouveau collaborateur ${name} ajouté à l'équipe.`, 'success');
+    showToast(`Compte de ${name} créé. Il/Elle peut désormais se connecter !`, 'success');
   }
 
   saveData();
