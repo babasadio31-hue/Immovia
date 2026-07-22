@@ -1815,6 +1815,11 @@ body {
   border: 1px solid var(--glass-border) !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.25s ease-in-out;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.25rem;
+  cursor: pointer;
 }
 
 .theme-card:hover {
