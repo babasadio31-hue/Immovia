@@ -1658,67 +1658,81 @@ function openOwnerDossier(ownerId) {
     document.getElementById('statement-owner-contact').textContent = `Tél: ${owner.phone} | Email: ${owner.email} | Commission : ${owner.commissionRate}%`;
     document.getElementById('statement-current-date').textContent = `Bamako, le ${getTodayFrenchDateString()}`;
     
-    // Calcul des totaux pour le relevé
-    const sumGross = sumCollected;
-    const sumCom = ownerIncomes.reduce((sum, t) => {
-      let rate = owner.commissionRate;
-      const prop = state.properties.find(p => p.id === t.propertyId);
-      if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
-      return sum + (t.amount * rate) / 100;
-    }, 0);
-    
-    const ownerWithdrawals = state.transactions.filter(t => 
-        t.type === 'expense' && 
-        ownerPropIds.includes(t.propertyId)
+    function renderStatement() {
+      // Calcul des totaux pour le relevé (filtrés)
+      const allTxFiltered = state.transactions.filter(t => 
+        ownerPropIds.includes(t.propertyId) &&
+        matchesDateFilter(t.date, 'statement-filter-type', 'statement-filter-day', 'statement-filter-month', 'statement-filter-year')
       );
-    const sumWithdrawn = ownerWithdrawals.reduce((sum, w) => sum + w.amount, 0);
-    const sumBalance = pendingNet;
-    
-    document.getElementById('statement-val-gross').textContent = formatCurrency(sumGross);
-    document.getElementById('statement-val-com').textContent = formatCurrency(sumCom);
-    document.getElementById('statement-val-withdrawn').textContent = formatCurrency(sumWithdrawn);
-    document.getElementById('statement-val-balance').textContent = formatCurrency(sumBalance);
-    
-    // Remplir le grand livre du relevé
-    const tbodyStatement = document.getElementById('body-statement-ledger');
-    if (tbodyStatement) {
-      tbodyStatement.innerHTML = '';
-      const allOwnerTx = state.transactions.filter(t => 
-        ownerPropIds.includes(t.propertyId)
-      ).sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      if (allOwnerTx.length === 0) {
-        tbodyStatement.innerHTML = '<tr><td colspan="5" class="text-center">Aucune transaction enregistrée.</td></tr>';
-      } else {
-        allOwnerTx.forEach(t => {
-          const typeLabel = t.type === 'income' 
-            ? '<span class="badge badge-green">Loyer perçu</span>' 
-            : '<span class="badge badge-rose">Retrait</span>';
-            
-          const brutDisplay = t.type === 'income' 
-            ? `<span class="value-green">+${formatCurrency(t.amount)}</span>` 
-            : `-`;
-            
-          let rate = owner.commissionRate;
-          const prop = state.properties.find(p => p.id === t.propertyId);
-          if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
-            
-          const netRepayeDisplay = t.type === 'income'
-            ? `<span style="color: var(--color-text-primary);">+${formatCurrency(t.amount - (t.amount * rate / 100))}</span>`
-            : `<span class="value-rose">-${formatCurrency(t.amount)}</span>`;
-            
-          tbodyStatement.innerHTML += `
-            <tr>
-              <td>${formatDateString(t.date)}</td>
-              <td style="font-weight: 500;">${t.description}</td>
-              <td>${typeLabel}</td>
-              <td class="text-right" style="font-weight: 600;">${brutDisplay}</td>
-              <td class="text-right" style="font-weight: 600;">${netRepayeDisplay}</td>
-            </tr>
-          `;
-        });
+      const filteredIncomes = allTxFiltered.filter(t => t.type === 'income');
+      const filteredWithdrawals = allTxFiltered.filter(t => t.type === 'expense');
+      
+      const sumGross = filteredIncomes.reduce((sum, t) => sum + t.amount, 0);
+      const sumCom = filteredIncomes.reduce((sum, t) => {
+        let rate = owner.commissionRate;
+        const prop = state.properties.find(p => p.id === t.propertyId);
+        if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+        return sum + (t.amount * rate) / 100;
+      }, 0);
+      const sumWithdrawn = filteredWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+      const sumBalance = (sumGross - sumCom) - sumWithdrawn;
+      
+      document.getElementById('statement-val-gross').textContent = formatCurrency(sumGross);
+      document.getElementById('statement-val-com').textContent = formatCurrency(sumCom);
+      document.getElementById('statement-val-withdrawn').textContent = formatCurrency(sumWithdrawn);
+      document.getElementById('statement-val-balance').textContent = formatCurrency(sumBalance);
+      
+      // Remplir le grand livre du relevé
+      const tbodyStatement = document.getElementById('body-statement-ledger');
+      if (tbodyStatement) {
+        tbodyStatement.innerHTML = '';
+        const sortedTx = [...allTxFiltered].sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (sortedTx.length === 0) {
+          tbodyStatement.innerHTML = '<tr><td colspan="5" class="text-center">Aucune transaction enregistrée.</td></tr>';
+        } else {
+          sortedTx.forEach(t => {
+            const typeLabel = t.type === 'income' 
+              ? '<span class="badge badge-green">Loyer perçu</span>' 
+              : '<span class="badge badge-rose">Retrait</span>';
+              
+            const brutDisplay = t.type === 'income' 
+              ? `<span class="value-green">+${formatCurrency(t.amount)}</span>` 
+              : `-`;
+              
+            let rate = owner.commissionRate;
+            const prop = state.properties.find(p => p.id === t.propertyId);
+            if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+              
+            const netRepayeDisplay = t.type === 'income'
+              ? `<span style="color: var(--color-text-primary);">+${formatCurrency(t.amount - (t.amount * rate / 100))}</span>`
+              : `<span class="value-rose">-${formatCurrency(t.amount)}</span>`;
+              
+            tbodyStatement.innerHTML += `
+              <tr>
+                <td>${formatDateString(t.date)}</td>
+                <td style="font-weight: 500;">${t.description}</td>
+                <td>${typeLabel}</td>
+                <td class="text-right" style="font-weight: 600;">${brutDisplay}</td>
+                <td class="text-right" style="font-weight: 600;">${netRepayeDisplay}</td>
+              </tr>
+            `;
+          });
+        }
       }
     }
+
+    setupDateFilterControls('statement-filter-type', 'statement-filter-day', 'statement-filter-month', 'statement-filter-year', renderStatement);
+    document.getElementById('btn-clear-statement').onclick = () => {
+      document.getElementById('statement-filter-type').value = 'all';
+      document.getElementById('statement-filter-day').style.display = 'none';
+      document.getElementById('statement-filter-month').style.display = 'none';
+      document.getElementById('statement-filter-year').style.display = 'none';
+      renderStatement();
+    };
+
+    renderStatement();
     
     document.getElementById('modal-statement').classList.add('active');
   };

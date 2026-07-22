@@ -1441,6 +1441,10 @@ body {
   body.print-statement-active .app-container {
     display: none !important;
   }
+  body.print-statement-active #modal-statement .modal-header,
+  body.print-statement-active #modal-statement .no-print {
+    display: none !important;
+  }
   body.print-statement-active #modal-statement {
     display: block !important;
     position: relative !important;
