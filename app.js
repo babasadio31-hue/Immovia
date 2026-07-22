@@ -427,6 +427,16 @@ function setupEventListeners() {
   setupDateFilterControls('sorties-filter-type', 'sorties-filter-day', 'sorties-filter-month', 'sorties-filter-year', () => renderAccounting());
   setupDateFilterControls('entrees-filter-type', 'entrees-filter-day', 'entrees-filter-month', 'entrees-filter-year', () => renderAccounting());
   setupDateFilterControls('dashboard-filter-type', 'dashboard-filter-day', 'dashboard-filter-month', 'dashboard-filter-year', () => renderDashboard());
+  
+  const btnPrintEntrees = document.getElementById('btn-print-entrees');
+  if (btnPrintEntrees) {
+    btnPrintEntrees.addEventListener('click', () => {
+      document.body.classList.add('print-entrees-active');
+      window.print();
+      document.body.classList.remove('print-entrees-active');
+    });
+  }
+
   const btnPrintSorties = document.getElementById('btn-print-sorties');
   if (btnPrintSorties) {
     btnPrintSorties.addEventListener('click', () => {

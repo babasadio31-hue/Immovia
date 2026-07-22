@@ -1637,7 +1637,71 @@ body {
     color: black !important;
   }
   
-  /* Tenant Dossier Printing Configuration */
+  /* Entrées Printing Configuration */
+  body.print-entrees-active {
+    background: white !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  body.print-entrees-active .sidebar,
+  body.print-entrees-active .top-header,
+  body.print-entrees-active .kpi-grid,
+  body.print-entrees-active .card-header,
+  body.print-entrees-active .accounting-sub-btn,
+  body.print-entrees-active #panel-accounting-sorties,
+  body.print-entrees-active .toolbar,
+  body.print-entrees-active .no-print {
+    display: none !important;
+  }
+  body.print-entrees-active .app-container {
+    display: block !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  body.print-entrees-active .main-content {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  body.print-entrees-active .view-wrapper {
+    display: block !important;
+    padding: 0 !important;
+  }
+  body.print-entrees-active .tab-view {
+    display: none !important;
+  }
+  body.print-entrees-active .tab-view#view-accounting {
+    display: block !important;
+  }
+  body.print-entrees-active .card.glass {
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+  }
+  body.print-entrees-active #panel-accounting-entrées {
+    display: block !important;
+    overflow: visible !important;
+  }
+  body.print-entrees-active .print-only {
+    display: block !important;
+  }
+  body.print-entrees-active h4, 
+  body.print-entrees-active td, 
+  body.print-entrees-active th,
+  body.print-entrees-active span.badge {
+    color: black !important;
+  }
+  
+  
+/* Tenant Dossier Printing Configuration */
   body.print-tenant-dossier-active {
     background: white !important;
     display: block !important;
