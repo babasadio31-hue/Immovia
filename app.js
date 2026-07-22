@@ -297,6 +297,27 @@ function handlePropertyOwnerChange(e) {
   }
 }
 
+// Helper pour lier les filtres de date globalement
+function setupDateFilterControls(typeId, dayId, monthId, yearId, callback) {
+  const filterType = document.getElementById(typeId);
+  const filterDay = document.getElementById(dayId);
+  const filterMonth = document.getElementById(monthId);
+  const filterYear = document.getElementById(yearId);
+  
+  if (filterType) {
+    filterType.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (filterDay) filterDay.style.display = val === 'day' ? 'block' : 'none';
+      if (filterMonth) filterMonth.style.display = val === 'month' ? 'block' : 'none';
+      if (filterYear) filterYear.style.display = val === 'year' ? 'block' : 'none';
+      callback();
+    });
+  }
+  if (filterDay) filterDay.addEventListener('change', callback);
+  if (filterMonth) filterMonth.addEventListener('change', callback);
+  if (filterYear) filterYear.addEventListener('input', callback);
+}
+
 function setupEventListeners() {
 
   // Onglets Paramètres (Général / Apparence)
@@ -404,25 +425,7 @@ function setupEventListeners() {
   document.getElementById('btn-back-to-owners').addEventListener('click', () => switchTab('owners'));
 
   // Helper pour lier les filtres de date (Dashboard, Entrées, Sorties)
-  function setupDateFilterControls(typeId, dayId, monthId, yearId, callback) {
-    const filterType = document.getElementById(typeId);
-    const filterDay = document.getElementById(dayId);
-    const filterMonth = document.getElementById(monthId);
-    const filterYear = document.getElementById(yearId);
-    
-    if (filterType) {
-      filterType.addEventListener('change', (e) => {
-        const val = e.target.value;
-        if (filterDay) filterDay.style.display = val === 'day' ? 'block' : 'none';
-        if (filterMonth) filterMonth.style.display = val === 'month' ? 'block' : 'none';
-        if (filterYear) filterYear.style.display = val === 'year' ? 'block' : 'none';
-        callback();
-      });
-    }
-    if (filterDay) filterDay.addEventListener('change', callback);
-    if (filterMonth) filterMonth.addEventListener('change', callback);
-    if (filterYear) filterYear.addEventListener('input', callback);
-  }
+  // (Moved to global scope)
 
   setupDateFilterControls('sorties-filter-type', 'sorties-filter-day', 'sorties-filter-month', 'sorties-filter-year', () => renderAccounting());
   setupDateFilterControls('entrees-filter-type', 'entrees-filter-day', 'entrees-filter-month', 'entrees-filter-year', () => renderAccounting());
