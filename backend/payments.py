@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 import os
-import requests
+import json
 import uuid
+import urllib.request
+import urllib.error
 from datetime import datetime, timedelta
 from . import database, models, schemas, auth
 
@@ -43,24 +45,28 @@ def create_checkout_session(
         "webhook_url": "https://immovia-production.up.railway.app/api/subscriptions/webhook"
     }
 
-    headers = {
-        "Authorization": f"Bearer {MONEROH_SECRET_KEY}",
-        "Content-Type": "application/json",
-        "X-Api-Key": MONEROH_SECRET_KEY
-    }
-
     try:
-        # Appel vers l'API Moneroh
-        res = requests.post(f"{MONEROH_API_URL}/checkout", json=payload, headers=headers, timeout=10)
-        if res.status_code in [200, 201]:
-            data = res.json()
-            checkout_url = data.get("checkout_url") or data.get("payment_url") or data.get("url")
-            return {
-                "status": "success",
-                "checkout_url": checkout_url,
-                "reference": reference,
-                "trial_period_days": trial_days
-            }
+        req_data = json.dumps(payload).encode('utf-8')
+        req = urllib.request.Request(
+            f"{MONEROH_API_URL}/checkout",
+            data=req_data,
+            headers={
+                "Authorization": f"Bearer {MONEROH_SECRET_KEY}",
+                "Content-Type": "application/json",
+                "X-Api-Key": MONEROH_SECRET_KEY
+            },
+            method='POST'
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status in [200, 201]:
+                res_body = json.loads(response.read().decode('utf-8'))
+                checkout_url = res_body.get("checkout_url") or res_body.get("payment_url") or res_body.get("url")
+                return {
+                    "status": "success",
+                    "checkout_url": checkout_url,
+                    "reference": reference,
+                    "trial_period_days": trial_days
+                }
     except Exception as e:
         print(f"Moneroh API Direct Call Warning: {e}")
 
