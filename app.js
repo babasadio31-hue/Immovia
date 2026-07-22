@@ -3562,14 +3562,14 @@ function setupSubscriptionModal() {
     if (btnOpenCancel) btnOpenCancel.style.display = 'none';
   } else {
     if (badge) {
-      badge.textContent = 'Plan Premium — Essai (31j)';
+      badge.textContent = 'Plan Premium — Actif';
       badge.style.background = 'rgba(139, 92, 246, 0.2)';
       badge.style.color = '#a78bfa';
       badge.style.borderColor = 'rgba(139, 92, 246, 0.4)';
     }
-    if (planEl) planEl.textContent = 'Premium (15 000 FCFA / mois)';
-    if (trialEl) trialEl.textContent = '31 jours offerts';
-    if (dateEl) dateEl.textContent = '22 Août 2026';
+    if (planEl) planEl.textContent = 'Premium (1 000 FCFA / mois)';
+    if (trialEl) trialEl.textContent = 'Aucun (Paiement immédiat)';
+    if (dateEl) dateEl.textContent = 'Aujourd\\'hui';
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
   }
 

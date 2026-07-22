@@ -376,7 +376,7 @@
             if (headerDiv) {
                 const badge = document.createElement('div');
                 badge.style.cssText = 'background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 500;';
-                badge.innerHTML = '✨ <strong>Plan Premium (15.000 FCFA/mois)</strong> — 31 jours d\'essai offerts (Carte enregistrée, 0 FCFA débité aujourd\'hui).';
+                badge.innerHTML = '✨ <strong>Plan Premium (1.000 FCFA/mois)</strong> — Paiement immédiat requis pour accéder à l\'application.';
                 headerDiv.appendChild(badge);
             }
         }
@@ -401,7 +401,7 @@
                 await API.login(email, password);
 
                 if (selectedPlan === 'premium') {
-                    btnSubmit.textContent = 'Initialisation Moneroh (Essai 31 jours)...';
+                    btnSubmit.textContent = 'Initialisation du paiement sécurisé...';
                     try {
                         const sub = await API.createSubscriptionCheckout('premium');
                         if (sub && sub.checkout_url) {

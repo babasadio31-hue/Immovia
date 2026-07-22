@@ -21,10 +21,10 @@ def create_checkout_session(
 ):
     """
     Initialise la session de paiement / carte avec Moneroh (Axasara)
-    pour le plan Premium à 15.000 FCFA avec 31 jours d'essai offert.
+    pour le plan Premium à 1.000 FCFA sans essai.
     """
-    amount = 15000 if plan == "premium" else 0
-    trial_days = 31
+    amount = 1000 if plan == "premium" else 0
+    trial_days = 0
 
     reference = f"SUB-{uuid.uuid4().hex[:8].upper()}"
 
@@ -32,14 +32,13 @@ def create_checkout_session(
     payload = {
         "amount": amount,
         "currency": "XOF",
-        "description": f"Abonnement Immovi Premium (31 jours d'essai) - {current_user.email}",
+        "description": f"Abonnement Immovi Premium (Paiement immédiat) - {current_user.email}",
         "customer": {
             "name": current_user.name,
             "email": current_user.email,
             "phone": current_user.phone or "+221770000000"
         },
         "reference": reference,
-        "trial_period_days": trial_days,
         "return_url": "https://immovia-production.up.railway.app/index.html?payment=success",
         "cancel_url": "https://immovia-production.up.railway.app/landing.html?payment=cancelled",
         "webhook_url": "https://immovia-production.up.railway.app/api/subscriptions/webhook"
@@ -71,15 +70,15 @@ def create_checkout_session(
         print(f"Moneroh API Direct Call Warning: {e}")
 
     # Fallback sécurisé en mode démo / direct checkout si l'API est en cours de propagation
-    trial_end = (datetime.now() + timedelta(days=31)).strftime("%Y-%m-%d")
+    trial_end = datetime.now().strftime("%Y-%m-%d")
     return {
         "status": "success",
-        "checkout_url": f"https://checkout.moneroh.io/pay?ref={reference}&amount=15000&trial=31",
+        "checkout_url": f"https://checkout.moneroh.io/pay?ref={reference}&amount=1000&trial=0",
         "reference": reference,
         "plan": "Premium",
-        "trial_period_days": 31,
+        "trial_period_days": 0,
         "trial_end_date": trial_end,
-        "message": "Session d'essai 31 jours avec carte Moneroh initialisée avec succès."
+        "message": "Session de paiement 1000 FCFA initialisée avec succès."
     }
 
 @router.post("/webhook")
