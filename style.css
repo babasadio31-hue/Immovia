@@ -821,6 +821,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
 }
 
 .data-table td {
@@ -1488,8 +1489,9 @@ body {
 }
 
 /* Custom formatting to prevent word wrapping in tables */
-.data-table th {
+.data-table th, th {
   white-space: nowrap !important;
+  text-align: center !important;
 }
 .data-table td.text-right {
   white-space: nowrap !important;
@@ -1559,6 +1561,10 @@ body {
   .data-table th, .data-table td, .data-table td.text-right {
     white-space: normal !important;
     word-break: break-word !important;
+  }
+  
+  th {
+    font-size: 13px !important;
   }
 
   
