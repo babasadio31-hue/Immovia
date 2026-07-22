@@ -26,6 +26,15 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    status: Optional[str] = None
+    permissions: Optional[Any] = None
+    password: Optional[str] = None
+
 class OwnerBase(BaseModel):
     type: str
     name: str

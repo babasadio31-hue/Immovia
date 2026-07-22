@@ -146,12 +146,13 @@ function handleLogout() {
 
 async function loadData() {
   try {
-    const [apiOwners, apiProperties, apiTenants, apiTransactions, apiSettings] = await Promise.all([
+    const [apiOwners, apiProperties, apiTenants, apiTransactions, apiSettings, apiUsers] = await Promise.all([
       API.getOwners().catch(() => []),
       API.getProperties().catch(() => []),
       API.getTenants().catch(() => []),
       API.getTransactions().catch(() => []),
-      API.getSettings().catch(() => null)
+      API.getSettings().catch(() => null),
+      (typeof API.getUsers === 'function') ? API.getUsers().catch(() => []) : Promise.resolve([])
     ]);
     state.owners = (apiOwners || []).map(o => {
         let cr = 10;
@@ -184,6 +185,11 @@ async function loadData() {
       propertyId: t.property_id,
       rent: t.rent_amount,
       caution: t.caution_amount
+    }));
+
+    state.staff = (apiUsers || []).map(u => ({
+      ...u,
+      dateAdded: u.date_added
     }));
     
     const currentTheme = localStorage.getItem('immovi_theme') || (state.agencySettings && state.agencySettings.theme) || 'dark';
@@ -3786,7 +3792,23 @@ async function handleStaffSubmit(e) {
       member.role = role;
       member.status = status;
       member.permissions = permissions;
-      if (pwdInput) member.password = pwdInput;
+      
+      const updatePayload = {
+        name, phone, email, role, status, permissions
+      };
+      if (pwdInput) {
+        member.password = pwdInput;
+        updatePayload.password = pwdInput;
+      }
+      
+      try {
+        if (typeof API !== 'undefined' && API.updateUser) {
+          await API.updateUser(idInput, updatePayload);
+        }
+      } catch (err) {
+        console.warn("Mise à jour backend warning :", err.message);
+      }
+      
       showToast(`Collaborateur ${name} mis à jour.`, 'success');
     }
   } else {
@@ -3829,6 +3851,13 @@ function toggleStaffStatus(id) {
   const member = state.staff.find(m => m.id === id);
   if (member) {
     member.status = member.status === 'Actif' ? 'Inactif' : 'Actif';
+    
+    try {
+      if (typeof API !== 'undefined' && API.updateUser) {
+        API.updateUser(member.id, { status: member.status }).catch(err => console.warn(err));
+      }
+    } catch(e) {}
+    
     saveData();
     renderStaffTable();
     showToast(`Statut de ${member.name} mis à jour : ${member.status}`, 'success');
@@ -3841,6 +3870,12 @@ function deleteStaff(id) {
 
   showCustomConfirm(`Voulez-vous vraiment retirer ${member.name} de l'équipe ?`).then(confirmed => {
     if (confirmed) {
+      try {
+        if (typeof API !== 'undefined' && API.deleteUser) {
+          API.deleteUser(id);
+        }
+      } catch (e) {}
+      
       state.staff = state.staff.filter(m => m.id !== id);
       saveData();
       renderStaffTable();

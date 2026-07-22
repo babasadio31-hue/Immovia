@@ -89,3 +89,46 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@router.get("/users", response_model=list[schemas.User])
+def read_all_users(current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    if current_user.role != "Administrateur":
+        raise HTTPException(status_code=403, detail="Not authorized to view all users")
+    return db.query(models.User).all()
+
+@router.put("/users/{user_id}", response_model=schemas.User)
+def update_user(user_id: str, user_update: schemas.UserUpdate, current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    if current_user.role != "Administrateur" and current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this user")
+    
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user_update.name is not None: db_user.name = user_update.name
+    if user_update.phone is not None: db_user.phone = user_update.phone
+    if user_update.email is not None: db_user.email = user_update.email
+    if user_update.role is not None: db_user.role = user_update.role
+    if user_update.status is not None: db_user.status = user_update.status
+    if user_update.permissions is not None: db_user.permissions = user_update.permissions
+    if user_update.password is not None and len(user_update.password) > 0:
+        db_user.password_hash = security.get_password_hash(user_update.password)
+        
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.delete("/users/{user_id}")
+def delete_user(user_id: str, current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    if current_user.role != "Administrateur":
+        raise HTTPException(status_code=403, detail="Not authorized to delete users")
+    if current_user.id == user_id:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+        
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    db.delete(db_user)
+    db.commit()
+    return {"message": "User deleted"}
