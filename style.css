@@ -1827,6 +1827,15 @@ body {
   border-color: var(--color-primary) !important;
 }
 
+/* Settings Sub-Tabs Visibility */
+.settings-tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.settings-tab-content.active {
+  display: block;
+}
+
 .theme-card.active-theme {
   border: 2px solid var(--color-primary) !important;
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.35) !important;
