@@ -3487,6 +3487,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
       }
 
+      initSettingsSubTabs();
       setupSubscriptionModal();
       initApp();
     } catch (err) {
@@ -3571,6 +3572,61 @@ function setupSubscriptionModal() {
       showToast("Résiliation enregistrée. Votre compte repassera au Plan Starter (Gratuit) à la fin de votre période d'essai.", "info");
     });
   }
+}
+
+// --- Rendu & Actions pour la page Paramètres (Settings) ---
+function renderSettingsView() {
+  if (state.agencySettings) {
+    const s = state.agencySettings;
+    const inputName = document.getElementById('input-settings-name');
+    const inputAddress = document.getElementById('input-settings-address');
+    const inputPhone = document.getElementById('input-settings-phone');
+    const inputEmail = document.getElementById('input-settings-email');
+    const inputCurrency = document.getElementById('input-settings-currency');
+    const inputCommission = document.getElementById('input-settings-commission');
+    const inputNif = document.getElementById('input-settings-nif');
+    const inputSlogan = document.getElementById('input-settings-slogan');
+
+    if (inputName) inputName.value = s.name || '';
+    if (inputAddress) inputAddress.value = s.address || '';
+    if (inputPhone) inputPhone.value = s.phone || '';
+    if (inputEmail) inputEmail.value = s.email || '';
+    if (inputCurrency) inputCurrency.value = s.currency || 'FCFA';
+    if (inputCommission) inputCommission.value = s.commissionRate || 10;
+    if (inputNif) inputNif.value = s.nif || '';
+    if (inputSlogan) inputSlogan.value = s.slogan || '';
+  }
+
+  // Actualiser la carte d'abonnement selon l'utilisateur connecté
+  setupSubscriptionModal();
+}
+
+function initSettingsSubTabs() {
+  document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-settings-target');
+      
+      document.querySelectorAll('.settings-tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.borderBottomColor = 'transparent';
+        b.style.color = 'var(--color-text-muted)';
+      });
+
+      btn.classList.add('active');
+      btn.style.borderBottomColor = 'var(--color-primary)';
+      btn.style.color = 'var(--color-text-primary)';
+
+      document.querySelectorAll('.settings-tab-content').forEach(content => {
+        if (content.id === targetId) {
+          content.style.display = 'block';
+          content.classList.add('active');
+        } else {
+          content.style.display = 'none';
+          content.classList.remove('active');
+        }
+      });
+    });
+  });
 }
 
 // --- Rendu & Actions pour la page Personnel (Staff) ---
