@@ -369,14 +369,14 @@
     <script src="api.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const selectedPlan = urlParams.get('plan') || 'premium';
+        const selectedPlan = urlParams.get('plan');
 
         if (selectedPlan === 'premium') {
             const headerDiv = document.querySelector('.login-header');
             if (headerDiv) {
                 const badge = document.createElement('div');
                 badge.style.cssText = 'background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 500;';
-                badge.innerHTML = '✨ <strong>Plan Premium (15.000 FCFA/mois)</strong> — 31 jours d\'essai offerts (Carte enregistrée via <strong>Moneroh</strong>, 0 FCFA débité aujourd\'hui).';
+                badge.innerHTML = '✨ <strong>Plan Premium (15.000 FCFA/mois)</strong> — 31 jours d\'essai offerts (Carte enregistrée, 0 FCFA débité aujourd\'hui).';
                 headerDiv.appendChild(badge);
             }
         }
