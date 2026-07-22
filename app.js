@@ -3452,6 +3452,7 @@ window.addEventListener('DOMContentLoaded', () => {
       
       // Set real authenticated user with role and permissions intact
       if (currentUser) {
+        state.currentUser = currentUser;
         // Look up member in state.staff for exact permissions/role set by admin
         const existingStaff = state.staff.find(s => s.email && currentUser.email && s.email.toLowerCase() === currentUser.email.toLowerCase());
         if (existingStaff) {
