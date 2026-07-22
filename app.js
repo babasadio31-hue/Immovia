@@ -3487,6 +3487,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
       }
 
+      setupSubscriptionModal();
       initApp();
     } catch (err) {
       console.error("Erreur de session:", err);
@@ -3496,6 +3497,51 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   startApp();
 });
+
+// --- Gestionnaire de Résiliation d'Abonnement ---
+function setupSubscriptionModal() {
+  const btnOpenCancel = document.getElementById('btn-open-cancel-sub');
+  const modalCancel = document.getElementById('modal-cancel-subscription');
+  const btnCloseCancel = document.getElementById('btn-close-cancel-sub');
+  const btnKeepSub = document.getElementById('btn-keep-sub');
+  const btnConfirmCancel = document.getElementById('btn-confirm-cancel-sub');
+
+  if (btnOpenCancel && modalCancel) {
+    btnOpenCancel.addEventListener('click', () => {
+      modalCancel.classList.add('active');
+    });
+  }
+
+  const closeModal = () => {
+    if (modalCancel) modalCancel.classList.remove('active');
+  };
+
+  if (btnCloseCancel) btnCloseCancel.addEventListener('click', closeModal);
+  if (btnKeepSub) btnKeepSub.addEventListener('click', closeModal);
+
+  if (btnConfirmCancel) {
+    btnConfirmCancel.addEventListener('click', () => {
+      closeModal();
+      
+      const badge = document.getElementById('sub-card-badge');
+      const planEl = document.getElementById('sub-card-plan');
+      if (badge) {
+        badge.textContent = 'Résiliation programmée';
+        badge.style.background = 'rgba(244, 63, 94, 0.15)';
+        badge.style.color = 'var(--color-rose-hover)';
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.3)';
+      }
+      if (planEl) {
+        planEl.textContent = 'Starter (Gratuit dès le 22/08/2026)';
+      }
+      if (btnOpenCancel) {
+        btnOpenCancel.style.display = 'none';
+      }
+
+      showToast("Résiliation enregistrée. Votre compte repassera au Plan Starter (Gratuit) à la fin de votre période d'essai.", "info");
+    });
+  }
+}
 
 // --- Rendu & Actions pour la page Personnel (Staff) ---
 function renderStaffTable() {

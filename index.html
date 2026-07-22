@@ -1219,6 +1219,37 @@
                   </button>
                 </div>
               </div>
+            <!-- Subscription & Billing settings card -->
+            <div class="card glass" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <h4 class="card-title" style="margin-bottom: 0;">Mon Abonnement</h4>
+                  <span class="badge badge-purple" id="sub-card-badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4);">Plan Premium — Essai (31j)</span>
+                </div>
+                <p class="subtitle">Gérez la souscription de votre agence, vos échéances et vos options de facturation.</p>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                  <span style="color: var(--color-text-muted);">Formule actuelle :</span>
+                  <strong style="color: var(--color-text-primary);" id="sub-card-plan">Premium (15 000 FCFA / mois)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                  <span style="color: var(--color-text-muted);">Période d'essai :</span>
+                  <span style="color: var(--color-emerald); font-weight: 600;" id="sub-card-trial">31 jours offerts</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                  <span style="color: var(--color-text-muted);">Prochain prélèvement :</span>
+                  <span style="color: var(--color-text-primary); font-weight: 500;" id="sub-card-next-date">22 Août 2026</span>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                <button class="btn btn-outline btn-sm" id="btn-open-cancel-sub" style="border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                  <span>Résilier mon abonnement</span>
+                </button>
+              </div>
             </div>
             
             </div>
@@ -1874,6 +1905,46 @@
       <div class="modal-footer" style="justify-content: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
         <button type="button" class="btn btn-outline" id="btn-confirm-cancel" style="min-width: 120px;">Annuler</button>
         <button type="button" class="btn btn-primary" id="btn-confirm-ok" style="min-width: 120px; background: var(--color-rose); border-color: var(--color-rose); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">Oui, Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Résiliation d'Abonnement -->
+  <div class="modal-overlay" id="modal-cancel-subscription" style="z-index: 10000;">
+    <div class="modal-card glass animate-slide-up" style="max-width: 480px; width: 90%;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
+        <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--color-rose-hover); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span>Résilier l'abonnement Premium</span>
+        </h4>
+        <button class="modal-close" id="btn-close-cancel-sub">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1rem;">
+        <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary); margin: 0;">
+          Êtes-vous sûr de vouloir résilier votre abonnement Premium ? <br><br>
+          Vous conserverez tous vos accès Premium jusqu'à la fin de votre période d'essai / payée le <strong style="color: var(--color-text-primary);" id="cancel-modal-date">22 Août 2026</strong>. <br><br>
+          Après cette date, votre compte basculera automatiquement vers le <strong>Plan Starter (Gratuit)</strong>.
+        </p>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+          <label class="form-label" style="font-size: 0.85rem;">Motif de résiliation (Optionnel)</label>
+          <select id="select-cancel-reason" class="form-select" style="font-size: 0.9rem; padding: 0.5rem;">
+            <option value="too_expensive">Le tarif est trop élevé</option>
+            <option value="not_using">Je n'utilise plus l'application</option>
+            <option value="missing_features">Il manque des fonctionnalités</option>
+            <option value="other">Autre raison</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-keep-sub">Conserver mon abonnement</button>
+        <button type="button" class="btn btn-sm" id="btn-confirm-cancel-sub" style="background: var(--color-rose); color: white; border-color: var(--color-rose);">Confirmer la résiliation</button>
       </div>
     </div>
   </div>
