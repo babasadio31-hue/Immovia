@@ -10,8 +10,8 @@ from . import database, models, schemas, auth
 
 router = APIRouter(prefix="/api/subscriptions", tags=["Subscriptions & Payments"])
 
-MONEROH_SECRET_KEY = os.getenv("MONEROH_SECRET_KEY", "")
-MONEROH_API_URL = os.getenv("MONEROH_API_URL", "https://api.moneroh.io/v1")
+MONEROO_SECRET_KEY = os.getenv("MONEROO_SECRET_KEY", "")
+MONEROO_API_URL = os.getenv("MONEROO_API_URL", "https://api.moneroo.io/v1")
 
 @router.post("/checkout")
 def create_checkout_session(
@@ -20,7 +20,7 @@ def create_checkout_session(
     db: Session = Depends(database.get_db)
 ):
     """
-    Initialise la session de paiement / carte avec Moneroh (Axasara)
+    Initialise la session de paiement / carte avec Moneroo (Axasara)
     pour le plan Premium à 1.000 FCFA sans essai.
     """
     amount = 1000 if plan == "premium" else 0
@@ -28,7 +28,7 @@ def create_checkout_session(
 
     reference = f"SUB-{uuid.uuid4().hex[:8].upper()}"
 
-    # Structure du payload pour Moneroh API (Axasara)
+    # Structure du payload pour Moneroo API (Axasara)
     payload = {
         "amount": amount,
         "currency": "XOF",
@@ -47,12 +47,12 @@ def create_checkout_session(
     try:
         req_data = json.dumps(payload).encode('utf-8')
         req = urllib.request.Request(
-            f"{MONEROH_API_URL}/checkout",
+            f"{MONEROO_API_URL}/checkout",
             data=req_data,
             headers={
-                "Authorization": f"Bearer {MONEROH_SECRET_KEY}",
+                "Authorization": f"Bearer {MONEROO_SECRET_KEY}",
                 "Content-Type": "application/json",
-                "X-Api-Key": MONEROH_SECRET_KEY
+                "X-Api-Key": MONEROO_SECRET_KEY
             },
             method='POST'
         )
@@ -67,13 +67,13 @@ def create_checkout_session(
                     "trial_period_days": trial_days
                 }
     except Exception as e:
-        print(f"Moneroh API Direct Call Warning: {e}")
+        print(f"Moneroo API Direct Call Warning: {e}")
 
     # Fallback sécurisé en mode démo / direct checkout si l'API est en cours de propagation
     trial_end = datetime.now().strftime("%Y-%m-%d")
     return {
         "status": "success",
-        "checkout_url": f"https://checkout.moneroh.io/pay?ref={reference}&amount=1000&trial=0",
+        "checkout_url": f"https://checkout.moneroo.io/pay?ref={reference}&amount=1000&trial=0",
         "reference": reference,
         "plan": "Premium",
         "trial_period_days": 0,
@@ -82,13 +82,13 @@ def create_checkout_session(
     }
 
 @router.post("/webhook")
-async def moneroh_webhook(request: Request, db: Session = Depends(database.get_db)):
+async def moneroo_webhook(request: Request, db: Session = Depends(database.get_db)):
     """
-    Webhook pour recevoir la confirmation de prélèvement ou de souscription depuis Moneroh.
+    Webhook pour recevoir la confirmation de prélèvement ou de souscription depuis Moneroo.
     """
     try:
         data = await request.json()
-        print("Moneroh Webhook Received:", data)
+        print("Moneroo Webhook Received:", data)
         
         event_type = data.get("event") or data.get("type")
         customer_email = data.get("customer", {}).get("email") or data.get("email")
@@ -120,5 +120,5 @@ def get_subscription_status(current_user: models.User = Depends(auth.get_current
         "status": "Actif (Essai en cours)",
         "amount": "15 000 FCFA / mois",
         "trial_end_date": trial_end,
-        "gateway": "Moneroh (Axasara)"
+        "gateway": "Moneroo (Axasara)"
     }

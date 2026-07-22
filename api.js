@@ -164,7 +164,7 @@ const API = {
   getSettings: () => apiFetch('/settings/'),
   updateSettings: (settings) => apiFetch('/settings/', { method: 'PUT', body: JSON.stringify(settings) }),
 
-  // Abonnements SaaS & Paiements Moneroh
+  // Abonnements SaaS & Paiements Moneroo
   createSubscriptionCheckout: (plan = 'premium') => apiFetch(`/subscriptions/checkout?plan=${plan}`, { method: 'POST' }),
   getSubscriptionStatus: () => apiFetch('/subscriptions/status'),
 };
