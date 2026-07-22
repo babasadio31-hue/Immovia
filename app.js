@@ -3498,13 +3498,45 @@ window.addEventListener('DOMContentLoaded', () => {
   startApp();
 });
 
-// --- Gestionnaire de Résiliation d'Abonnement ---
+// --- Gestionnaire de Résiliation & Affichage d'Abonnement ---
 function setupSubscriptionModal() {
   const btnOpenCancel = document.getElementById('btn-open-cancel-sub');
   const modalCancel = document.getElementById('modal-cancel-subscription');
   const btnCloseCancel = document.getElementById('btn-close-cancel-sub');
   const btnKeepSub = document.getElementById('btn-keep-sub');
   const btnConfirmCancel = document.getElementById('btn-confirm-cancel-sub');
+
+  const badge = document.getElementById('sub-card-badge');
+  const planEl = document.getElementById('sub-card-plan');
+  const trialEl = document.getElementById('sub-card-trial');
+  const dateEl = document.getElementById('sub-card-next-date');
+
+  const currentUser = state.currentUser;
+  const isSuperAdmin = currentUser && (currentUser.role === 'Administrateur' || currentUser.email === 'admin@immovi.ml');
+
+  if (isSuperAdmin) {
+    if (badge) {
+      badge.textContent = 'Compte Fondateur — Illimité à vie';
+      badge.style.background = 'rgba(16, 185, 129, 0.15)';
+      badge.style.color = '#34d399';
+      badge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+    }
+    if (planEl) planEl.textContent = 'Super Admin / Fondateur (Gratuit à vie)';
+    if (trialEl) trialEl.textContent = 'Accès complet illimité';
+    if (dateEl) dateEl.textContent = 'Aucune échéance (Accès permanent)';
+    if (btnOpenCancel) btnOpenCancel.style.display = 'none';
+  } else {
+    if (badge) {
+      badge.textContent = 'Plan Premium — Essai (31j)';
+      badge.style.background = 'rgba(139, 92, 246, 0.2)';
+      badge.style.color = '#a78bfa';
+      badge.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+    }
+    if (planEl) planEl.textContent = 'Premium (15 000 FCFA / mois)';
+    if (trialEl) trialEl.textContent = '31 jours offerts';
+    if (dateEl) dateEl.textContent = '22 Août 2026';
+    if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
+  }
 
   if (btnOpenCancel && modalCancel) {
     btnOpenCancel.addEventListener('click', () => {
@@ -3523,8 +3555,6 @@ function setupSubscriptionModal() {
     btnConfirmCancel.addEventListener('click', () => {
       closeModal();
       
-      const badge = document.getElementById('sub-card-badge');
-      const planEl = document.getElementById('sub-card-plan');
       if (badge) {
         badge.textContent = 'Résiliation programmée';
         badge.style.background = 'rgba(244, 63, 94, 0.15)';
