@@ -3602,7 +3602,46 @@ function renderSettingsView() {
   setupSubscriptionModal();
 }
 
+// --- Système de Thème & Mode d'affichage (Clair / Sombre) ---
+function setThemeOption(theme) {
+  if (theme === 'light') {
+    document.documentElement.classList.add('theme-light');
+    localStorage.setItem('immovi_theme', 'light');
+  } else {
+    document.documentElement.classList.remove('theme-light');
+    localStorage.setItem('immovi_theme', 'dark');
+  }
+  updateThemeCardUI(theme);
+}
+window.setThemeOption = setThemeOption;
+
+function updateThemeCardUI(theme) {
+  const cardLight = document.getElementById('theme-card-light');
+  const cardDark = document.getElementById('theme-card-dark');
+
+  if (cardLight && cardDark) {
+    if (theme === 'light') {
+      cardLight.classList.add('active-theme');
+      cardDark.classList.remove('active-theme');
+    } else {
+      cardDark.classList.add('active-theme');
+      cardLight.classList.remove('active-theme');
+    }
+  }
+}
+
+function initThemeSystem() {
+  const savedTheme = localStorage.getItem('immovi_theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('theme-light');
+  } else {
+    document.documentElement.classList.remove('theme-light');
+  }
+  updateThemeCardUI(savedTheme);
+}
+
 function initSettingsSubTabs() {
+  initThemeSystem();
   document.querySelectorAll('.settings-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-settings-target');

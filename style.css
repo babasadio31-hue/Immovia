@@ -1809,6 +1809,42 @@ body {
   color: #64748b !important;
 }
 
+/* Theme Selector Cards */
+.theme-card {
+  background: rgba(17, 22, 34, 0.7) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease-in-out;
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary) !important;
+}
+
+.theme-card.active-theme {
+  border: 2px solid var(--color-primary) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35) !important;
+  background: rgba(139, 92, 246, 0.15) !important;
+}
+
+:root.theme-light .theme-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+:root.theme-light .theme-card:hover {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+}
+
+:root.theme-light .theme-card.active-theme {
+  border: 2px solid var(--color-primary) !important;
+  background: rgba(124, 58, 237, 0.08) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.2) !important;
+}
+
 :root.theme-light .search-icon {
   color: #64748b !important;
 }
