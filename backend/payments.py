@@ -10,7 +10,7 @@ from . import database, models, schemas, auth
 
 router = APIRouter(prefix="/api/subscriptions", tags=["Subscriptions & Payments"])
 
-MONEROO_SECRET_KEY = os.getenv("MONEROO_SECRET_KEY", "")
+MONEROO_SECRET_KEY = os.getenv("MONEROO_SECRET_KEY", os.getenv("MONEROH_SECRET_KEY", ""))
 MONEROO_API_URL = os.getenv("MONEROO_API_URL", "https://api.moneroo.io/v1")
 
 @router.post("/checkout")
