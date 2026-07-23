@@ -130,7 +130,7 @@ async function loadUsers() {
         <td><span class="badge ${u.status === 'Actif' ? 'badge-green' : 'badge-orange'}"><i class="fa-solid fa-check"></i> ${u.status}</span></td>
         <td>${u.subscription_expiry || '-'}</td>
         <td>
-          <button class="btn-icon" title="Voir" onclick="alert('Fonctionnalité en cours de développement')"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-icon" title="Voir" onclick="viewUserDetails('${u.id}')"><i class="fa-solid fa-eye"></i></button>
           <button class="btn-icon" title="${u.status === 'Actif' ? 'Suspendre' : 'Activer'}" onclick="toggleUserStatus('${u.id}', '${u.status}')"><i class="fa-solid fa-ban"></i></button>
           <button class="btn-icon danger" title="Supprimer" onclick="deleteUser('${u.id}')"><i class="fa-solid fa-trash"></i></button>
         </td>
@@ -213,43 +213,116 @@ function showToast(msg, type = 'info') {
 }
 
 // User Actions
-async function toggleUserStatus(userId, currentStatus) {
-  if (!confirm(`Voulez-vous vraiment ${currentStatus === 'Actif' ? 'suspendre' : 'activer'} cet utilisateur ?`)) return;
+
+
+// Custom Confirm Modal Logic
+function customConfirm(message, callback) {
+  const modal = document.getElementById('confirm-modal');
+  const msgEl = document.getElementById('confirm-message');
+  const btnOk = document.getElementById('btn-confirm-ok');
+  const btnCancel = document.getElementById('btn-confirm-cancel');
   
-  showLoading();
-  try {
-    const action = currentStatus === 'Actif' ? 'suspend' : 'activate';
-    const response = await fetch(`${API_URL}/admin/users/${userId}/${action}`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${adminToken}` }
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || 'Erreur lors de l\'opération');
-    
-    showToast(data.message, 'success');
-    loadUsers(); // refresh list
-  } catch (err) {
-    showToast(err.message, 'error');
-  } finally {
-    hideLoading();
-  }
+  msgEl.innerText = message;
+  modal.style.display = 'flex';
+  
+  // Clear previous listeners
+  const newBtnOk = btnOk.cloneNode(true);
+  const newBtnCancel = btnCancel.cloneNode(true);
+  btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+  btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+  
+  newBtnCancel.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  
+  newBtnOk.addEventListener('click', () => {
+    modal.style.display = 'none';
+    callback();
+  });
 }
 
+// Override toggleUserStatus
+async function toggleUserStatus(userId, currentStatus) {
+  customConfirm(`Voulez-vous vraiment ${currentStatus === 'Actif' ? 'suspendre' : 'activer'} cet utilisateur ?`, async () => {
+    showLoading();
+    try {
+      const action = currentStatus === 'Actif' ? 'suspend' : 'activate';
+      const response = await fetch(`${API_URL}/admin/users/${userId}/${action}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || 'Erreur lors de l\'opération');
+      
+      showToast(data.message, 'success');
+      loadUsers(); // refresh list
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+}
+
+// Override deleteUser
 async function deleteUser(userId) {
-  if (!confirm("ATTENTION : Voulez-vous vraiment supprimer définitivement cet utilisateur et toutes ses données ? Cette action est irréversible !")) return;
-  
+  customConfirm("ATTENTION : Voulez-vous vraiment supprimer définitivement cet utilisateur et toutes ses données ? Cette action est irréversible !", async () => {
+    showLoading();
+    try {
+      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || 'Erreur lors de la suppression');
+      
+      showToast(data.message, 'success');
+      loadUsers(); // refresh list
+      loadDashboard(); // refresh stats
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+}
+
+// Show specific view manually
+function showView(viewId) {
+  views.forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+}
+
+// Fetch and show user details
+async function viewUserDetails(userId) {
   showLoading();
   try {
-    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${adminToken}` }
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || 'Erreur lors de la suppression');
+    const data = await fetchApi(`/users/${userId}/details`);
     
-    showToast(data.message, 'success');
-    loadUsers(); // refresh list
-    loadDashboard(); // refresh stats
+    // Populate view
+    document.getElementById('detail-avatar').innerText = data.name.substring(0, 2).toUpperCase();
+    document.getElementById('detail-name').innerText = data.name;
+    document.getElementById('detail-email').innerText = data.email;
+    
+    const roleBadge = document.getElementById('detail-role');
+    roleBadge.innerText = data.role;
+    roleBadge.className = data.role === 'Super Administrateur' ? 'badge badge-purple' : 'badge badge-blue';
+    
+    const statusBadge = document.getElementById('detail-status');
+    statusBadge.innerHTML = `<i class="fa-solid ${data.status === 'Actif' ? 'fa-check' : 'fa-ban'}"></i> ${data.status}`;
+    statusBadge.className = data.status === 'Actif' ? 'badge badge-green' : 'badge badge-orange';
+    
+    document.getElementById('detail-agency').innerText = data.agency_name;
+    document.getElementById('detail-phone').innerText = data.agency_phone || 'Non renseigné';
+    document.getElementById('detail-date').innerText = data.date_added || 'Inconnue';
+    
+    document.getElementById('detail-prop-count').innerText = data.properties_count;
+    document.getElementById('detail-owner-count').innerText = data.owners_count;
+    document.getElementById('detail-tenant-count').innerText = data.tenants_count;
+    
+    // Switch to view
+    showView('view-user-details');
+    
   } catch (err) {
     showToast(err.message, 'error');
   } finally {

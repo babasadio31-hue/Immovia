@@ -230,8 +230,60 @@
           </div>
         </section>
         
+        
+        <!-- VIEW: USER DETAILS -->
+        <section id="view-user-details" class="admin-view">
+          <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <h2 class="view-title">Détails de l'utilisateur</h2>
+            <button class="btn-primary" onclick="showView('view-users')"><i class="fa-solid fa-arrow-left"></i> Retour</button>
+          </div>
+          
+          <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); margin-bottom: 2rem;">
+            <div style="display:flex; align-items:center; gap: 1.5rem; margin-bottom: 2rem;">
+              <div id="detail-avatar" class="avatar" style="width: 80px; height: 80px; font-size: 2rem;"></div>
+              <div>
+                <h3 id="detail-name" style="font-size: 1.5rem; color: var(--color-text-primary);">...</h3>
+                <p id="detail-email" style="color: var(--color-text-secondary);"></p>
+                <div style="margin-top: 0.5rem; display:flex; gap: 0.5rem;">
+                  <span id="detail-role" class="badge badge-blue"></span>
+                  <span id="detail-status" class="badge badge-green"></span>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div>
+                <h4 style="color:var(--color-text-primary); margin-bottom: 1rem;">Informations Agence</h4>
+                <p><strong style="color:var(--color-text-secondary);">Nom de l'agence:</strong> <span id="detail-agency"></span></p>
+                <p><strong style="color:var(--color-text-secondary);">Téléphone:</strong> <span id="detail-phone"></span></p>
+                <p><strong style="color:var(--color-text-secondary);">Date d'inscription:</strong> <span id="detail-date"></span></p>
+              </div>
+              <div>
+                <h4 style="color:var(--color-text-primary); margin-bottom: 1rem;">Statistiques</h4>
+                <p><strong style="color:var(--color-text-secondary);">Propriétés gérées:</strong> <span id="detail-prop-count">0</span></p>
+                <p><strong style="color:var(--color-text-secondary);">Propriétaires:</strong> <span id="detail-owner-count">0</span></p>
+                <p><strong style="color:var(--color-text-secondary);">Locataires:</strong> <span id="detail-tenant-count">0</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- OTHERS... -->
 
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Custom Confirm Modal -->
+  <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:12px; padding:2rem; max-width:400px; text-align:center;">
+      <div id="confirm-icon" style="font-size:3rem; color:var(--color-danger); margin-bottom:1rem;"><i class="fa-solid fa-circle-exclamation"></i></div>
+      <h3 id="confirm-title" style="color:var(--color-text-primary); margin-bottom:1rem;">Confirmation</h3>
+      <p id="confirm-message" style="color:var(--color-text-secondary); margin-bottom:2rem; line-height:1.5;"></p>
+      <div style="display:flex; justify-content:center; gap:1rem;">
+        <button id="btn-confirm-cancel" class="btn-icon" style="background:var(--color-background); border:1px solid var(--color-border); color:var(--color-text-primary); padding:0.5rem 1rem; border-radius:8px; width:auto;">Annuler</button>
+        <button id="btn-confirm-ok" class="btn-primary" style="background:var(--color-danger); padding:0.5rem 1.5rem;">Confirmer</button>
       </div>
     </div>
   </div>

@@ -122,3 +122,29 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db), admin: mod
     db.delete(user)
     db.commit()
     return {"message": "Utilisateur supprimé"}
+
+@router.get("/users/{user_id}/details")
+def get_user_details(user_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+        
+    agency = db.query(models.Agency).filter(models.Agency.id == user.agency_id).first()
+    
+    properties_count = db.query(models.Property).filter(models.Property.agency_id == user.agency_id).count() if user.agency_id else 0
+    owners_count = db.query(models.Owner).filter(models.Owner.agency_id == user.agency_id).count() if user.agency_id else 0
+    tenants_count = db.query(models.Tenant).filter(models.Tenant.agency_id == user.agency_id).count() if user.agency_id else 0
+    
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "status": user.status,
+        "agency_name": agency.name if agency else "Aucune",
+        "agency_phone": agency.phone if agency else "Aucun",
+        "date_added": user.date_added,
+        "properties_count": properties_count,
+        "owners_count": owners_count,
+        "tenants_count": tenants_count
+    }
