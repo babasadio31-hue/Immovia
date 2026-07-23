@@ -353,7 +353,7 @@ function switchMsgTab(tabId) {
 
 async function loadContactMessages() {
   try {
-    const messages = await fetchApi('/admin/messages');
+    const messages = await fetchApi('/messages');
     const tbody = document.getElementById('tbody-contact');
     tbody.innerHTML = '';
     
@@ -383,7 +383,7 @@ async function loadContactMessages() {
 
 async function loadSupportTickets() {
   try {
-    const tickets = await fetchApi('/admin/tickets');
+    const tickets = await fetchApi('/tickets');
     const tbody = document.getElementById('tbody-tickets');
     tbody.innerHTML = '';
     
