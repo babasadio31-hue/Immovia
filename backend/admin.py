@@ -95,3 +95,30 @@ def get_all_tickets(db: Session = Depends(database.get_db), admin: models.User =
 @router.get("/activity")
 def get_activity_logs(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     return db.query(models.ActivityLog).order_by(models.ActivityLog.id.desc()).limit(100).all()
+
+@router.put("/users/{user_id}/suspend")
+def suspend_user(user_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    user.status = "Suspendu"
+    db.commit()
+    return {"message": "Utilisateur suspendu avec succès"}
+
+@router.put("/users/{user_id}/activate")
+def activate_user(user_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    user.status = "Actif"
+    db.commit()
+    return {"message": "Utilisateur activé avec succès"}
+
+@router.delete("/users/{user_id}")
+def delete_user(user_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    db.delete(user)
+    db.commit()
+    return {"message": "Utilisateur supprimé"}

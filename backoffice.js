@@ -130,8 +130,9 @@ async function loadUsers() {
         <td><span class="badge ${u.status === 'Actif' ? 'badge-green' : 'badge-orange'}"><i class="fa-solid fa-check"></i> ${u.status}</span></td>
         <td>${u.subscription_expiry || '-'}</td>
         <td>
-          <button class="btn-icon" title="Voir"><i class="fa-solid fa-eye"></i></button>
-          <button class="btn-icon danger" title="Suspendre/Supprimer"><i class="fa-solid fa-trash"></i></button>
+          <button class="btn-icon" title="Voir" onclick="alert('Fonctionnalité en cours de développement')"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-icon" title="${u.status === 'Actif' ? 'Suspendre' : 'Activer'}" onclick="toggleUserStatus('${u.id}', '${u.status}')"><i class="fa-solid fa-ban"></i></button>
+          <button class="btn-icon danger" title="Supprimer" onclick="deleteUser('${u.id}')"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -209,4 +210,49 @@ function showToast(msg, type = 'info') {
   toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'}"></i> <span>${msg}</span>`;
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 3500);
+}
+
+// User Actions
+async function toggleUserStatus(userId, currentStatus) {
+  if (!confirm(`Voulez-vous vraiment ${currentStatus === 'Actif' ? 'suspendre' : 'activer'} cet utilisateur ?`)) return;
+  
+  showLoading();
+  try {
+    const action = currentStatus === 'Actif' ? 'suspend' : 'activate';
+    const response = await fetch(`${API_URL}/admin/users/${userId}/${action}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Erreur lors de l\'opération');
+    
+    showToast(data.message, 'success');
+    loadUsers(); // refresh list
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+async function deleteUser(userId) {
+  if (!confirm("ATTENTION : Voulez-vous vraiment supprimer définitivement cet utilisateur et toutes ses données ? Cette action est irréversible !")) return;
+  
+  showLoading();
+  try {
+    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Erreur lors de la suppression');
+    
+    showToast(data.message, 'success');
+    loadUsers(); // refresh list
+    loadDashboard(); // refresh stats
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    hideLoading();
+  }
 }
