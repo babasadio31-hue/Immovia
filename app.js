@@ -870,7 +870,7 @@ function switchTab(tabName) {
   if (state.currentUser) {
     const user = state.currentUser;
     const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
-    const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'settings'] : (user.permissions || ['dashboard']);
+    const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'support', 'settings'] : (user.permissions || ['dashboard']);
     
     if (!isTabAllowed(tabName, userPerms, isSuperAdmin)) {
       showToast("Accès restreint : Vous n'avez pas l'autorisation d'accéder à cette section.", "error");
@@ -910,6 +910,8 @@ function switchTab(tabName) {
     renderAccounting();
   } else if (tabName === 'staff') {
     renderStaffTable();
+  } else if (tabName === 'support') {
+    renderSupportTickets();
   } else if (tabName === 'settings') {
     renderSettingsView();
   }
@@ -4445,3 +4447,129 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     return null;
   }
 }
+
+
+// ==========================================================================
+// Rendu : Support Technique
+// ==========================================================================
+
+function renderSupportTickets() {
+  const tbody = document.getElementById('tbody-support');
+  const emptyState = document.getElementById('empty-support');
+  const table = document.getElementById('table-support').parentElement;
+  
+  if (!state.tickets || state.tickets.length === 0) {
+    if(emptyState) emptyState.style.display = 'block';
+    if(table) table.style.display = 'none';
+    return;
+  }
+  
+  if(emptyState) emptyState.style.display = 'none';
+  if(table) table.style.display = 'table';
+  
+  if(tbody) {
+    tbody.innerHTML = '';
+    
+    // Sort by date descending
+    const sortedTickets = [...state.tickets].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    sortedTickets.forEach(ticket => {
+      let priorityColor = 'var(--color-text-muted)';
+      if (ticket.priority === 'Normale') priorityColor = 'var(--color-blue)';
+      if (ticket.priority === 'Haute') priorityColor = 'var(--color-amber)';
+      if (ticket.priority === 'Urgente') priorityColor = 'var(--color-rose)';
+      
+      let statusBadge = '<span class="status-badge bg-green text-green">Ouvert</span>';
+      if (ticket.status === 'Fermé') {
+        statusBadge = '<span class="status-badge" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">Fermé</span>';
+      } else if (ticket.status === 'En cours') {
+        statusBadge = '<span class="status-badge bg-blue text-blue">En cours</span>';
+      }
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>#${ticket.id}</td>
+        <td><strong>${ticket.subject}</strong></td>
+        <td>${ticket.category}</td>
+        <td><span style="color: ${priorityColor}; font-weight: 500;">${ticket.priority}</span></td>
+        <td>${statusBadge}</td>
+        <td>${new Date(ticket.date).toLocaleDateString('fr-FR')}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn-icon text-rose" title="Fermer le ticket" onclick="closeSupportTicket('${ticket.id}')" ${ticket.status === 'Fermé' ? 'disabled style="opacity: 0.5;"' : ''}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+function closeSupportTicket(id) {
+  if (confirm("Êtes-vous sûr de vouloir fermer ce ticket ?")) {
+    const t = state.tickets.find(x => x.id === id);
+    if (t) {
+      t.status = 'Fermé';
+      saveState();
+      renderSupportTickets();
+      showToast("Ticket fermé avec succès", "success");
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modalTicket = document.getElementById('modal-ticket');
+  const btnAddTicket = document.getElementById('btn-add-ticket');
+  const btnEmptyAddTicket = document.getElementById('btn-empty-add-ticket');
+  const btnCloseTicket = document.getElementById('btn-close-ticket');
+  const btnCancelTicket = document.getElementById('btn-cancel-ticket');
+  const formTicket = document.getElementById('form-ticket');
+  const searchSupport = document.getElementById('search-support');
+  
+  if (btnAddTicket) btnAddTicket.addEventListener('click', () => modalTicket.classList.add('active'));
+  if (btnEmptyAddTicket) btnEmptyAddTicket.addEventListener('click', () => modalTicket.classList.add('active'));
+  if (btnCloseTicket) btnCloseTicket.addEventListener('click', () => modalTicket.classList.remove('active'));
+  if (btnCancelTicket) btnCancelTicket.addEventListener('click', () => modalTicket.classList.remove('active'));
+  
+  if (formTicket) {
+    formTicket.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const newTicket = {
+        id: 'TKT-' + Math.floor(1000 + Math.random() * 9000),
+        subject: document.getElementById('ticket-subject').value,
+        category: document.getElementById('ticket-category').value,
+        priority: document.getElementById('ticket-priority').value,
+        message: document.getElementById('ticket-message').value,
+        status: 'Ouvert',
+        date: new Date().toISOString(),
+        userId: state.currentUser ? state.currentUser.id : null
+      };
+      
+      state.tickets = state.tickets || [];
+      state.tickets.push(newTicket);
+      saveState();
+      
+      formTicket.reset();
+      modalTicket.classList.remove('active');
+      renderSupportTickets();
+      showToast("Votre ticket a été envoyé au support", "success");
+    });
+  }
+  
+  if (searchSupport) {
+    searchSupport.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#tbody-support tr');
+      rows.forEach(row => {
+        if (row.textContent.toLowerCase().includes(term)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+});
