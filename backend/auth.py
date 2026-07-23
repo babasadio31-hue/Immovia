@@ -120,10 +120,8 @@ def update_user(user_id: str, user_update: schemas.UserUpdate, current_user: mod
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: str, current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
-    if current_user.role != "Administrateur":
-        raise HTTPException(status_code=403, detail="Not authorized to delete users")
-    if current_user.id == user_id:
-        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    if current_user.role != "Administrateur" and current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this user")
         
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:

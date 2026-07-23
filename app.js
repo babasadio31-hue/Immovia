@@ -140,8 +140,10 @@ startApp(); // reload the app with session
 }
 
 function handleLogout() {
+  removeAuthToken();
+  localStorage.removeItem('immovi_local_user');
   sessionStorage.removeItem('immovi_session');
-  location.reload(); // Reloads the page to clear memory state and show login
+  window.location.href = 'login.html';
 }
 
 async function loadData() {
@@ -3470,6 +3472,13 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       currentUser = await API.getCurrentUser();
     } catch (err) {
+      if (err.message === 'Session expirée' || (err.message && err.message.includes('Session'))) {
+        removeAuthToken();
+        localStorage.removeItem('immovi_local_user');
+        window.location.href = 'login.html';
+        return;
+      }
+      
       const localUserRaw = localStorage.getItem('immovi_local_user');
       if (localUserRaw) {
         currentUser = JSON.parse(localUserRaw);

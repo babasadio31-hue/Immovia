@@ -393,9 +393,14 @@
             btnSubmit.textContent = 'Création du compte...';
             errorDiv.textContent = '';
 
+            let createdUserId = null;
+
             try {
                 // Call API register
-                await API.register(name, email, password);
+                const registerRes = await API.register(name, email, password);
+                if (registerRes && registerRes.id) {
+                    createdUserId = registerRes.id;
+                }
                 
                 // Login right after
                 await API.login(email, password);
@@ -406,14 +411,27 @@
                         const sub = await API.createSubscriptionCheckout('premium');
                         if (sub && sub.checkout_url) {
                             window.location.href = sub.checkout_url;
-                            return;
+                            return; // Stop here, browser redirects
+                        } else {
+                            throw new Error("L'URL de paiement n'a pas été retournée.");
                         }
                     } catch (subErr) {
-                        console.warn("Moneroo checkout redirect warning:", subErr);
+                        console.error("Moneroo checkout init failed:", subErr);
+                        // Rollback user creation
+                        if (!createdUserId) {
+                             const currentUser = await API.getCurrentUser();
+                             if (currentUser && currentUser.id) createdUserId = currentUser.id;
+                        }
+                        if (createdUserId) {
+                             await API.deleteUser(createdUserId).catch(e => console.error("Rollback failed", e));
+                        }
+                        localStorage.removeItem('immovi_jwt');
+                        errorDiv.textContent = 'Erreur d\'initialisation du paiement sécurisé. Veuillez réessayer.';
+                        return; // Stop here
                     }
                 }
                 
-                // Redirect to main dashboard
+                // Redirect to main dashboard (for free plan or if no plan param)
                 window.location.href = 'index.html';
             } catch (err) {
                 errorDiv.textContent = err.message || 'Erreur lors de la création';
