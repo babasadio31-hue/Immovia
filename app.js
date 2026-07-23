@@ -4356,13 +4356,14 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     }
 
     // Bloc Locataire (Droite)
+    const locataireX = pageWidth / 2 + 30;
     doc.setFont("helvetica", "bold");
-    doc.text("Locataire :", pageWidth / 2 + 10, 45);
+    doc.text("Locataire :", locataireX, 45);
     
     doc.setFont("helvetica", "normal");
-    doc.text(tenant.name || "Locataire Inconnu", pageWidth / 2 + 10, 52);
-    if (tenant.phone) doc.text(`Tél : ${tenant.phone}`, pageWidth / 2 + 10, 58);
-    if (tenant.email) doc.text(`Email : ${tenant.email}`, pageWidth / 2 + 10, 64);
+    doc.text(tenant.name || "Locataire Inconnu", locataireX, 52);
+    if (tenant.phone) doc.text(`Tél : ${tenant.phone}`, locataireX, 58);
+    if (tenant.email) doc.text(`Email : ${tenant.email}`, locataireX, 64);
 
     // Ligne de séparation
     const lineY = Math.max(yPosEmetteur, 64) + 8;
