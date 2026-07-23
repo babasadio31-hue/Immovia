@@ -268,6 +268,62 @@
           </div>
         </section>
 
+        
+        <!-- VIEW: EMAILS -->
+        <section id="view-emails" class="admin-view">
+          <h2 class="view-title">Communications et E-mails</h2>
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 3rem; text-align: center; border-radius: 12px; margin-top: 2rem;">
+            <i class="fa-solid fa-paper-plane" style="font-size: 3rem; color: var(--color-primary); margin-bottom: 1rem;"></i>
+            <h3 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.5rem;">Campagnes E-mail</h3>
+            <p style="color: var(--color-text-secondary); max-width: 500px; margin: 0 auto;">
+              Le module d'envoi massif d'e-mails et de newsletters aux agences et utilisateurs est en cours de développement. Il sera disponible très prochainement.
+            </p>
+            <button class="btn-primary" style="margin-top: 1.5rem; opacity: 0.5; cursor: not-allowed;" disabled>Créer une campagne</button>
+          </div>
+        </section>
+
+        <!-- VIEW: SETTINGS -->
+        <section id="view-settings" class="admin-view">
+          <h2 class="view-title">Paramètres de la plateforme</h2>
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div>
+                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Mode Maintenance</h4>
+                <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Empêcher l'accès à la plateforme (sauf Super Admin) pour effectuer des mises à jour.</p>
+              </div>
+              <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--color-border); border-radius: 34px; transition: .4s;">
+                  <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                </span>
+              </label>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div>
+                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Inscriptions Automatiques</h4>
+                <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Autoriser la création de nouveaux comptes agences depuis l'application cliente.</p>
+              </div>
+              <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--color-primary); border-radius: 34px; transition: .4s;">
+                  <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 27px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                </span>
+              </label>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Version de l'API</h4>
+                <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Version actuelle du backend déployé sur Railway.</p>
+              </div>
+              <span class="badge badge-purple" style="font-size: 1rem; padding: 0.5rem 1rem;">v2.1.0 (Stable)</span>
+            </div>
+
+          </div>
+        </section>
+
         <!-- OTHERS... -->
 
       </div>
