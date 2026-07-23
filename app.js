@@ -4326,7 +4326,9 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    doc.text("Agence Immovia", 20, 52);
+    
+    const agencyName = (state.agencySettings && state.agencySettings.name) ? state.agencySettings.name : "Agence Immovia";
+    doc.text(agencyName, 20, 52);
     doc.text("Gestion Immobilière Professionnelle", 20, 58);
     if (owner) {
       doc.text(`Pour le compte de : ${owner.name}`, 20, 64);
@@ -4368,12 +4370,13 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.text(`${formatDateString(tx.date)}`, 60, 130);
 
     // Tableau des détails (AutoTable)
+    const rowDescription = tx.description ? `Loyer - ${tx.description}` : 'Loyer et charges (selon bail)';
+    
     doc.autoTable({
       startY: 145,
       head: [['Désignation', 'Période / Date', 'Montant Payé']],
       body: [
-        ['Loyer et charges (selon bail)', formatDateString(tx.date), safeCurrencyAmount],
-        [tx.description || 'Paiement locatif', '-', '-'],
+        [rowDescription, formatDateString(tx.date), safeCurrencyAmount]
       ],
       theme: 'grid',
       headStyles: { fillColor: [30, 58, 138], textColor: 255 },
