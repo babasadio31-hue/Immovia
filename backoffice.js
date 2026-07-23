@@ -329,3 +329,116 @@ async function viewUserDetails(userId) {
     hideLoading();
   }
 }
+
+// --- MESSAGERIE & SUPPORT LOGIC ---
+
+function switchMsgTab(tabId) {
+  // Hide all tabs
+  document.getElementById('tab-contact').style.display = 'none';
+  document.getElementById('tab-tickets').style.display = 'none';
+  document.getElementById('tab-news').style.display = 'none';
+  
+  // Reset buttons
+  document.getElementById('tab-btn-contact').className = 'btn-secondary';
+  document.getElementById('tab-btn-tickets').className = 'btn-secondary';
+  document.getElementById('tab-btn-news').className = 'btn-secondary';
+  
+  // Show selected
+  document.getElementById(`tab-${tabId}`).style.display = 'block';
+  document.getElementById(`tab-btn-${tabId}`).className = 'btn-primary';
+  
+  if (tabId === 'contact') loadContactMessages();
+  if (tabId === 'tickets') loadSupportTickets();
+}
+
+async function loadContactMessages() {
+  try {
+    const messages = await fetchApi('/admin/messages');
+    const tbody = document.getElementById('tbody-contact');
+    tbody.innerHTML = '';
+    
+    if (messages.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Aucun message reçu.</td></tr>';
+        return;
+    }
+    
+    messages.forEach(msg => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${msg.date}</td>
+        <td><strong>${msg.name}</strong></td>
+        <td>${msg.email}</td>
+        <td>${msg.phone}</td>
+        <td><span class="badge ${msg.status === 'Non lu' ? 'badge-orange' : 'badge-green'}">${msg.status}</span></td>
+        <td>
+          <button class="btn-icon" title="Lire" onclick="alert('Message: ${msg.message.replace(/'/g, "\'")}')"><i class="fa-solid fa-eye"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error("Erreur messages:", err);
+  }
+}
+
+async function loadSupportTickets() {
+  try {
+    const tickets = await fetchApi('/admin/tickets');
+    const tbody = document.getElementById('tbody-tickets');
+    tbody.innerHTML = '';
+    
+    if (tickets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Aucun ticket de support.</td></tr>';
+        return;
+    }
+    
+    tickets.forEach(ticket => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>#${ticket.id.substring(0,6)}</td>
+        <td>${ticket.date}</td>
+        <td><strong>${ticket.subject}</strong></td>
+        <td>${ticket.category}</td>
+        <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority}</span></td>
+        <td><span class="badge badge-purple">${ticket.status}</span></td>
+        <td>
+          <button class="btn-icon" title="Voir détails"><i class="fa-solid fa-eye"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error("Erreur tickets:", err);
+  }
+}
+
+async function submitNewsletter(e) {
+  e.preventDefault();
+  
+  const payload = {
+    target: document.getElementById('news-target').value,
+    subject: document.getElementById('news-subject').value,
+    content: document.getElementById('news-content').value
+  };
+  
+  showLoading();
+  try {
+    const res = await fetch(`${API_URL}/admin/newsletters/send`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminToken}`
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Erreur d\'envoi');
+    
+    showToast(data.message, 'success');
+    document.getElementById('form-newsletter').reset();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    hideLoading();
+  }
+}

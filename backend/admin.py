@@ -148,3 +148,42 @@ def get_user_details(user_id: str, db: Session = Depends(database.get_db), admin
         "owners_count": owners_count,
         "tenants_count": tenants_count
     }
+
+@router.get("/messages")
+def get_contact_messages(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    messages = db.query(models.ContactMessage).all()
+    return messages
+
+class NewsletterRequest(BaseModel):
+    subject: str
+    content: str
+    target: str
+
+@router.post("/newsletters/send")
+def send_newsletter(req: NewsletterRequest, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    import uuid
+    from datetime import datetime
+    
+    # In a real scenario, we would use an SMTP server here
+    # For now, we simulate the sending process
+    
+    if req.target == "agencies":
+        count = db.query(models.User).filter(models.User.role == "Admin Agence").count()
+    elif req.target == "owners":
+        count = db.query(models.Owner).count()
+    else:
+        count = db.query(models.User).count()
+        
+    new_campaign = models.NewsletterCampaign(
+        id=str(uuid.uuid4()),
+        subject=req.subject,
+        content=req.content,
+        target_audience=req.target,
+        status="Envoyé (Simulation)",
+        sent_count=count,
+        date=datetime.now().strftime("%Y-%m-%d %H:%M")
+    )
+    db.add(new_campaign)
+    db.commit()
+    
+    return {"message": f"Newsletter envoyée avec succès à {count} destinataires ! (Mode Simulation)"}

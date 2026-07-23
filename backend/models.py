@@ -178,3 +178,26 @@ class PlatformSettings(Base):
     domain = Column(String, nullable=True)
     payment_settings = Column(JSON, nullable=True)
     email_settings = Column(JSON, nullable=True)
+
+
+class ContactMessage(Base):
+    __tablename__ = "contact_messages"
+    
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String)
+    phone = Column(String)
+    message = Column(String)
+    status = Column(String, default="Non lu")
+    date = Column(String)
+
+class NewsletterCampaign(Base):
+    __tablename__ = "newsletter_campaigns"
+    
+    id = Column(String, primary_key=True, index=True)
+    subject = Column(String)
+    content = Column(String)
+    target_audience = Column(String) # "all", "agencies", "owners"
+    status = Column(String, default="Envoyé")
+    sent_count = Column(Integer, default=0)
+    date = Column(String)

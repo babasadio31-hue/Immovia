@@ -269,20 +269,85 @@
         </section>
 
         
-        <!-- VIEW: EMAILS -->
+        
+        <!-- VIEW: MESSAGERIE & SUPPORT -->
         <section id="view-emails" class="admin-view">
-          <h2 class="view-title">Communications et E-mails</h2>
-          <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 3rem; text-align: center; border-radius: 12px; margin-top: 2rem;">
-            <i class="fa-solid fa-paper-plane" style="font-size: 3rem; color: var(--color-primary); margin-bottom: 1rem;"></i>
-            <h3 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.5rem;">Campagnes E-mail</h3>
-            <p style="color: var(--color-text-secondary); max-width: 500px; margin: 0 auto;">
-              Le module d'envoi massif d'e-mails et de newsletters aux agences et utilisateurs est en cours de développement. Il sera disponible très prochainement.
-            </p>
-            <button class="btn-primary" style="margin-top: 1.5rem; opacity: 0.5; cursor: not-allowed;" disabled>Créer une campagne</button>
+          <h2 class="view-title">Messagerie & Support</h2>
+          
+          <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <button class="btn-primary" id="tab-btn-contact" onclick="switchMsgTab('contact')">Messages Contact</button>
+            <button class="btn-secondary" id="tab-btn-tickets" onclick="switchMsgTab('tickets')">Tickets Support</button>
+            <button class="btn-secondary" id="tab-btn-news" onclick="switchMsgTab('news')">Newsletters</button>
           </div>
+          
+          <!-- Tab Content: Contact -->
+          <div id="tab-contact" style="display: block;">
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-contact"></tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Tab Content: Tickets -->
+          <div id="tab-tickets" style="display: none;">
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Date</th>
+                    <th>Sujet</th>
+                    <th>Catégorie</th>
+                    <th>Priorité</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-tickets"></tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Tab Content: Newsletters -->
+          <div id="tab-news" style="display: none;">
+            <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); max-width: 600px;">
+              <h3 style="margin-bottom: 1.5rem; color: var(--color-text-primary);">Envoyer une Newsletter</h3>
+              <form id="form-newsletter" onsubmit="submitNewsletter(event)">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Cible</label>
+                  <select id="news-target" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary);">
+                    <option value="all">Tous les utilisateurs</option>
+                    <option value="agencies">Agences Uniquement</option>
+                    <option value="owners">Propriétaires Uniquement</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Sujet de l'e-mail</label>
+                  <input type="text" id="news-subject" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary);">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Contenu (HTML autorisé)</label>
+                  <textarea id="news-content" rows="6" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary); resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Envoyer la Newsletter</button>
+              </form>
+            </div>
+          </div>
+          
         </section>
 
-        <!-- VIEW: SETTINGS -->
+<!-- VIEW: SETTINGS -->
         <section id="view-settings" class="admin-view">
           <h2 class="view-title">Paramètres de la plateforme</h2>
           <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
