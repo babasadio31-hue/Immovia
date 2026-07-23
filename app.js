@@ -1933,7 +1933,17 @@ function filterAndRenderTransactionsTable() {
       <td><span class="badge badge-purple">${propName}</span></td>
       <td>${typeBadge}</td>
       <td class="text-right ${amountClass}" style="font-weight: 600;">${sign}${formatCurrency(amountToShow)}</td>
-      <td class="text-center no-print">
+      <td class="text-center no-print" style="display: flex; gap: 0.5rem; justify-content: center;">
+        ${isIncome && tx.propertyId ? `
+        <button class="btn-icon-only primary" onclick="generateQuittancePDF('${tx.id}', true)" title="Télécharger la Quittance PDF">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <polyline points="9 15 12 18 15 15"></polyline>
+          </svg>
+        </button>
+        ` : ''}
         <button class="btn-icon-only danger" onclick="deleteTransaction('${tx.id}')" title="Supprimer">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -2245,7 +2255,7 @@ async function handleTransactionSubmit(e) {
       motif: finalMotif || null
     };
 
-    await API.createTransaction(newTx);
+    const createdTx = await API.createTransaction(newTx);
     
     closeAllModals();
     document.getElementById('form-transaction').reset();
@@ -2255,6 +2265,16 @@ async function handleTransactionSubmit(e) {
     filterAndRenderTransactionsTable();
     renderAccounting();
     renderDashboard();
+
+    if (type === 'income' && propertyId) {
+      setTimeout(async () => {
+        if (confirm("Loyer encaissé avec succès. Voulez-vous télécharger la quittance PDF ?")) {
+          // Utilise l'ID du flux renvoyé par l'API s'il existe, sinon l'ID local
+          const finalTxId = createdTx && createdTx.id ? createdTx.id : newTx.id;
+          generateQuittancePDF(finalTxId, true);
+        }
+      }, 500);
+    }
   } catch (err) {
     showToast(err.message || 'Erreur lors de la transaction.', 'error');
   }
@@ -2991,6 +3011,16 @@ function renderAccounting() {
           <td><a class="owner-click-link" onclick="openOwnerDossier('${ownerId}')">${ownerName}</a></td>
           <td><span class="badge badge-purple">${propName}</span></td>
           <td class="text-right value-green" style="font-weight: 600;">+${formatCurrency(commission)}</td>
+          <td class="text-center no-print">
+            <button class="btn-icon-only primary" onclick="generateQuittancePDF('${tx.id}', true)" title="Télécharger la Quittance PDF">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <polyline points="9 15 12 18 15 15"></polyline>
+              </svg>
+            </button>
+          </td>
         `;
         tbodyEntrees.appendChild(tr);
       }
@@ -4245,3 +4275,144 @@ window.addEventListener('resize', () => requestAnimationFrame(adjustWrappedText)
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(adjustWrappedText, 300);
 });
+
+// ==========================================================================
+// Génération de Quittances PDF (jsPDF)
+// ==========================================================================
+
+async function generateQuittancePDF(transactionId, autoDownload = true) {
+  const tx = state.transactions.find(t => t.id === transactionId);
+  if (!tx || tx.type !== 'income' || !tx.propertyId) return null;
+
+  const prop = state.properties.find(p => p.id === tx.propertyId);
+  if (!prop) return null;
+
+  const tenant = getTenantForProperty(prop.id);
+  if (!tenant) return null;
+
+  const owner = state.owners.find(o => o.id === prop.owner_id);
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(30, 58, 138); // Primary color
+    doc.text("QUITTANCE DE LOYER", pageWidth / 2, 20, { align: 'center' });
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Réf : QTT-${tx.id.substring(3).toUpperCase()}`, pageWidth / 2, 28, { align: 'center' });
+
+    // Ligne de séparation
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.5);
+    doc.line(20, 35, pageWidth - 20, 35);
+
+    // Bloc Agence / Propriétaire (Gauche)
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.text("Émetteur :", 20, 45);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("Agence Immovia", 20, 52);
+    doc.text("Gestion Immobilière Professionnelle", 20, 58);
+    if (owner) {
+      doc.text(`Pour le compte de : ${owner.name}`, 20, 64);
+    }
+
+    // Bloc Locataire (Droite)
+    doc.setFont("helvetica", "bold");
+    doc.text("Locataire :", pageWidth / 2 + 10, 45);
+    
+    doc.setFont("helvetica", "normal");
+    doc.text(tenant.name || "Locataire Inconnu", pageWidth / 2 + 10, 52);
+    if (tenant.phone) doc.text(`Tél : ${tenant.phone}`, pageWidth / 2 + 10, 58);
+    if (tenant.email) doc.text(`Email : ${tenant.email}`, pageWidth / 2 + 10, 64);
+
+    // Ligne de séparation
+    doc.line(20, 75, pageWidth - 20, 75);
+
+    // Détails de la quittance
+    doc.setFontSize(12);
+    doc.text(`Reçu de Monsieur / Madame : `, 20, 90);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${tenant.name}`, 80, 90);
+    
+    doc.setFont("helvetica", "normal");
+    doc.text(`La somme de : `, 20, 100);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${formatCurrency(tx.amount)}`, 55, 100);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(`Pour le paiement du loyer concernant le bien :`, 20, 110);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${prop.name} - ${prop.address}`, 20, 118);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(`Date du paiement : `, 20, 130);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${formatDateString(tx.date)}`, 60, 130);
+
+    // Tableau des détails (AutoTable)
+    doc.autoTable({
+      startY: 145,
+      head: [['Désignation', 'Période / Date', 'Montant Payé']],
+      body: [
+        ['Loyer et charges (selon bail)', formatDateString(tx.date), formatCurrency(tx.amount)],
+        [tx.description || 'Paiement locatif', '-', '-'],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [30, 58, 138], textColor: 255 },
+      styles: { fontSize: 10, cellPadding: 5 },
+      columnStyles: {
+        0: { cellWidth: 80 },
+        2: { halign: 'right', fontStyle: 'bold' }
+      }
+    });
+
+    const finalY = doc.lastAutoTable.finalY || 180;
+
+    // Mention légale et Signature
+    doc.setFontSize(9);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte sur le présent terme.", 20, finalY + 15);
+    doc.text("Elle doit être conservée pendant une durée de 3 ans.", 20, finalY + 20);
+
+    doc.setFontSize(11);
+    doc.setTextColor(15, 23, 42);
+    doc.text("Le Gestionnaire", pageWidth - 50, finalY + 35, { align: 'center' });
+    
+    // Cachet / Signature (Simulation)
+    doc.setDrawColor(30, 58, 138);
+    doc.setLineWidth(1);
+    doc.rect(pageWidth - 80, finalY + 45, 60, 25);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(30, 58, 138);
+    doc.text("Validé électroniquement", pageWidth - 50, finalY + 60, { align: 'center' });
+
+    // Sauvegarde du fichier
+    if (autoDownload) {
+      const fileName = `Quittance_Loyer_${tenant.name.replace(/\s+/g, '_')}_${tx.date}.pdf`;
+      doc.save(fileName);
+      showToast('Quittance PDF générée avec succès.', 'success');
+    }
+    
+    return doc;
+  } catch (error) {
+    console.error("Erreur lors de la génération PDF:", error);
+    showToast("Erreur lors de la création de la quittance.", "error");
+    return null;
+  }
+}
