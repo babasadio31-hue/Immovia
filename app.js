@@ -4350,10 +4350,12 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setFont("helvetica", "bold");
     doc.text(`${tenant.name}`, 80, 90);
     
+    const safeCurrencyAmount = formatCurrency(tx.amount).replace(/[\u202f\u00a0]/g, ' ');
+
     doc.setFont("helvetica", "normal");
     doc.text(`La somme de : `, 20, 100);
     doc.setFont("helvetica", "bold");
-    doc.text(`${formatCurrency(tx.amount)}`, 55, 100);
+    doc.text(safeCurrencyAmount, 55, 100);
 
     doc.setFont("helvetica", "normal");
     doc.text(`Pour le paiement du loyer concernant le bien :`, 20, 110);
@@ -4370,7 +4372,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
       startY: 145,
       head: [['Désignation', 'Période / Date', 'Montant Payé']],
       body: [
-        ['Loyer et charges (selon bail)', formatDateString(tx.date), formatCurrency(tx.amount)],
+        ['Loyer et charges (selon bail)', formatDateString(tx.date), safeCurrencyAmount],
         [tx.description || 'Paiement locatif', '-', '-'],
       ],
       theme: 'grid',
