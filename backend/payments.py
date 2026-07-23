@@ -83,7 +83,10 @@ def create_checkout_session(
             except:
                 pass
         print(f"Moneroo API Direct Call Error: {e}")
-        raise HTTPException(status_code=500, detail="Erreur lors de l'initialisation du paiement sécurisé avec Moneroo.")
+        error_msg = "Erreur lors de l'initialisation du paiement sécurisé."
+        if error_details:
+            error_msg += f" Details: {error_details}"
+        raise HTTPException(status_code=500, detail=error_msg)
 
 @router.post("/webhook")
 async def moneroo_webhook(request: Request, db: Session = Depends(database.get_db)):

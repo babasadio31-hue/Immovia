@@ -426,7 +426,7 @@
                              await API.deleteUser(createdUserId).catch(e => console.error("Rollback failed", e));
                         }
                         localStorage.removeItem('immovi_jwt');
-                        errorDiv.textContent = 'Erreur d\'initialisation du paiement sécurisé. Veuillez réessayer.';
+                        errorDiv.textContent = subErr.message || 'Erreur d\'initialisation du paiement sécurisé. Veuillez réessayer.';
                         return; // Stop here
                     }
                 }
