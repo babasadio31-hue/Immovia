@@ -4313,6 +4313,16 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setTextColor(100, 116, 139);
     doc.text(`Réf : QTT-${tx.id.substring(3).toUpperCase()}`, pageWidth / 2, 28, { align: 'center' });
 
+    // Logo
+    if (state.agencySettings && state.agencySettings.logoBase64) {
+      try {
+        // Positioned at top left (x=20, y=10)
+        doc.addImage(state.agencySettings.logoBase64, 20, 10, 30, 15);
+      } catch (err) {
+        console.error("Erreur ajout logo au PDF", err);
+      }
+    }
+
     // Ligne de séparation
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.5);
@@ -4329,9 +4339,19 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     
     const agencyName = (state.agencySettings && state.agencySettings.name) ? state.agencySettings.name : "Agence Immovia";
     doc.text(agencyName, 20, 52);
-    doc.text("Gestion Immobilière Professionnelle", 20, 58);
+    
+    let yPosEmetteur = 58;
+    if (state.agencySettings) {
+      if (state.agencySettings.address) { doc.text(state.agencySettings.address, 20, yPosEmetteur); yPosEmetteur += 6; }
+      if (state.agencySettings.phone) { doc.text(`Tél : ${state.agencySettings.phone}`, 20, yPosEmetteur); yPosEmetteur += 6; }
+      if (state.agencySettings.email) { doc.text(`Email : ${state.agencySettings.email}`, 20, yPosEmetteur); yPosEmetteur += 6; }
+    } else {
+      doc.text("Gestion Immobilière Professionnelle", 20, yPosEmetteur);
+      yPosEmetteur += 6;
+    }
+
     if (owner) {
-      doc.text(`Pour le compte de : ${owner.name}`, 20, 64);
+      doc.text(`Pour le compte de : ${owner.name}`, 20, yPosEmetteur);
     }
 
     // Bloc Locataire (Droite)
