@@ -4352,6 +4352,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
 
     if (owner) {
       doc.text(`Pour le compte de : ${owner.name}`, 20, yPosEmetteur);
+      yPosEmetteur += 6;
     }
 
     // Bloc Locataire (Droite)
@@ -4364,36 +4365,38 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     if (tenant.email) doc.text(`Email : ${tenant.email}`, pageWidth / 2 + 10, 64);
 
     // Ligne de séparation
-    doc.line(20, 75, pageWidth - 20, 75);
+    const lineY = Math.max(yPosEmetteur, 64) + 8;
+    doc.line(20, lineY, pageWidth - 20, lineY);
 
     // Détails de la quittance
+    const detailsY = lineY + 15;
     doc.setFontSize(12);
-    doc.text(`Reçu de Monsieur / Madame : `, 20, 90);
+    doc.text(`Reçu de Monsieur / Madame : `, 20, detailsY);
     doc.setFont("helvetica", "bold");
-    doc.text(`${tenant.name}`, 80, 90);
+    doc.text(`${tenant.name}`, 80, detailsY);
     
     const safeCurrencyAmount = formatCurrency(tx.amount).replace(/[\u202f\u00a0]/g, ' ');
 
     doc.setFont("helvetica", "normal");
-    doc.text(`La somme de : `, 20, 100);
+    doc.text(`La somme de : `, 20, detailsY + 10);
     doc.setFont("helvetica", "bold");
-    doc.text(safeCurrencyAmount, 55, 100);
+    doc.text(safeCurrencyAmount, 55, detailsY + 10);
 
     doc.setFont("helvetica", "normal");
-    doc.text(`Pour le paiement du loyer concernant le bien :`, 20, 110);
+    doc.text(`Pour le paiement du loyer concernant le bien :`, 20, detailsY + 20);
     doc.setFont("helvetica", "bold");
-    doc.text(`${prop.name} - ${prop.address}`, 20, 118);
+    doc.text(`${prop.name} - ${prop.address}`, 20, detailsY + 28);
 
     doc.setFont("helvetica", "normal");
-    doc.text(`Date du paiement : `, 20, 130);
+    doc.text(`Date du paiement : `, 20, detailsY + 40);
     doc.setFont("helvetica", "bold");
-    doc.text(`${formatDateString(tx.date)}`, 60, 130);
+    doc.text(`${formatDateString(tx.date)}`, 60, detailsY + 40);
 
     // Tableau des détails (AutoTable)
     const rowDescription = tx.description ? `Loyer - ${tx.description}` : 'Loyer et charges (selon bail)';
     
     doc.autoTable({
-      startY: 145,
+      startY: detailsY + 55,
       head: [['Désignation', 'Période / Date', 'Montant Payé']],
       body: [
         [rowDescription, formatDateString(tx.date), safeCurrencyAmount]
