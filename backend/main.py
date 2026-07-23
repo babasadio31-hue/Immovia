@@ -23,40 +23,31 @@ async def lifespan(app: FastAPI):
 
         # Schema upgrade for new columns in properties table
         from sqlalchemy import text
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN transaction_type VARCHAR DEFAULT 'Location'"))
-        except Exception:
-            pass
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN price FLOAT"))
-        except Exception:
-            pass
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN caution_amount FLOAT"))
-        except Exception:
-            pass
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN commission_rate FLOAT"))
-        except Exception:
-            pass
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN tenant_name VARCHAR"))
-        except Exception:
-            pass
-        try:
-            db.execute(text("ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR"))
-        except Exception:
-            pass
-            
+        
+        upgrades = [
+            "ALTER TABLE properties ADD COLUMN transaction_type VARCHAR DEFAULT 'Location'",
+            "ALTER TABLE properties ADD COLUMN price FLOAT",
+            "ALTER TABLE properties ADD COLUMN caution_amount FLOAT",
+            "ALTER TABLE properties ADD COLUMN commission_rate FLOAT",
+            "ALTER TABLE properties ADD COLUMN tenant_name VARCHAR",
+            "ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR"
+        ]
+        
+        for upgrade in upgrades:
+            try:
+                db.execute(text(upgrade))
+                db.commit()
+            except Exception:
+                db.rollback()
+                
         # Back-office upgrades
         tables = ["users", "owners", "properties", "tenants", "transactions"]
         for table in tables:
             try:
                 db.execute(text(f"ALTER TABLE {table} ADD COLUMN agency_id VARCHAR REFERENCES agencies(id)"))
-            except Exception:
-                pass
-                
-        db.commit()
+                db.commit()
+            except Exception as e:
+                db.rollback()
 
         user_count = db.query(models.User).count()
         if user_count == 0:
