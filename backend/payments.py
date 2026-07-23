@@ -28,14 +28,18 @@ def create_checkout_session(
 
     reference = f"SUB-{uuid.uuid4().hex[:8].upper()}"
 
-    # Structure du payload pour Moneroo API (Axasara)
+    name_parts = current_user.name.split(" ", 1)
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else name_parts[0]
+
     payload = {
         "amount": amount,
         "currency": "XOF",
         "description": f"Abonnement Immovi Premium (Paiement immédiat) - {current_user.email}",
         "customer": {
-            "name": current_user.name,
             "email": current_user.email,
+            "first_name": first_name,
+            "last_name": last_name,
             "phone": current_user.phone or "+221770000000"
         },
         "reference": reference,
@@ -47,38 +51,39 @@ def create_checkout_session(
     try:
         req_data = json.dumps(payload).encode('utf-8')
         req = urllib.request.Request(
-            f"{MONEROO_API_URL}/checkout",
+            f"{MONEROO_API_URL}/payments/initialize",
             data=req_data,
             headers={
                 "Authorization": f"Bearer {MONEROO_SECRET_KEY}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
             method='POST'
         )
         with urllib.request.urlopen(req, timeout=10) as response:
-            if response.status in [200, 201]:
-                res_body = json.loads(response.read().decode('utf-8'))
-                checkout_url = res_body.get("checkout_url") or res_body.get("payment_url") or res_body.get("url")
-                return {
-                    "status": "success",
-                    "checkout_url": checkout_url,
-                    "reference": reference,
-                    "trial_period_days": trial_days
-                }
+            res_body = json.loads(response.read().decode('utf-8'))
+            data_obj = res_body.get("data", {})
+            checkout_url = data_obj.get("checkout_url")
+            
+            if not checkout_url:
+                raise Exception("checkout_url manquant dans la réponse Moneroo")
+                
+            return {
+                "status": "success",
+                "checkout_url": checkout_url,
+                "reference": reference,
+                "trial_period_days": trial_days
+            }
     except Exception as e:
-        print(f"Moneroo API Direct Call Warning: {e}")
-
-    # Fallback sécurisé en mode démo / direct checkout si l'API est en cours de propagation
-    trial_end = datetime.now().strftime("%Y-%m-%d")
-    return {
-        "status": "success",
-        "checkout_url": f"https://checkout.moneroo.io/pay?ref={reference}&amount=1000&trial=0",
-        "reference": reference,
-        "plan": "Premium",
-        "trial_period_days": 0,
-        "trial_end_date": trial_end,
-        "message": "Session de paiement 1000 FCFA initialisée avec succès."
-    }
+        error_details = ""
+        if hasattr(e, 'read'):
+            try:
+                error_details = e.read().decode('utf-8')
+                print(f"Moneroo API Error Details: {error_details}")
+            except:
+                pass
+        print(f"Moneroo API Direct Call Error: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors de l'initialisation du paiement sécurisé avec Moneroo.")
 
 @router.post("/webhook")
 async def moneroo_webhook(request: Request, db: Session = Depends(database.get_db)):
