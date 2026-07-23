@@ -1,9 +1,35 @@
-from sqlalchemy import Column, String, Integer, Float, Boolean, ForeignKey, JSON
+from sqlalchemy import Column, String, Integer, Float, Boolean, ForeignKey, JSON, DateTime
+import datetime
 from sqlalchemy.orm import relationship
 from .database import Base
 
+
+class Agency(Base):
+    __tablename__ = "agencies"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String, index=True)
+    manager_name = Column(String)
+    phone = Column(String)
+    email = Column(String, unique=True, index=True)
+    property_count = Column(Integer, default=0)
+    owner_count = Column(Integer, default=0)
+    tenant_count = Column(Integer, default=0)
+    contract_count = Column(Integer, default=0)
+    subscription_plan = Column(String, default="Essai") # Essai, Starter, Pro, Business
+    subscription_status = Column(String, default="Actif") # Actif, Expiré, Suspendu
+    subscription_expiry = Column(String, nullable=True)
+    status = Column(String, default="Actif")
+    date_added = Column(String)
+    users = relationship("User", back_populates="agency")
+    owners = relationship("Owner", back_populates="agency")
+    properties = relationship("Property", back_populates="agency")
+    tenants = relationship("Tenant", back_populates="agency")
+
 class User(Base):
     __tablename__ = "users"
+
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
 
     id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
@@ -14,9 +40,12 @@ class User(Base):
     status = Column(String, default="Actif")
     permissions = Column(JSON) # e.g., ["dashboard", "owners", ...]
     date_added = Column(String)
+    agency = relationship("Agency", back_populates="users")
 
 class Owner(Base):
     __tablename__ = "owners"
+
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
 
     id = Column(String, primary_key=True, index=True)
     type = Column(String) # Personne Physique, Personne Morale
@@ -29,9 +58,12 @@ class Owner(Base):
     avatar_url = Column(String, nullable=True)
 
     properties = relationship("Property", back_populates="owner", cascade="all, delete-orphan")
+    agency = relationship("Agency", back_populates="owners")
 
 class Property(Base):
     __tablename__ = "properties"
+
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
 
     id = Column(String, primary_key=True, index=True)
     owner_id = Column(String, ForeignKey("owners.id"))
@@ -50,9 +82,12 @@ class Property(Base):
 
     owner = relationship("Owner", back_populates="properties")
     tenant = relationship("Tenant", back_populates="property", uselist=False, cascade="all, delete-orphan")
+    agency = relationship("Agency", back_populates="properties")
 
 class Tenant(Base):
     __tablename__ = "tenants"
+
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
 
     id = Column(String, primary_key=True, index=True)
     property_id = Column(String, ForeignKey("properties.id"))
@@ -65,9 +100,12 @@ class Tenant(Base):
     entry_date = Column(String)
 
     property = relationship("Property", back_populates="tenant")
+    agency = relationship("Agency", back_populates="tenants")
 
 class Transaction(Base):
     __tablename__ = "transactions"
+
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
 
     id = Column(String, primary_key=True, index=True)
     property_id = Column(String, ForeignKey("properties.id"), nullable=True)
@@ -90,3 +128,53 @@ class AgencySettings(Base):
     nif = Column(String)
     slogan = Column(String)
     logo_base64 = Column(String, nullable=True)
+
+
+class Subscription(Base):
+    __tablename__ = "subscriptions"
+    
+    id = Column(String, primary_key=True, index=True)
+    agency_id = Column(String, ForeignKey("agencies.id"))
+    plan = Column(String)
+    amount = Column(Float)
+    payment_method = Column(String) # Moneroo, Orange Money, etc.
+    reference = Column(String)
+    date = Column(String)
+    status = Column(String) # Payé, Échoué, En attente
+
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+    
+    id = Column(String, primary_key=True, index=True)
+    agency_id = Column(String, ForeignKey("agencies.id"))
+    user_id = Column(String, ForeignKey("users.id"))
+    subject = Column(String)
+    category = Column(String)
+    priority = Column(String)
+    message = Column(String)
+    status = Column(String, default="Ouvert")
+    date = Column(String)
+
+class ActivityLog(Base):
+    __tablename__ = "activity_logs"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True)
+    action = Column(String) # e.g., "Connexion", "Paiement", "Création Bien"
+    details = Column(String)
+    date = Column(String)
+
+class PlatformSettings(Base):
+    __tablename__ = "platform_settings"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    logo_url = Column(String, nullable=True)
+    favicon_url = Column(String, nullable=True)
+    app_name = Column(String, default="Immovi")
+    currency = Column(String, default="FCFA")
+    languages = Column(JSON, nullable=True)
+    api_keys = Column(JSON, nullable=True)
+    domain = Column(String, nullable=True)
+    payment_settings = Column(JSON, nullable=True)
+    email_settings = Column(JSON, nullable=True)

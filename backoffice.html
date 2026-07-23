@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Back-Office | Immovi Admin</title>
+  <link rel="stylesheet" href="backoffice.css">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Login View -->
+  <div id="login-view" class="login-view">
+    <div class="login-box">
+      <div class="login-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h2>Immovi Admin</h2>
+      </div>
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label>Email Administrateur</label>
+          <input type="email" id="admin-email" required placeholder="admin@immovi.com">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="admin-password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Admin Interface -->
+  <div id="admin-interface" class="admin-layout" style="display: none;">
+    
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="header-left">
+        <div class="brand">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Immovi Back-Office</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="admin-profile">
+          <span id="admin-user-name">Administrateur</span>
+          <div class="avatar">AD</div>
+        </div>
+        <button id="btn-logout" class="btn-icon" title="Déconnexion"><i class="fa-solid fa-power-off"></i></button>
+      </div>
+    </header>
+
+    <div class="admin-main">
+      <!-- Main Navigation Pills -->
+      <nav class="admin-nav-pills">
+        <button class="nav-pill active" data-target="view-users">
+          <i class="fa-solid fa-users"></i> Abonnés
+        </button>
+        <button class="nav-pill" data-target="view-agencies">
+          <i class="fa-solid fa-building"></i> Agences
+        </button>
+        <button class="nav-pill" data-target="view-properties">
+          <i class="fa-solid fa-home"></i> Biens
+        </button>
+        <button class="nav-pill" data-target="view-stats">
+          <i class="fa-solid fa-chart-simple"></i> Statistiques
+        </button>
+        <button class="nav-pill" data-target="view-emails">
+          <i class="fa-solid fa-envelope"></i> E-mails
+        </button>
+        <button class="nav-pill" data-target="view-journal">
+          <i class="fa-solid fa-clock-rotate-left"></i> Journal
+        </button>
+        <button class="nav-pill" data-target="view-settings">
+          <i class="fa-solid fa-gear"></i> Paramètres
+        </button>
+      </nav>
+
+      <div class="content-area">
+        
+        <!-- VIEW: USERS / ABONNÉS -->
+        <section id="view-users" class="admin-view active">
+          
+          <div class="toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="search-users" placeholder="Rechercher par nom, email, téléphone...">
+            </div>
+            <div class="filters">
+              <select class="filter-select" id="filter-user-status">
+                <option value="all">Tous statuts</option>
+                <option value="Actif">Actif</option>
+                <option value="En attente">En attente</option>
+                <option value="Suspendu">Suspendu</option>
+              </select>
+              <select class="filter-select" id="filter-user-type">
+                <option value="all">Tous types</option>
+                <option value="Essai">Essai gratuit</option>
+                <option value="Starter">Starter</option>
+                <option value="Pro">Pro</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="results-count">
+            <span id="users-count">0</span> utilisateur(s) trouvé(s)
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>Téléphone</th>
+                  <th>Société</th>
+                  <th>Type</th>
+                  <th>Statut</th>
+                  <th>Expiration</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-users">
+                <!-- Data injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- VIEW: AGENCIES -->
+        <section id="view-agencies" class="admin-view">
+          <h2 class="view-title">Agences Enregistrées</h2>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom Agence</th>
+                  <th>Responsable</th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Abonnement</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-agencies"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- VIEW: PROPERTIES -->
+        <section id="view-properties" class="admin-view">
+          <h2 class="view-title">Base Globale des Biens</h2>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom du Bien</th>
+                  <th>Type</th>
+                  <th>Statut</th>
+                  <th>Agence</th>
+                  <th>Propriétaire</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-properties"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- VIEW: STATS -->
+        <section id="view-stats" class="admin-view">
+          <h2 class="view-title">Vue d'ensemble</h2>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon text-blue"><i class="fa-solid fa-users"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Total Utilisateurs</span>
+                <h3 class="stat-value" id="stat-users">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon text-purple"><i class="fa-solid fa-building"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Total Agences</span>
+                <h3 class="stat-value" id="stat-agencies">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon text-green"><i class="fa-solid fa-money-bill-wave"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Revenus (FCFA)</span>
+                <h3 class="stat-value" id="stat-revenue">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon text-orange"><i class="fa-solid fa-home"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Total Biens</span>
+                <h3 class="stat-value" id="stat-properties">0</h3>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW: JOURNAL -->
+        <section id="view-journal" class="admin-view">
+          <h2 class="view-title">Journal d'Activité</h2>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Détails</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-journal"></tbody>
+            </table>
+          </div>
+        </section>
+        
+        <!-- OTHERS... -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="backoffice.js"></script>
+</body>
+</html>

@@ -20,21 +20,6 @@ async def lifespan(app: FastAPI):
     # Setup default admin user on startup if no users exist
     db = database.SessionLocal()
     try:
-        user_count = db.query(models.User).count()
-        if user_count == 0:
-            hashed_pwd = security.get_password_hash("admin123")
-            admin_user = models.User(
-                id="admin-001",
-                name="Administrateur",
-                email="admin@immovi.com",
-                password_hash=hashed_pwd,
-                role="Admin",
-                status="Actif",
-                permissions=["all"],
-                date_added="2026-07-16"
-            )
-            db.add(admin_user)
-            db.commit()
 
         # Schema upgrade for new columns in properties table
         from sqlalchemy import text
@@ -62,7 +47,32 @@ async def lifespan(app: FastAPI):
             db.execute(text("ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR"))
         except Exception:
             pass
+            
+        # Back-office upgrades
+        tables = ["users", "owners", "properties", "tenants", "transactions"]
+        for table in tables:
+            try:
+                db.execute(text(f"ALTER TABLE {table} ADD COLUMN agency_id VARCHAR REFERENCES agencies(id)"))
+            except Exception:
+                pass
+                
         db.commit()
+
+        user_count = db.query(models.User).count()
+        if user_count == 0:
+            hashed_pwd = security.get_password_hash("admin123")
+            admin_user = models.User(
+                id="admin-001",
+                name="Administrateur",
+                email="admin@immovi.com",
+                password_hash=hashed_pwd,
+                role="Admin",
+                status="Actif",
+                permissions=["all"],
+                date_added="2026-07-16"
+            )
+            db.add(admin_user)
+            db.commit()
 
     finally:
         db.close()
@@ -78,7 +88,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from . import owners, properties, tenants, transactions, settings, payments
+from . import owners, properties, tenants, transactions, settings, payments, admin
 
 app.include_router(auth.router)
 app.include_router(owners.router)
@@ -87,6 +97,7 @@ app.include_router(tenants.router)
 app.include_router(transactions.router)
 app.include_router(settings.router)
 app.include_router(payments.router)
+app.include_router(admin.router)
 
 @app.get("/api")
 def read_root():
