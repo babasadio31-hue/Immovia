@@ -846,15 +846,15 @@ html {
   }
 }
 
-/* Section Modules Dark Theme */
-.bg-dark-modules { background-color: #0b1121; color: #fff; padding: 5rem 0; }
-.bg-dark-modules .section-title { color: #fff; }
-.bg-dark-modules .section-subtitle { color: #94a3b8; }
+/* Section Modules Light Theme */
+.bg-light-modules { background-color: #f9fafb; padding: 5rem 0; }
+.bg-light-modules .section-title { color: var(--color-text); }
+.bg-light-modules .section-subtitle { color: var(--color-text-light); }
 .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-.module-card { background-color: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; text-align: left; }
-.module-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+.module-card { background-color: #ffffff; border: 1px solid var(--color-border); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s; text-align: left; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+.module-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
 .module-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
-.module-icon { width: 32px; height: 32px; background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-.module-number { color: #60a5fa; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; }
-.module-title { color: #f8fafc; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
-.module-desc { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+.module-icon { width: 32px; height: 32px; background-color: rgba(89, 115, 93, 0.1); color: var(--color-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.module-number { color: var(--color-primary); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; }
+.module-title { color: var(--color-text); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.module-desc { color: var(--color-text-light); font-size: 0.9rem; line-height: 1.5; }
