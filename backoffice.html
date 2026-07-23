@@ -238,11 +238,11 @@
             <button class="btn-primary" onclick="showView('view-users')"><i class="fa-solid fa-arrow-left"></i> Retour</button>
           </div>
           
-          <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); margin-bottom: 2rem;">
+          <div style="background: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); margin-bottom: 2rem;">
             <div style="display:flex; align-items:center; gap: 1.5rem; margin-bottom: 2rem;">
               <div id="detail-avatar" class="avatar" style="width: 80px; height: 80px; font-size: 2rem;"></div>
               <div>
-                <h3 id="detail-name" style="font-size: 1.5rem; color: var(--color-text-primary);">...</h3>
+                <h3 id="detail-name" style="font-size: 1.5rem; color: var(--text-main);">...</h3>
                 <p id="detail-email" style="color: var(--color-text-secondary);"></p>
                 <div style="margin-top: 0.5rem; display:flex; gap: 0.5rem;">
                   <span id="detail-role" class="badge badge-blue"></span>
@@ -321,24 +321,24 @@
           
           <!-- Tab Content: Newsletters -->
           <div id="tab-news" style="display: none;">
-            <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); max-width: 600px;">
-              <h3 style="margin-bottom: 1.5rem; color: var(--color-text-primary);">Envoyer une Newsletter</h3>
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--color-border); max-width: 600px;">
+              <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Envoyer une Newsletter</h3>
               <form id="form-newsletter" onsubmit="submitNewsletter(event)">
                 <div class="form-group" style="margin-bottom: 1rem;">
-                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Cible</label>
-                  <select id="news-target" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary);">
-                    <option value="all" style="background: var(--color-surface); color: var(--color-text-primary);">Tous les utilisateurs</option>
-                    <option value="agencies" style="background: var(--color-surface); color: var(--color-text-primary);">Agences Uniquement</option>
-                    <option value="owners" style="background: var(--color-surface); color: var(--color-text-primary);">Propriétaires Uniquement</option>
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Cible</label>
+                  <select id="news-target" required>
+                    <option value="all" >Tous les utilisateurs</option>
+                    <option value="agencies" >Agences Uniquement</option>
+                    <option value="owners" >Propriétaires Uniquement</option>
                   </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
-                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Sujet de l'e-mail</label>
-                  <input type="text" id="news-subject" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary);">
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Sujet de l'e-mail</label>
+                  <input type="text" id="news-subject" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 1.5rem;">
-                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-primary);">Contenu (HTML autorisé)</label>
-                  <textarea id="news-content" rows="6" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text-primary); resize: vertical;"></textarea>
+                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Contenu (HTML autorisé)</label>
+                  <textarea id="news-content" rows="6" required style="resize: vertical;"></textarea>
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%;">Envoyer la Newsletter</button>
               </form>
@@ -350,11 +350,11 @@
 <!-- VIEW: SETTINGS -->
         <section id="view-settings" class="admin-view">
           <h2 class="view-title">Paramètres de la plateforme</h2>
-          <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+          <div style="background: var(--bg-card); border: 1px solid var(--color-border); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
             
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
               <div>
-                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Mode Maintenance</h4>
+                <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.5rem;">Mode Maintenance</h4>
                 <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Empêcher l'accès à la plateforme (sauf Super Admin) pour effectuer des mises à jour.</p>
               </div>
               <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
@@ -367,7 +367,7 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
               <div>
-                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Inscriptions Automatiques</h4>
+                <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.5rem;">Inscriptions Automatiques</h4>
                 <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Autoriser la création de nouveaux comptes agences depuis l'application cliente.</p>
               </div>
               <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
@@ -380,7 +380,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <h4 style="color: var(--color-text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Version de l'API</h4>
+                <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.5rem;">Version de l'API</h4>
                 <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Version actuelle du backend déployé sur Railway.</p>
               </div>
               <span class="badge badge-purple" style="font-size: 1rem; padding: 0.5rem 1rem;">v2.1.0 (Stable)</span>
