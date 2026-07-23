@@ -3578,7 +3578,7 @@ function setupSubscriptionModal() {
     }
     if (planEl) planEl.textContent = 'Premium (1 000 FCFA / mois)';
     if (trialEl) trialEl.textContent = 'Aucun (Paiement immédiat)';
-    if (dateEl) dateEl.textContent = 'Aujourd\\'hui';
+    if (dateEl) dateEl.textContent = "Aujourd'hui";
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
   }
 
