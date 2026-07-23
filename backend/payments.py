@@ -51,8 +51,7 @@ def create_checkout_session(
             data=req_data,
             headers={
                 "Authorization": f"Bearer {MONEROO_SECRET_KEY}",
-                "Content-Type": "application/json",
-                "X-Api-Key": MONEROO_SECRET_KEY
+                "Content-Type": "application/json"
             },
             method='POST'
         )
