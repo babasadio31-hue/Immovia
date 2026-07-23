@@ -328,9 +328,23 @@
         
         <div class="login-right">
             <div class="login-right-inner">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 0.2rem;">Développé par Sadio N'diaye</p>
+                    <p style="color: var(--color-text-muted); font-size: 0.85rem;">+223 92 83 17 34 — +223 62 84 95 77</p>
+                </div>
+
+                <div style="display: flex; background: #f3f4f6; padding: 0.5rem; border-radius: 12px; gap: 0.5rem; margin-bottom: 2rem;">
+                    <a href="login.html" class="btn" style="flex: 1; justify-content: center; background: transparent; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; border: none; padding: 0.75rem; border-radius: 8px;">
+                        <i class="uil uil-signin" style="margin-right: 8px;"></i> Connexion
+                    </a>
+                    <button class="btn" style="flex: 1; justify-content: center; background: var(--color-primary); color: white; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; padding: 0.75rem; border-radius: 8px; cursor: default;">
+                        <i class="uil uil-user-plus" style="margin-right: 8px;"></i> Inscription
+                    </button>
+                </div>
+
                 <div class="login-header">
-                    <h2>Créer un compte</h2>
-                    <p>Remplissez vos informations ci-dessous</p>
+                    <h2>Inscription</h2>
+                    <p>Essai gratuit de <span style="color: var(--color-primary); font-weight: 600;">3 jours</span> — Aucune carte requise</p>
                 </div>
                 
                 <div id="login-error"></div>
@@ -356,11 +370,12 @@
                         </div>
                     </div>
                     
-                    <div style="margin-top: 1rem; margin-bottom: 2rem; text-align: center;">
-                        <a href="login.html" style="color: var(--color-primary); font-size: 0.9rem; text-decoration: none; font-weight: 600;">Vous avez déjà un compte ? Se connecter</a>
+                    <div class="form-group">
+                        <label for="company">Nom de la société (optionnel)</label>
+                        <input type="text" id="company" class="form-control" placeholder="Nom de votre société" style="border-color: var(--color-primary);">
                     </div>
                     
-                    <button type="submit" class="btn-submit" id="btn-submit">Créer le compte</button>
+                    <button type="submit" class="btn-submit" id="btn-submit" style="background: var(--color-primary);">S'inscrire — Essai gratuit 3 jours</button>
                 </form>
             </div>
         </div>
