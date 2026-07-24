@@ -4460,7 +4460,7 @@ async function renderSupportTickets() {
   
   try {
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/tickets/`, {
+    const res = await fetch('/api/tickets/', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -4553,7 +4553,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_URL}/tickets/`, {
+        const res = await fetch('/api/tickets/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
