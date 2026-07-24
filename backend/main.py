@@ -31,7 +31,11 @@ async def lifespan(app: FastAPI):
             "ALTER TABLE properties ADD COLUMN caution_amount FLOAT",
             "ALTER TABLE properties ADD COLUMN commission_rate FLOAT",
             "ALTER TABLE properties ADD COLUMN tenant_name VARCHAR",
-            "ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR"
+                        "ALTER TABLE properties ADD COLUMN tenant_phone VARCHAR",
+            "ALTER TABLE properties ADD COLUMN mandate_start VARCHAR",
+            "ALTER TABLE properties ADD COLUMN mandate_end VARCHAR",
+            "ALTER TABLE owners ADD COLUMN mandate_start VARCHAR",
+            "ALTER TABLE owners ADD COLUMN mandate_end VARCHAR"
         ]
         
         for upgrade in upgrades:

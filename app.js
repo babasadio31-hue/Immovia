@@ -2239,6 +2239,8 @@ async function handleOwnerSubmit(e) {
   const email = document.getElementById('input-owner-email').value.trim();
   const address = document.getElementById('input-owner-address').value.trim();
   const commissionRate = parseInt(document.getElementById('input-owner-commission').value);
+  const mandateStart = document.getElementById('input-owner-mandate-start').value || null;
+  const mandateEnd = document.getElementById('input-owner-mandate-end').value || null;
 
   if (!name || !phone || !email || isNaN(commissionRate)) {
     showToast('Veuillez remplir correctement la fiche propriétaire.', 'error');
@@ -2266,7 +2268,9 @@ async function handleOwnerSubmit(e) {
     phone,
     email,
     address,
-    notes: JSON.stringify({ commissionRate: commissionRate, notes: existingNotes })
+    notes: JSON.stringify({ commissionRate: commissionRate, notes: existingNotes }),
+    mandate_start: mandateStart,
+    mandate_end: mandateEnd
   };
 
   try {
@@ -2338,6 +2342,8 @@ async function handlePropertySubmit(e) {
   const commissionRate = commissionVal !== '' ? parseFloat(commissionVal) : null;
   const status = document.getElementById('select-property-status').value;
   const saleStatus = document.getElementById('select-property-sale-status').value;
+  const mandateStart = document.getElementById('input-property-mandate-start').value || null;
+  const mandateEnd = document.getElementById('input-property-mandate-end').value || null;
 
   let tenantName = '';
   let tenantPhone = '';
@@ -2368,7 +2374,9 @@ async function handlePropertySubmit(e) {
     surface: 0,
     units: 1,
     tenant_name: tenantName,
-    tenant_phone: tenantPhone
+    tenant_phone: tenantPhone,
+    mandate_start: mandateStart,
+    mandate_end: mandateEnd
   };
 
   try {

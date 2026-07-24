@@ -56,6 +56,8 @@ class Owner(Base):
     address = Column(String)
     notes = Column(String)
     avatar_url = Column(String, nullable=True)
+    mandate_start = Column(String, nullable=True)
+    mandate_end = Column(String, nullable=True)
 
     properties = relationship("Property", back_populates="owner", cascade="all, delete-orphan")
     agency = relationship("Agency", back_populates="owners")
@@ -79,6 +81,8 @@ class Property(Base):
     commission_rate = Column(Float, nullable=True)
     tenant_name = Column(String, nullable=True)
     tenant_phone = Column(String, nullable=True)
+    mandate_start = Column(String, nullable=True)
+    mandate_end = Column(String, nullable=True)
 
     owner = relationship("Owner", back_populates="properties")
     tenant = relationship("Tenant", back_populates="property", uselist=False, cascade="all, delete-orphan")

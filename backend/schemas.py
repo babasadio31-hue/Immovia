@@ -44,6 +44,8 @@ class OwnerBase(BaseModel):
     address: str
     notes: Optional[str] = None
     avatar_url: Optional[str] = None
+    mandate_start: Optional[str] = None
+    mandate_end: Optional[str] = None
 
 class OwnerCreate(OwnerBase):
     id: str
@@ -68,6 +70,8 @@ class PropertyBase(BaseModel):
     commission_rate: Optional[float] = None
     tenant_name: Optional[str] = None
     tenant_phone: Optional[str] = None
+    mandate_start: Optional[str] = None
+    mandate_end: Optional[str] = None
 
 class PropertyCreate(PropertyBase):
     id: str
