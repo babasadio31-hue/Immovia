@@ -92,7 +92,24 @@ def get_all_subscriptions(db: Session = Depends(database.get_db), admin: models.
 
 @router.get("/tickets")
 def get_all_tickets(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
-    return db.query(models.SupportTicket).order_by(models.SupportTicket.date.desc()).all()
+    tickets = db.query(models.SupportTicket).order_by(models.SupportTicket.date.desc()).all()
+    results = []
+    for t in tickets:
+        user = db.query(models.User).filter(models.User.id == t.user_id).first() if t.user_id else None
+        agency = db.query(models.Agency).filter(models.Agency.id == t.agency_id).first() if t.agency_id else None
+        results.append({
+            "id": t.id,
+            "subject": t.subject,
+            "category": t.category,
+            "priority": t.priority,
+            "message": t.message,
+            "status": t.status,
+            "date": t.date,
+            "author": user.name if user else "Anonyme",
+            "agency": agency.name if agency else "Aucune",
+            "email": user.email if user else "Non spécifié"
+        })
+    return results
 
 @router.get("/activity")
 def get_activity_logs(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):

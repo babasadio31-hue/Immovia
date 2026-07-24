@@ -391,22 +391,42 @@ async function loadSupportTickets() {
     const tbody = document.getElementById('tbody-tickets');
     tbody.innerHTML = '';
     
+    // Check if table header needs an update for Author
+    const thead = tbody.closest('table').querySelector('thead tr');
+    if (!thead.querySelector('.th-author')) {
+        const th = document.createElement('th');
+        th.className = 'th-author';
+        th.innerText = 'AUTEUR / AGENCE';
+        thead.insertBefore(th, thead.children[2]);
+    }
+    
     if (tickets.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Aucun ticket de support.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Aucun ticket de support.</td></tr>';
         return;
     }
     
     tickets.forEach(ticket => {
       const tr = document.createElement('tr');
+      
+      const safeSubject = (ticket.subject || '').replace(/'/g, "\'").replace(/"/g, '&quot;');
+      const safeMessage = (ticket.message || '').replace(/'/g, "\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+      const safeAuthor = (ticket.author || 'Anonyme').replace(/'/g, "\'");
+      const safeEmail = (ticket.email || 'Non spécifié').replace(/'/g, "\'");
+      const safeAgency = (ticket.agency || 'Aucune').replace(/'/g, "\'");
+      
       tr.innerHTML = `
         <td>#${ticket.id.substring(0,6)}</td>
-        <td>${ticket.date}</td>
+        <td>${ticket.date ? ticket.date.substring(0,10) : ''}</td>
+        <td>
+            <div style="font-weight:bold;">${ticket.author}</div>
+            <div style="font-size:0.85em; color:var(--color-text-muted);">${ticket.agency !== 'Aucune' ? ticket.agency : ticket.email}</div>
+        </td>
         <td><strong>${ticket.subject}</strong></td>
         <td>${ticket.category}</td>
         <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority}</span></td>
         <td><span class="badge badge-purple">${ticket.status}</span></td>
         <td>
-          <button class="btn-icon" title="Voir détails"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-icon" title="Voir détails" onclick="viewTicketDetails('${ticket.id}', '${safeSubject}', '${safeAuthor}', '${safeAgency}', '${safeEmail}', '${safeMessage}')"><i class="fa-solid fa-eye"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -415,6 +435,37 @@ async function loadSupportTickets() {
     console.error("Erreur tickets:", err);
   }
 }
+
+function viewTicketDetails(id, subject, author, agency, email, message) {
+  const modalHTML = `
+    <div id="ticket-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+      <div style="background:var(--color-surface); width:600px; max-width:95%; max-height:90vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
+        <div style="padding:20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">Ticket: ${subject}</h3>
+          <button onclick="document.getElementById('ticket-modal').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div style="padding:20px; overflow-y:auto; flex:1;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:15px; background:var(--color-background); border-radius:8px;">
+            <div>
+                <p style="margin:0 0 5px 0;"><strong>Auteur:</strong> ${author}</p>
+                <p style="margin:0 0 5px 0;"><strong>Email:</strong> ${email}</p>
+            </div>
+            <div>
+                <p style="margin:0;"><strong>Agence:</strong> ${agency}</p>
+            </div>
+          </div>
+          <h4 style="margin-top:0;">Description du problème :</h4>
+          <p style="white-space:pre-wrap; line-height:1.6; padding:15px; border:1px solid var(--color-border); border-radius:8px; background:#f9fafb;">${message}</p>
+        </div>
+        <div style="padding:15px 20px; background:var(--color-background); text-align:right;">
+          <button onclick="document.getElementById('ticket-modal').remove()" class="btn-primary">Fermer</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
 
 async function submitNewsletter(e) {
   e.preventDefault();
