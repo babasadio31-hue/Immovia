@@ -30,14 +30,11 @@ class TicketResponse(BaseModel):
         orm_mode = True
 
 @router.post("/", response_model=TicketResponse)
-def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    # Check if user has an agency
-    agency = db.query(models.Agency).filter(models.Agency.owner_id == current_user.id).first()
-    
+def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db)):
     new_ticket = models.SupportTicket(
         id=f"TKT-{uuid.uuid4().hex[:8].upper()}",
-        agency_id=agency.id if agency else None,
-        user_id=current_user.id,
+        agency_id=None,
+        user_id=None,
         subject=ticket.subject,
         category=ticket.category,
         priority=ticket.priority,
@@ -53,6 +50,6 @@ def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_u
     return new_ticket
 
 @router.get("/", response_model=List[TicketResponse])
-def get_tickets(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    tickets = db.query(models.SupportTicket).filter(models.SupportTicket.user_id == current_user.id).all()
+def get_tickets(db: Session = Depends(get_db)):
+    tickets = db.query(models.SupportTicket).order_by(models.SupportTicket.date.desc()).all()
     return tickets
