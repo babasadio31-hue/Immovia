@@ -3801,33 +3801,20 @@ async function handleStaffSubmit(e) {
 
   if (idInput) {
     // Modification
-    const member = state.staff.find(m => m.id === idInput);
-    if (member) {
-      member.name = name;
-      member.phone = phone;
-      member.email = email;
-      member.role = role;
-      member.status = status;
-      member.permissions = permissions;
+    const updatePayload = {
+      name, phone, email, role, status, permissions
+    };
+    if (pwdInput) updatePayload.password = pwdInput;
       
-      const updatePayload = {
-        name, phone, email, role, status, permissions
-      };
-      if (pwdInput) {
-        member.password = pwdInput;
-        updatePayload.password = pwdInput;
+    try {
+      if (typeof API !== 'undefined' && API.updateUser) {
+        await API.updateUser(idInput, updatePayload);
       }
-      
-      try {
-        if (typeof API !== 'undefined' && API.updateUser) {
-          await API.updateUser(idInput, updatePayload);
-        }
-      } catch (err) {
-        console.warn("Mise à jour backend warning :", err.message);
-      }
-      
-      showToast(`Collaborateur ${name} mis à jour.`, 'success');
+    } catch (err) {
+      showToast(err.message || 'Erreur lors de la mise à jour.', 'error');
+      return;
     }
+    showToast(`Collaborateur ${name} mis à jour.`, 'success');
   } else {
     // Création
     if (!pwdInput) {
@@ -3835,30 +3822,18 @@ async function handleStaffSubmit(e) {
       return;
     }
 
-    // Création backend pour permettre la connexion
     try {
       if (typeof API !== 'undefined' && API.createStaffUser) {
         await API.createStaffUser(name, email, pwdInput, role, permissions);
       }
     } catch (err) {
-      console.warn("Création backend warning :", err.message);
+      showToast(err.message || 'Erreur lors de la création.', 'error');
+      return;
     }
-
-    const newMember = {
-      id: 'staff-' + Date.now(),
-      name,
-      phone,
-      email,
-      role,
-      status,
-      password: pwdInput,
-      permissions,
-      dateAdded: getPastDateString(0)
-    };
-    state.staff.push(newMember);
     showToast(`Compte de ${name} créé. Il/Elle peut désormais se connecter !`, 'success');
   }
   closeAllModals();
+  await loadData();
   renderStaffTable();
 }
 
