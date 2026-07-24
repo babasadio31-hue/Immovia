@@ -43,31 +43,8 @@ function initApp() {
   
   const allPermissions = ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'settings'];
   
-  if (!state.staff || state.staff.length === 0) {
-    state.staff = [
-      { id: 'staff-1', name: 'Sadio Diallo', phone: '+223 70 123 456', email: 'admin@immovi.ml', password: 'admin', role: 'Administrateur', status: 'Actif', permissions: allPermissions, dateAdded: getPastDateString(120) }
-    ];
-    dataChanged = true;
-  } else {
-    // Migration pour les données existantes
-    state.staff.forEach(s => {
-      if (!s.password) {
-        s.password = '1234'; // Mot de passe par défaut
-        dataChanged = true;
-      }
-      if (!s.permissions) {
-        s.permissions = s.role === 'Administrateur' ? allPermissions : ['dashboard'];
-        dataChanged = true;
-      }
-      if (s.id === 'staff-1') {
-        s.email = 'admin@immovi.ml';
-        s.password = 'admin';
-        dataChanged = true;
-      }
-    });
-  }
+
   if (dataChanged) {
-    saveData();
   }
   
   setupEventListeners();
@@ -209,18 +186,6 @@ async function loadData() {
         logoBase64: apiSettings.logo_base64 || null,
         theme: currentTheme
       };
-    } else {
-      const savedState = localStorage.getItem('immovi_state');
-      if (savedState) {
-          const local = JSON.parse(savedState);
-          state.staff = local.staff || [];
-          if (local.agencySettings && local.agencySettings.name) {
-            state.agencySettings = {
-              ...local.agencySettings,
-              theme: currentTheme
-            };
-          }
-      }
     }
     renderGlobalPrintHeader();
     applyThemeUI();
@@ -229,17 +194,6 @@ async function loadData() {
   }
 }
 
-function saveData() {
-  try {
-    const toSave = {
-      agencySettings: state.agencySettings,
-      staff: state.staff
-    };
-    localStorage.setItem('immovi_state', JSON.stringify(toSave));
-  } catch (e) {
-    console.error("Erreur de sauvegarde locale:", e);
-  }
-}
 
 
 
@@ -490,7 +444,6 @@ function setupEventListeners() {
               notes: JSON.stringify({ commissionRate: owner.commissionRate, notes: owner.notes || "" }),
               avatar_url: owner.avatar_url || ""
             });
-            saveData();
             openOwnerDossier(state.activeOwnerId); // Refresh dossier
             showToast(`Honoraires mis à jour (${newRate}%)`, 'success');
           } catch (err) {
@@ -521,7 +474,6 @@ function setupEventListeners() {
           const txToDelete = state.transactions.filter(tx => tx.type === 'expense' && ownerPropIds.includes(tx.propertyId));
           await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
           state.transactions = state.transactions.filter(tx => !(tx.type === 'expense' && ownerPropIds.includes(tx.propertyId)));
-          saveData();
           renderAccounting();
           renderDashboard();
           openOwnerDossier(state.activeOwnerId); 
@@ -538,7 +490,6 @@ function setupEventListeners() {
         const txToDelete = state.transactions.filter(tx => ownerPropIds.includes(tx.propertyId));
         await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => !ownerPropIds.includes(tx.propertyId));
-        saveData();
         document.getElementById('modal-statement').classList.remove('active');
         openOwnerDossier(state.activeOwnerId);
         showToast("L'historique du relevé financier a été définitivement supprimé.", "success");
@@ -552,7 +503,6 @@ function setupEventListeners() {
         const txToDelete = state.transactions.filter(tx => tx.type === 'income');
         await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => tx.type !== 'income');
-        saveData();
         renderAccounting();
         showToast("Toutes les entrées ont été supprimées définitivement.", "success");
       }
@@ -565,7 +515,6 @@ function setupEventListeners() {
         const txToDelete = state.transactions.filter(tx => tx.type === 'expense');
         await Promise.all(txToDelete.map(tx => API.deleteTransaction(tx.id)));
         state.transactions = state.transactions.filter(tx => tx.type !== 'expense');
-        saveData();
         renderAccounting();
         showToast("Toutes les sorties ont été supprimées définitivement.", "success");
       }
@@ -3909,8 +3858,6 @@ async function handleStaffSubmit(e) {
     state.staff.push(newMember);
     showToast(`Compte de ${name} créé. Il/Elle peut désormais se connecter !`, 'success');
   }
-
-  saveData();
   closeAllModals();
   renderStaffTable();
 }
@@ -3925,8 +3872,6 @@ function toggleStaffStatus(id) {
         API.updateUser(member.id, { status: member.status }).catch(err => console.warn(err));
       }
     } catch(e) {}
-    
-    saveData();
     renderStaffTable();
     showToast(`Statut de ${member.name} mis à jour : ${member.status}`, 'success');
   }
@@ -3945,7 +3890,6 @@ function deleteStaff(id) {
       } catch (e) {}
       
       state.staff = state.staff.filter(m => m.id !== id);
-      saveData();
       renderStaffTable();
       showToast(`Collaborateur ${member.name} retiré.`, 'warning');
     }
@@ -4000,8 +3944,6 @@ async function handleSettingsAgencySubmit(e) {
     nif,
     slogan
   };
-
-  saveData();
   try {
     await API.updateSettings({
       name: state.agencySettings.name,
@@ -4029,7 +3971,6 @@ function handleLogoUpload(e) {
   reader.onload = async function(evt) {
     state.agencySettings = state.agencySettings || {};
     state.agencySettings.logoBase64 = evt.target.result;
-    saveData();
     try {
       await API.updateSettings({
         name: state.agencySettings.name || 'Immovi S.A.R.L',
@@ -4052,7 +3993,6 @@ function handleLogoUpload(e) {
 async function resetLogo() {
   if (state.agencySettings) {
     delete state.agencySettings.logoBase64;
-    saveData();
     try {
       await API.updateSettings({
         name: state.agencySettings.name || 'Immovi S.A.R.L',
@@ -4180,8 +4120,6 @@ function handleImportJSONFile(e) {
           staff: importedState.staff || [],
           agencySettings: importedState.agencySettings || {}
         };
-        
-        saveData();
         populateDropdowns();
         renderGlobalPrintHeader();
         switchTab('dashboard');
@@ -4218,7 +4156,6 @@ window.setThemeOption = function(theme) {
   state.agencySettings = state.agencySettings || {};
   state.agencySettings.theme = theme;
   localStorage.setItem('immovi_theme', theme);
-  saveData();
   applyThemeUI();
 };
 
