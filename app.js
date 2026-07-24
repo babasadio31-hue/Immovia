@@ -1459,19 +1459,29 @@ function openOwnerDossier(ownerId) {
   const tbodyBiens = document.getElementById('body-owner-biens-table');
   tbodyBiens.innerHTML = '';
   if (ownerProperties.length === 0) {
-    tbodyBiens.innerHTML = '<tr><td colspan="4" class="text-center">Aucun bien sous contrat.</td></tr>';
+    tbodyBiens.innerHTML = '<tr><td colspan="5" class="text-center">Aucun bien sous contrat.</td></tr>';
   } else {
     ownerProperties.forEach(p => {
       let badgeClass = 'badge-purple';
       if (p.status === 'Loué') badgeClass = 'badge-green';
       if (p.status === 'Maintenance') badgeClass = 'badge-rose';
       
+      let mandateHtml = '<span class="text-muted" style="font-size:0.85rem;">-</span>';
+      if (p.mandate_start && p.mandate_end) {
+        mandateHtml = `<span style="font-size:0.85rem;">Du ${formatDateString(p.mandate_start)} au ${formatDateString(p.mandate_end)}</span>`;
+      } else if (p.mandate_start) {
+        mandateHtml = `<span style="font-size:0.85rem;">Depuis le ${formatDateString(p.mandate_start)}</span>`;
+      } else if (p.mandate_end) {
+        mandateHtml = `<span style="font-size:0.85rem;">Jusqu'au ${formatDateString(p.mandate_end)}</span>`;
+      }
+
       tbodyBiens.innerHTML += `
         <tr>
-          <td style="font-weight: 500;">${p.name}</td>
-          <td>${p.address}</td>
-          <td class="text-right" style="font-weight: 600;">${formatCurrency(p.rent)}</td>
+          <td class="text-center" style="font-weight: 500;">${p.name}</td>
+          <td class="text-center">${p.address}</td>
+          <td class="text-center" style="font-weight: 600;">${formatCurrency(p.rent)}</td>
           <td class="text-center"><span class="badge ${badgeClass}">${p.status}</span></td>
+          <td class="text-center">${mandateHtml}</td>
         </tr>
       `;
     });
