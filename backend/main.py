@@ -96,6 +96,35 @@ app.include_router(tickets.router)
 def read_root():
     return {"message": "Bienvenue sur l'API Immovi ! Le backend est en ligne."}
 
+from pydantic import BaseModel
+import uuid
+import datetime
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from . import database, models
+
+class ContactRequest(BaseModel):
+    name: str
+    email: str
+    phone: str
+    message: str
+
+@app.post("/api/contact")
+def receive_contact_message(contact: ContactRequest, db: Session = Depends(database.get_db)):
+    msg = models.ContactMessage(
+        id=f"MSG-{uuid.uuid4().hex[:8].upper()}",
+        name=contact.name,
+        email=contact.email,
+        phone=contact.phone,
+        message=contact.message,
+        status="Non lu",
+        date=datetime.datetime.utcnow().isoformat() + "Z"
+    )
+    db.add(msg)
+    db.commit()
+    db.refresh(msg)
+    return {"message": "Success"}
+
 # Servir le frontend pour Railway
 import os
 frontend_path = os.path.join(os.path.dirname(__file__), "..")

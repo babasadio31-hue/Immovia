@@ -7,6 +7,43 @@
   <link rel="stylesheet" href="landing.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="icon" href="assets/favicon.png" type="image/png">
+
+  <style>
+    /* Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: var(--color-surface);
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--color-text);
+      font-weight: 500;
+      animation: slideInRight 0.3s ease forwards;
+      border-left: 4px solid var(--color-primary);
+    }
+    .toast.success { border-left-color: #10b981; }
+    .toast.error { border-left-color: #ef4444; }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
 
@@ -452,19 +489,46 @@
           });
           
           if(res.ok) {
-              alert("Votre message a bien été envoyé ! Nous vous contacterons sous peu.");
+              showToast("Votre message a bien été envoyé !", "success");
               contactModal.style.display = 'none';
               contactForm.reset();
           } else {
-              alert("Erreur lors de l'envoi du message. Veuillez réessayer.");
+              showToast("Erreur lors de l'envoi du message.", "error");
           }
       } catch (err) {
-          alert("Erreur de connexion. Veuillez réessayer plus tard.");
+          showToast("Erreur de connexion. Veuillez réessayer.", "error");
       } finally {
           submitBtn.innerText = originalText;
           submitBtn.disabled = false;
       }
     });
+
+    
+    // Toast Notification System
+    function showToast(message, type = 'success') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+      }
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      let icon = '<i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 1.2rem;"></i>';
+      if (type === 'error') {
+        icon = '<i class="fa-solid fa-circle-xmark" style="color: #ef4444; font-size: 1.2rem;"></i>';
+      }
+      
+      toast.innerHTML = `${icon} <span>${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const mobileToggle = document.querySelector('.mobile-menu-toggle');
