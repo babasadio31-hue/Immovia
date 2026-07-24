@@ -81,9 +81,13 @@ navPills.forEach(pill => {
 });
 
 // API Calls
-async function fetchApi(endpoint) {
+async function fetchApi(endpoint, options = {}) {
   const response = await fetch(`${API_URL}/admin${endpoint}`, {
-    headers: { 'Authorization': `Bearer ${adminToken}` }
+    ...options,
+    headers: { 
+      'Authorization': `Bearer ${adminToken}`,
+      ...(options.headers || {})
+    }
   });
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem('immovi_admin_token');
@@ -469,7 +473,7 @@ async function viewMessage(id, subject, email, phone, text) {
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
   try {
-    await fetchApi(`/messages/${id}/read`, 'PUT');
+    await fetchApi(`/messages/${id}/read`, { method: 'PUT' });
     // Refresh messages quietly
     setTimeout(loadContactMessages, 500);
   } catch(e) {
