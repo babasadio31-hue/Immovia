@@ -45,6 +45,12 @@ async def lifespan(app: FastAPI):
             except Exception:
                 db.rollback()
                 
+        try:
+            db.execute(text("ALTER TABLE users ADD COLUMN verification_token VARCHAR"))
+            db.commit()
+        except Exception:
+            db.rollback()
+                
         # Back-office upgrades
         tables = ["users", "owners", "properties", "tenants", "transactions"]
         for table in tables:
