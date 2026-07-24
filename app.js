@@ -381,7 +381,8 @@ function setupEventListeners() {
   
   // Suppression du compte
   document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.")) {
+    const isConfirmed = await showCustomConfirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.", false, "Suppression du compte");
+    if (isConfirmed) {
       try {
         const me = await API.getCurrentUser();
         if (!me || !me.id) {
