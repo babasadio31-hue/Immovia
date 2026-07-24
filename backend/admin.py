@@ -153,8 +153,18 @@ def get_user_details(user_id: str, db: Session = Depends(database.get_db), admin
 
 @router.get("/messages")
 def get_contact_messages(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
-    messages = db.query(models.ContactMessage).all()
+    messages = db.query(models.ContactMessage).order_by(models.ContactMessage.date.desc()).all()
     return messages
+
+@router.put("/messages/{msg_id}/read")
+def mark_message_read(msg_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    msg = db.query(models.ContactMessage).filter(models.ContactMessage.id == msg_id).first()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message introuvable")
+    msg.status = "Lu"
+    db.commit()
+    return {"message": "Message marqué comme lu"}
+
 
 class NewsletterRequest(BaseModel):
     subject: str

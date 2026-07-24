@@ -371,7 +371,7 @@ async function loadContactMessages() {
         <td>${msg.phone}</td>
         <td><span class="badge ${msg.status === 'Non lu' ? 'badge-orange' : 'badge-green'}">${msg.status}</span></td>
         <td>
-          <button class="btn-icon" title="Lire" onclick="alert('Message: ${msg.message.replace(/'/g, "\'")}')"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-icon" title="Lire" onclick="viewMessage('${msg.id}', '${msg.name.replace(/'/g, "\'")}', '${msg.email.replace(/'/g, "\'")}', '${msg.phone.replace(/'/g, "\'")}', '${msg.message.replace(/'/g, "\'").replace(/\n/g, "\\n")}')"><i class="fa-solid fa-eye"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -440,5 +440,39 @@ async function submitNewsletter(e) {
     showToast(err.message, 'error');
   } finally {
     hideLoading();
+  }
+}
+
+
+async function viewMessage(id, subject, email, phone, text) {
+  // Show a nice modal
+  const modalHTML = `
+    <div id="msg-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+      <div style="background:var(--color-surface); width:500px; max-width:90%; border-radius:12px; overflow:hidden;">
+        <div style="padding:20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">Message de Contact</h3>
+          <button onclick="document.getElementById('msg-modal').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div style="padding:20px;">
+          <p><strong>De:</strong> ${subject}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Téléphone:</strong> ${phone}</p>
+          <hr style="border:0; border-top:1px solid var(--color-border); margin:15px 0;">
+          <p style="white-space:pre-wrap; line-height:1.5;">${text}</p>
+        </div>
+        <div style="padding:15px 20px; background:var(--color-background); text-align:right;">
+          <button onclick="document.getElementById('msg-modal').remove()" class="btn-primary">Fermer</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  try {
+    await fetchApi(`/messages/${id}/read`, 'PUT');
+    // Refresh messages quietly
+    setTimeout(loadContactMessages, 500);
+  } catch(e) {
+    console.error("Could not mark as read", e);
   }
 }
