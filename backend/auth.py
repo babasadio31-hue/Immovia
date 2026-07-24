@@ -88,6 +88,31 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    
+    # Envoi de l'email de confirmation
+    try:
+        from . import email_service
+        subject = "Bienvenue sur Immovi - Confirmation d'inscription"
+        html_content = f"""
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto;'>
+            <h2 style='color: #2E5BFF;'>Bienvenue sur Immovi, {{user.name}} !</h2>
+            <p>Nous sommes ravis de vous compter parmi nous. Votre compte agence a bien été créé.</p>
+            <div style='background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;'>
+                <p><strong>Vos identifiants :</strong></p>
+                <p>Email : {{user.email}}</p>
+            </div>
+            <p><strong>🎁 Votre essai gratuit de 3 jours vient de commencer !</strong></p>
+            <p>Vous avez un accès complet à toutes les fonctionnalités pendant cette période pour découvrir la puissance de notre plateforme de gestion immobilière.</p>
+            <p>À l'issue de ces 3 jours, vous serez invité à souscrire à l'un de nos abonnements pour continuer à utiliser le service.</p>
+            <br>
+            <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+            <p>L'équipe Immovi</p>
+        </div>
+        """
+        email_service.send_email(user.email, subject, html_content)
+    except Exception as e:
+        print("Erreur envoi email bienvenue:", e)
+
     return new_user
 
 @router.get("/users", response_model=list[schemas.User])

@@ -133,6 +133,7 @@ const API = {
   
   getCurrentUser: () => apiFetch('/auth/me'),
   getUsers: () => apiFetch('/auth/users'),
+  getSubscriptionStatus: () => apiFetch('/subscriptions/status'),
   updateUser: (id, user) => apiFetch(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(user) }),
   deleteUser: (id) => apiFetch(`/auth/users/${id}`, { method: 'DELETE' }),
 
