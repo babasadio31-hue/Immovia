@@ -31,10 +31,10 @@ function initApp() {
   let dataChanged = false;
   if (!state.agencySettings || Object.keys(state.agencySettings).length === 0) {
     state.agencySettings = {
-      name: 'Immovi S.A.R.L',
-      address: 'Rue du Golf, Immeuble Horizon, Bamako, Mali',
-      phone: '+223 20 22 44 66',
-      email: 'contact@immovi.ml',
+      name: 'Nom de l\'agence',
+      address: 'Adresse de l\'agence',
+      phone: '+00 00 00 00 00',
+      email: 'contact@agence.com',
       currency: 'FCFA',
       commissionRate: 10
     };
@@ -1191,23 +1191,7 @@ function getTenantForProperty(propertyId) {
       caution: prop.caution || (prop.rent * 2)
     };
   }
-  const tenants = {
-    'prop-1': { name: 'Bakary Diop', phone: '+221 70 123 45 67', address: 'Dakar, Grand Yoff', leaseStart: '2026-01-01', caution: 150000 },
-    'prop-2': { name: 'Aissatou Keita', phone: '+221 76 999 88 77', address: 'Dakar, Almadies', leaseStart: '2026-02-01', caution: 200000 },
-    'prop-3': { name: 'Omar Sy', phone: '+221 77 444 55 66', address: 'Dakar, Plateau', leaseStart: '2026-03-01', caution: 250000 },
-    'prop-5': { name: 'Mr Soumaila', phone: '+221 77 101 20 30', address: 'Bamako, Golf Immeuble I Apt 5', leaseStart: '2026-03-15', caution: 50000 },
-    'prop-7': { name: 'Mr Mohamed Mouktar Salem', phone: '+221 70 808 90 90', address: 'Bamako, Golf Immeuble I Apt 7', leaseStart: '2026-03-15', caution: 250000 },
-    'prop-8': { name: 'Mr Diarra', phone: '+221 76 222 33 44', address: 'Bamako, Golf Immeuble I Magasin 8', leaseStart: '2026-03-15', caution: 200000 }
-  };
-  const mockTenant = tenants[propertyId] || { name: 'Locataire Inconnu', phone: 'Non renseigné', address: 'Non renseignée', leaseStart: '2026-03-15', caution: 0 };
-  if (prop) {
-    if (!prop.tenantName) prop.tenantName = mockTenant.name;
-    if (!prop.tenantPhone) prop.tenantPhone = mockTenant.phone;
-    if (!prop.tenantAddress) prop.tenantAddress = mockTenant.address;
-    if (!prop.leaseStart) prop.leaseStart = mockTenant.leaseStart;
-    if (!prop.caution) prop.caution = mockTenant.caution;
-  }
-  return mockTenant;
+  return { name: 'Locataire Inconnu', phone: 'Non renseigné', address: 'Non renseignée', leaseStart: 'N/A', caution: 0 };
 }
 
 // Helper pour simuler les décalages de date
@@ -4023,7 +4007,7 @@ function renderGlobalPrintHeader() {
       <div style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-primary);">
         <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
         <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
-        <p style="margin: 0;">${settings.address || 'Rue du Golf, Immeuble Horizon, Bamako, Mali'}</p>
+        <p style="margin: 0;">${settings.address || 'Adresse de l\\'agence'}</p>
         <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
         ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
       </div>
@@ -4049,7 +4033,7 @@ function renderGlobalPrintHeader() {
         <div>
           <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || 'Rue du Golf, Bamako, Mali'}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || 'Adresse de l\\'agence'}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
           ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
         </div>
