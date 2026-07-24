@@ -40,6 +40,7 @@ class User(Base):
     status = Column(String, default="Actif")
     permissions = Column(JSON) # e.g., ["dashboard", "owners", ...]
     date_added = Column(String)
+    verification_token = Column(String, nullable=True)
     agency = relationship("Agency", back_populates="users")
 
 class Owner(Base):

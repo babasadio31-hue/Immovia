@@ -388,6 +388,8 @@
             btnSubmit.disabled = true;
             btnSubmit.textContent = 'Connexion...';
             errorDiv.textContent = '';
+            errorDiv.style.color = 'var(--color-danger)';
+            errorDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
 
             try {
                 // Call API (will set token in localStorage on success)
@@ -419,6 +421,15 @@
                     eyeIcon.classList.add('uil-eye');
                 }
             });
+        }
+        
+        // Check for verified param
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('verified') === '1') {
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.textContent = 'Votre email a été vérifié avec succès ! Vous pouvez maintenant vous connecter.';
+            errorDiv.style.color = '#10b981';
+            errorDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
         }
         
     </script>
