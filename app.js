@@ -311,8 +311,8 @@ function setupEventListeners() {
   });
 
   // Ouverture des modales
-  document.getElementById('btn-open-owner-modal').addEventListener('click', () => openOwnerModal());
-  document.getElementById('btn-open-property-modal').addEventListener('click', () => openPropertyModal());
+  document.getElementById('btn-open-owner-modal')?.addEventListener('click', () => openOwnerModal());
+  document.getElementById('btn-open-property-modal')?.addEventListener('click', () => openPropertyModal());
 
   // Checkbox staff permissions select all
   const btnStaffSelectAll = document.getElementById('btn-staff-select-all');
@@ -337,12 +337,14 @@ function setupEventListeners() {
   const btnAddExpense = document.getElementById('btn-accounting-add-expense');
   if (btnAddExpense) {
     btnAddExpense.addEventListener('click', () => {
-      document.getElementById('form-transaction').reset();
-      document.getElementById('input-tx-id').value = '';
-      document.getElementById('input-tx-date').value = getTodayDateString();
+      document.getElementById('form-transaction')?.reset();
+      const inputTxId = document.getElementById('input-tx-id');
+      if(inputTxId) inputTxId.value = '';
+      const inputTxDate = document.getElementById('input-tx-date');
+      if(inputTxDate) inputTxDate.value = getTodayDateString();
       const motifAutreInput = document.getElementById('input-tx-motif-autre');
       if (motifAutreInput) motifAutreInput.style.display = 'none';
-      document.getElementById('modal-transaction').classList.add('active');
+      document.getElementById('modal-transaction')?.classList.add('active');
     });
   }
 
@@ -364,21 +366,21 @@ function setupEventListeners() {
   }
 
   // Raccourcis Dashboard
-  document.getElementById('btn-see-all-transactions').addEventListener('click', () => switchTab('transactions'));
-  document.getElementById('btn-nav-to-owners').addEventListener('click', () => switchTab('owners'));
-  document.getElementById('btn-nav-to-properties').addEventListener('click', () => switchTab('properties'));
+  document.getElementById('btn-see-all-transactions')?.addEventListener('click', () => switchTab('transactions'));
+  document.getElementById('btn-nav-to-owners')?.addEventListener('click', () => switchTab('owners'));
+  document.getElementById('btn-nav-to-properties')?.addEventListener('click', () => switchTab('properties'));
 
   // Fermetures des modales
-  document.getElementById('btn-close-transaction-modal').addEventListener('click', () => closeAllModals());
-  document.getElementById('btn-close-owner-modal').addEventListener('click', () => closeAllModals());
-  document.getElementById('btn-close-property-modal').addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-close-transaction-modal')?.addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-close-owner-modal')?.addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-close-property-modal')?.addEventListener('click', () => closeAllModals());
   
-  document.getElementById('btn-cancel-transaction').addEventListener('click', () => closeAllModals());
-  document.getElementById('btn-cancel-owner').addEventListener('click', () => closeAllModals());
-  document.getElementById('btn-cancel-property').addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-cancel-transaction')?.addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-cancel-owner')?.addEventListener('click', () => closeAllModals());
+  document.getElementById('btn-cancel-property')?.addEventListener('click', () => closeAllModals());
   
   // Retour à la liste des propriétaires
-  document.getElementById('btn-back-to-owners').addEventListener('click', () => switchTab('owners'));
+  document.getElementById('btn-back-to-owners')?.addEventListener('click', () => switchTab('owners'));
 
   // Helper pour lier les filtres de date (Dashboard, Entrées, Sorties)
   // (Moved to global scope)
@@ -4007,7 +4009,7 @@ function renderGlobalPrintHeader() {
       <div style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-primary);">
         <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
         <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
-        <p style="margin: 0;">${settings.address || 'Adresse de l\\'agence'}</p>
+        <p style="margin: 0;">${settings.address || "Adresse de l'agence"}</p>
         <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
         ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
       </div>
@@ -4033,7 +4035,7 @@ function renderGlobalPrintHeader() {
         <div>
           <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || 'Adresse de l\\'agence'}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || "Adresse de l'agence"}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
           ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
         </div>

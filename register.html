@@ -417,37 +417,30 @@
                     createdUserId = registerRes.id;
                 }
                 
-                // Login right after
-                await API.login(email, password);
-
-                if (selectedPlan === 'premium') {
-                    btnSubmit.textContent = 'Initialisation du paiement sécurisé...';
-                    try {
-                        const sub = await API.createSubscriptionCheckout('premium');
-                        if (sub && sub.checkout_url) {
-                            window.location.href = sub.checkout_url;
-                            return; // Stop here, browser redirects
-                        } else {
-                            throw new Error("L'URL de paiement n'a pas été retournée.");
-                        }
-                    } catch (subErr) {
-                        console.error("Moneroo checkout init failed:", subErr);
-                        // Rollback user creation
-                        if (!createdUserId) {
-                             const currentUser = await API.getCurrentUser();
-                             if (currentUser && currentUser.id) createdUserId = currentUser.id;
-                        }
-                        if (createdUserId) {
-                             await API.deleteUser(createdUserId).catch(e => console.error("Rollback failed", e));
-                        }
-                        localStorage.removeItem('immovi_jwt');
-                        errorDiv.textContent = subErr.message || 'Erreur d\'initialisation du paiement sécurisé. Veuillez réessayer.';
-                        return; // Stop here
-                    }
-                }
+                // On successful registration, we do NOT log in. We show a message instead.
+                document.getElementById('register-form').style.display = 'none';
                 
-                // Redirect to main dashboard (for free plan or if no plan param)
-                window.location.href = 'index.html';
+                const successDiv = document.createElement('div');
+                successDiv.style.cssText = 'text-align: center; padding: 2rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);';
+                successDiv.innerHTML = `
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <h3 style="color: var(--color-text-primary); margin-bottom: 1rem; font-size: 1.25rem;">Vérifiez votre boîte mail</h3>
+                    <p style="color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                        Votre compte a été créé avec succès. Pour finaliser votre inscription et activer votre espace agence, 
+                        <strong>veuillez cliquer sur le lien de confirmation</strong> que nous venons d'envoyer à :
+                        <br><br><span style="color: var(--color-primary); font-weight: 500;">${email}</span>
+                    </p>
+                    <p style="color: var(--color-text-muted); font-size: 0.9rem;">
+                        <em>(Pensez à vérifier vos courriers indésirables / spams si vous ne le trouvez pas)</em>
+                    </p>
+                `;
+                document.querySelector('.login-right-inner').appendChild(successDiv);
+                
+                // No redirect.
+                return;
             } catch (err) {
                 errorDiv.textContent = err.message || 'Erreur lors de la création';
             } finally {
