@@ -1547,6 +1547,17 @@
             <input type="number" id="input-owner-commission" class="form-input" min="1" max="100" value="10" required>
           </div>
           
+          <div class="form-row" style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <div class="form-group" style="flex: 1;">
+                  <label for="input-owner-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
+                  <input type="date" id="input-owner-mandate-start" class="form-input">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                  <label for="input-owner-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
+                  <input type="date" id="input-owner-mandate-end" class="form-input">
+              </div>
+          </div>
+          
           <!-- Section: Bien Immobilier Initial (Facultatif) -->
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.08);">
             <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.75rem;">Bien Immobilier Associé (Facultatif)</h4>
@@ -1738,6 +1749,18 @@
               </div>
             </div>
           </div>
+          
+          <div class="form-row" style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <div class="form-group" style="flex: 1;">
+                  <label for="input-property-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
+                  <input type="date" id="input-property-mandate-start" class="form-input">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                  <label for="input-property-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
+                  <input type="date" id="input-property-mandate-end" class="form-input">
+              </div>
+          </div>
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-property">Annuler</button>
