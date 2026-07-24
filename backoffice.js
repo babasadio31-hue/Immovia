@@ -531,3 +531,44 @@ async function viewMessage(id, subject, email, phone, text) {
     console.error("Could not mark as read", e);
   }
 }
+
+
+// Update badges for unread messages and open tickets
+async function updateMessageBadges() {
+  try {
+    const messages = await fetchApi('/messages');
+    const tickets = await fetchApi('/tickets');
+    
+    let unreadMessages = 0;
+    if (messages && messages.length) {
+        unreadMessages = messages.filter(m => m.status === 'Non lu').length;
+    }
+    
+    let openTickets = 0;
+    if (tickets && tickets.length) {
+        openTickets = tickets.filter(t => t.status === 'Ouvert' || t.status === 'En attente').length;
+    }
+    
+    const totalUnread = unreadMessages + openTickets;
+    
+    const badgeNav = document.getElementById('badge-nav-emails');
+    if (badgeNav) {
+        badgeNav.textContent = totalUnread;
+        badgeNav.style.display = totalUnread > 0 ? 'inline-block' : 'none';
+    }
+    
+    const badgeContact = document.getElementById('badge-tab-contact');
+    if (badgeContact) {
+        badgeContact.textContent = unreadMessages;
+        badgeContact.style.display = unreadMessages > 0 ? 'inline-block' : 'none';
+    }
+    
+    const badgeTickets = document.getElementById('badge-tab-tickets');
+    if (badgeTickets) {
+        badgeTickets.textContent = openTickets;
+        badgeTickets.style.display = openTickets > 0 ? 'inline-block' : 'none';
+    }
+  } catch(e) {
+    console.error("Error updating badges", e);
+  }
+}
