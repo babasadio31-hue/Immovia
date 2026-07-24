@@ -80,7 +80,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from . import owners, properties, tenants, transactions, settings, payments, admin
+from . import owners, properties, tenants, transactions, settings, payments, admin, tickets
 
 app.include_router(auth.router)
 app.include_router(owners.router)
@@ -90,6 +90,7 @@ app.include_router(transactions.router)
 app.include_router(settings.router)
 app.include_router(payments.router)
 app.include_router(admin.router)
+app.include_router(tickets.router)
 
 @app.get("/api")
 def read_root():
