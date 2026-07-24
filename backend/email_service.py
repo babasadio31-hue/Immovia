@@ -8,7 +8,7 @@ SMTP_USER = "b31862001@smtp-brevo.com"
 SMTP_PASSWORD = "EPOHNQwLxjy2ARtk"
 
 # Expéditeur par défaut (à changer si tu as un domaine validé sur Brevo)
-DEFAULT_SENDER = "contact@immovi.com" 
+DEFAULT_SENDER = "bb.congo99@gmail.com" 
 
 def send_email(to_email: str, subject: str, html_content: str):
     msg = MIMEMultipart("alternative")
