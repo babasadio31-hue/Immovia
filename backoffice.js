@@ -455,7 +455,7 @@ function viewTicketDetails(id, subject, author, agency, email, message) {
             </div>
           </div>
           <h4 style="margin-top:0;">Description du problème :</h4>
-          <p style="white-space:pre-wrap; line-height:1.6; padding:15px; border:1px solid var(--color-border); border-radius:8px; background:#f9fafb;">${message}</p>
+          <p style="white-space:pre-wrap; line-height:1.6; padding:15px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-background); color:var(--color-text);">${message}</p>
         </div>
         <div style="padding:15px 20px; background:var(--color-background); text-align:right;">
           <button onclick="document.getElementById('ticket-modal').remove()" class="btn-primary">Fermer</button>
