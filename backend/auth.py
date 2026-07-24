@@ -79,8 +79,25 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     token = secrets.token_urlsafe(32)
     
+    agency_id = str(uuid.uuid4())
+    agency_name = user.company if user.company else f"Agence de {user.name}"
+    
+    new_agency = models.Agency(
+        id=agency_id,
+        name=agency_name,
+        manager_name=user.name,
+        email=user.email,
+        phone=user.phone or "",
+        subscription_plan="Essai",
+        subscription_status="Actif",
+        status="En attente",
+        date_added=str(date.today())
+    )
+    db.add(new_agency)
+    
     new_user = models.User(
         id=str(uuid.uuid4()),
+        agency_id=agency_id,
         name=user.name,
         email=user.email,
         phone=user.phone,
@@ -130,26 +147,15 @@ def verify_email(token: str, db: Session = Depends(get_db)):
         from fastapi.responses import RedirectResponse
         return RedirectResponse(url="https://immovia-production.up.railway.app/login.html?verified=1")
 
-    # Create an Agency for the user
-    import uuid
-    from datetime import date
-    agency_id = str(uuid.uuid4())
-    new_agency = models.Agency(
-        id=agency_id,
-        name=f"Agence de {db_user.name}",
-        manager_name=db_user.name,
-        email=db_user.email,
-        phone=db_user.phone or "",
-        subscription_plan="Essai",
-        subscription_status="Actif",
-        date_added=str(date.today())
-    )
-    db.add(new_agency)
-    
     # Update user status and associate with agency
     db_user.status = "Actif"
-    db_user.agency_id = agency_id
     db_user.verification_token = None
+    
+    if db_user.agency_id:
+        db_agency = db.query(models.Agency).filter(models.Agency.id == db_user.agency_id).first()
+        if db_agency:
+            db_agency.status = "Actif"
+            
     db.commit()
     
     # Send welcome email now that it's verified

@@ -68,7 +68,7 @@ async function apiFetch(endpoint, options = {}) {
 
 const API = {
   // Authentification
-  register: async (name, email, password) => {
+  register: async (name, email, password, phone, company) => {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -78,6 +78,8 @@ const API = {
         name,
         email,
         password,
+        phone,
+        company,
         role: "Administrateur",
         permissions: ["all"]
       }),

@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     email: str
     name: str
     phone: Optional[str] = None
+    company: Optional[str] = None
     role: Optional[str] = "Administrateur"
     permissions: Any = ["all"]
 

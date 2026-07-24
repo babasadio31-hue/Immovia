@@ -371,8 +371,16 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="company">Nom de la société (optionnel)</label>
-                        <input type="text" id="company" class="form-control" placeholder="Nom de votre société" style="border-color: var(--color-primary);">
+                        <label>Téléphone (avec indicatif) *</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="phone-code" value="+223" class="form-control" style="width: 80px; padding: 0.75rem 0.5rem; text-align: center;" required>
+                            <input type="tel" id="phone" class="form-control" placeholder="Numéro de téléphone" required style="flex: 1;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Nom de l'agence *</label>
+                        <input type="text" id="company" class="form-control" placeholder="Nom de votre agence" style="border-color: var(--color-primary);" required>
                     </div>
                     
                     <button type="submit" class="btn-submit" id="btn-submit" style="background: var(--color-primary);">S'inscrire — Essai gratuit 3 jours</button>
@@ -401,6 +409,10 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const phoneCode = document.getElementById('phone-code').value.trim();
+            const phoneNum = document.getElementById('phone').value.trim();
+            const phone = `${phoneCode} ${phoneNum}`;
+            const company = document.getElementById('company').value;
             const btnSubmit = document.getElementById('btn-submit');
             const errorDiv = document.getElementById('login-error');
 
@@ -412,7 +424,7 @@
 
             try {
                 // Call API register
-                const registerRes = await API.register(name, email, password);
+                const registerRes = await API.register(name, email, password, phone, company);
                 if (registerRes && registerRes.id) {
                     createdUserId = registerRes.id;
                 }
