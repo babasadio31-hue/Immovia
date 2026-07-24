@@ -379,6 +379,26 @@ function setupEventListeners() {
   document.getElementById('btn-cancel-owner')?.addEventListener('click', () => closeAllModals());
   document.getElementById('btn-cancel-property')?.addEventListener('click', () => closeAllModals());
   
+  // Suppression du compte
+  document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
+    if (confirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.")) {
+      try {
+        const me = await API.getCurrentUser();
+        if (!me || !me.id) {
+          showToast("Impossible d'identifier votre compte.", 'error');
+          return;
+        }
+        await API.deleteUser(me.id);
+        showToast("Votre compte a été supprimé.", 'success');
+        setTimeout(() => {
+          handleLogout();
+        }, 1500);
+      } catch (err) {
+        showToast("Erreur lors de la suppression: " + err.message, 'error');
+      }
+    }
+  });
+
   // Retour à la liste des propriétaires
   document.getElementById('btn-back-to-owners')?.addEventListener('click', () => switchTab('owners'));
 
