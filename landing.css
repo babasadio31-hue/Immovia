@@ -777,6 +777,9 @@ html {
   background: white;
   width: 90%;
   max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   border-radius: 20px;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   overflow: hidden;
@@ -798,6 +801,7 @@ html {
 
 .modal-body {
   padding: 1.5rem;
+  overflow-y: auto;
 }
 
 .btn-close {
