@@ -1,3 +1,4 @@
+from . import email_service
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -165,26 +166,37 @@ def send_newsletter(req: NewsletterRequest, db: Session = Depends(database.get_d
     import uuid
     from datetime import datetime
     
-    # In a real scenario, we would use an SMTP server here
-    # For now, we simulate the sending process
     
+    # Récupérer les adresses e-mail cibles
     if req.target == "agencies":
-        count = db.query(models.User).filter(models.User.role == "Admin Agence").count()
+        users = db.query(models.User).filter(models.User.role == "Admin Agence").all()
+        emails = [u.email for u in users if u.email]
     elif req.target == "owners":
-        count = db.query(models.Owner).count()
+        owners = db.query(models.Owner).all()
+        emails = [o.email for o in owners if o.email]
     else:
-        count = db.query(models.User).count()
+        users = db.query(models.User).all()
+        emails = [u.email for u in users if u.email]
+        
+    count = len(emails)
+    
+    # Appel du service d'envoi réel
+    success = email_service.send_mass_email(emails, req.subject, req.content)
+    status = "Envoyé" if success else "Échoué"
         
     new_campaign = models.NewsletterCampaign(
         id=str(uuid.uuid4()),
         subject=req.subject,
         content=req.content,
         target_audience=req.target,
-        status="Envoyé (Simulation)",
+        status=status,
         sent_count=count,
         date=datetime.now().strftime("%Y-%m-%d %H:%M")
     )
     db.add(new_campaign)
     db.commit()
     
-    return {"message": f"Newsletter envoyée avec succès à {count} destinataires ! (Mode Simulation)"}
+    if success:
+        return {"message": f"Newsletter envoyée avec succès à {count} destinataires !"}
+    else:
+        raise HTTPException(status_code=500, detail="Erreur lors de l'envoi de la newsletter. Vérifiez les paramètres SMTP.")
