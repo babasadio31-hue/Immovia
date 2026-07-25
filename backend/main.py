@@ -153,4 +153,9 @@ def receive_contact_message(contact: ContactRequest, db: Session = Depends(datab
 # Servir le frontend pour Railway
 import os
 frontend_path = os.path.join(os.path.dirname(__file__), "..")
+
+@app.get("/")
+async def serve_landing():
+    return FileResponse(os.path.join(frontend_path, "landing.html"))
+
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
