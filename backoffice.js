@@ -143,11 +143,13 @@ async function loadUsers() {
   } catch(e) {}
 }
 
+let currentAgenciesList = [];
+
 async function loadAgencies() {
   try {
-    const agencies = await fetchApi('/agencies');
+    currentAgenciesList = await fetchApi('/agencies');
     const tbody = document.getElementById('tbody-agencies');
-    tbody.innerHTML = agencies.map(a => `
+    tbody.innerHTML = currentAgenciesList.map(a => `
       <tr>
         <td>#${a.id.substring(0,6)}</td>
         <td><strong>${a.name}</strong></td>
@@ -156,12 +158,42 @@ async function loadAgencies() {
         <td>${a.phone || '-'}</td>
         <td><span class="badge badge-blue">${a.subscription_plan}</span></td>
         <td>
-          <button class="btn-icon"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-icon" onclick="openEditAgencyModal('${a.id}')"><i class="fa-solid fa-pen"></i></button>
         </td>
       </tr>
     `).join('');
   } catch(e) {}
 }
+
+function openEditAgencyModal(id) {
+    const agency = currentAgenciesList.find(a => a.id === id);
+    if (!agency) return;
+    document.getElementById('edit-agency-id').value = agency.id;
+    document.getElementById('edit-agency-name').value = agency.name || '';
+    document.getElementById('edit-agency-manager').value = agency.manager_name || '';
+    document.getElementById('edit-agency-email').value = agency.email || '';
+    document.getElementById('edit-agency-phone').value = agency.phone || '';
+    document.getElementById('edit-agency-modal').style.display = 'flex';
+}
+
+document.getElementById('edit-agency-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-agency-id').value;
+    const data = {
+        name: document.getElementById('edit-agency-name').value,
+        manager_name: document.getElementById('edit-agency-manager').value,
+        email: document.getElementById('edit-agency-email').value,
+        phone: document.getElementById('edit-agency-phone').value
+    };
+    try {
+        await fetchApi(`/agencies/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+        showToast('Agence modifiée avec succès', 'success');
+        document.getElementById('edit-agency-modal').style.display = 'none';
+        loadAgencies();
+    } catch(err) {
+        showToast(err.message, 'error');
+    }
+});
 
 async function loadProperties() {
   try {

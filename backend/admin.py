@@ -68,6 +68,24 @@ def get_all_users(db: Session = Depends(database.get_db), admin: models.User = D
 def get_all_agencies(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     return db.query(models.Agency).all()
 
+@router.put("/agencies/{agency_id}")
+def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_agency = db.query(models.Agency).filter(models.Agency.id == agency_id).first()
+    if not db_agency:
+        raise HTTPException(status_code=404, detail="Agence introuvable")
+    
+    if agency.name is not None:
+        db_agency.name = agency.name
+    if agency.manager_name is not None:
+        db_agency.manager_name = agency.manager_name
+    if agency.email is not None:
+        db_agency.email = agency.email
+    if agency.phone is not None:
+        db_agency.phone = agency.phone
+        
+    db.commit()
+    return {"message": "Agence modifiée avec succès"}
+
 @router.get("/properties")
 def get_all_properties(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     properties = db.query(models.Property).all()

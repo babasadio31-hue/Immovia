@@ -135,3 +135,9 @@ class AgencySettings(AgencySettingsBase):
 
     class Config:
         from_attributes = True
+
+class AgencyUpdate(BaseModel):
+    name: Optional[str] = None
+    manager_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
