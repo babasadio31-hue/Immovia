@@ -169,8 +169,32 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db), admin: mod
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+        
+    is_admin = user.role == "Administrateur"
+    agency_id = user.agency_id
+        
     db.delete(user)
     db.commit()
+    
+    if is_admin and agency_id:
+        remaining_users = db.query(models.User).filter(models.User.agency_id == agency_id).count()
+        if remaining_users == 0:
+            tables_with_agency = [
+                models.ActivityLog,
+                models.SupportTicket,
+                models.Subscription,
+                models.AgencySettings,
+                models.Transaction,
+                models.Tenant,
+                models.Property,
+                models.Owner
+            ]
+            for table in tables_with_agency:
+                db.query(table).filter(table.agency_id == agency_id).delete(synchronize_session=False)
+                
+            db.query(models.Agency).filter(models.Agency.id == agency_id).delete(synchronize_session=False)
+            db.commit()
+
     return {"message": "Utilisateur supprimé"}
 
 @router.get("/users/{user_id}/details")

@@ -277,6 +277,29 @@ def delete_user(user_id: str, current_user: models.User = Depends(get_current_ac
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
         
+    is_admin = db_user.role == "Administrateur"
+    agency_id = db_user.agency_id
+        
     db.delete(db_user)
     db.commit()
+    
+    if is_admin and agency_id:
+        remaining_users = db.query(models.User).filter(models.User.agency_id == agency_id).count()
+        if remaining_users == 0:
+            tables_with_agency = [
+                models.ActivityLog,
+                models.SupportTicket,
+                models.Subscription,
+                models.AgencySettings,
+                models.Transaction,
+                models.Tenant,
+                models.Property,
+                models.Owner
+            ]
+            for table in tables_with_agency:
+                db.query(table).filter(table.agency_id == agency_id).delete(synchronize_session=False)
+                
+            db.query(models.Agency).filter(models.Agency.id == agency_id).delete(synchronize_session=False)
+            db.commit()
+
     return {"message": "User deleted"}
