@@ -70,7 +70,7 @@ def read_users_me(current_user: models.User = Depends(get_current_active_user)):
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="L'adresse email est déjà utilisée par un utilisateur.")
     
     hashed_password = security.get_password_hash(user.password)
     import uuid
@@ -79,21 +79,35 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     token = secrets.token_urlsafe(32)
     
-    agency_id = str(uuid.uuid4())
-    agency_name = user.company if user.company else f"Agence de {user.name}"
+    db_agency = db.query(models.Agency).filter(models.Agency.email == user.email).first()
+    agency_id = None
     
-    new_agency = models.Agency(
-        id=agency_id,
-        name=agency_name,
-        manager_name=user.name,
-        email=user.email,
-        phone=user.phone or "",
-        subscription_plan="Essai",
-        subscription_status="Actif",
-        status="En attente",
-        date_added=str(date.today())
-    )
-    db.add(new_agency)
+    if db_agency:
+        users_in_agency = db.query(models.User).filter(models.User.agency_id == db_agency.id).count()
+        if users_in_agency == 0:
+            agency_id = db_agency.id
+            db_agency.name = user.company if user.company else f"Agence de {user.name}"
+            db_agency.manager_name = user.name
+            db_agency.phone = user.phone or ""
+            db_agency.status = "En attente"
+        else:
+            raise HTTPException(status_code=400, detail="L'adresse email est déjà utilisée par une agence existante.")
+    else:
+        agency_id = str(uuid.uuid4())
+        agency_name = user.company if user.company else f"Agence de {user.name}"
+        
+        new_agency = models.Agency(
+            id=agency_id,
+            name=agency_name,
+            manager_name=user.name,
+            email=user.email,
+            phone=user.phone or "",
+            subscription_plan="Essai",
+            subscription_status="Actif",
+            status="En attente",
+            date_added=str(date.today())
+        )
+        db.add(new_agency)
     
     new_user = models.User(
         id=str(uuid.uuid4()),

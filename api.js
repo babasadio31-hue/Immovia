@@ -1,12 +1,8 @@
 // Fichier de communication avec l'API Backend (Railway)
 
 // TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
-// Si on est en local, on utilise localhost, sinon l'URL de production
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const isFile = window.location.protocol === 'file:';
-const API_BASE_URL = (isLocal || isFile)
-    ? 'http://localhost:8000/api'
-    : '/api'; 
+// Si on est en local ou en ligne, on pointe de force vers l'URL de production
+const API_BASE_URL = 'https://immovia-production.up.railway.app/api';
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {
@@ -86,7 +82,13 @@ const API = {
     });
 
     if (!response.ok) {
-      const err = await response.json();
+      let err;
+      try {
+        err = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        throw new Error(`Erreur serveur: ${text.substring(0, 80)}...`);
+      }
       throw new Error(err.detail || 'Erreur lors de l\'inscription');
     }
     return await response.json();
