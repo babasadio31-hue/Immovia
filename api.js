@@ -95,25 +95,16 @@ const API = {
   },
 
   createStaffUser: async (name, email, password, role = 'Agent Premium', permissions = ['dashboard']) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    return apiFetch('/auth/users', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         name,
         email,
         password,
         role: role || "Agent Premium",
         permissions: permissions && permissions.length > 0 ? permissions : ["dashboard"]
-      }),
+      })
     });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.detail || 'Erreur lors de la création du compte personnel');
-    }
-    return await response.json();
   },
 
   login: async (email, password) => {

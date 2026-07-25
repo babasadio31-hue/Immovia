@@ -206,7 +206,42 @@ def verify_email(token: str, db: Session = Depends(get_db)):
 def read_all_users(current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     if current_user.role != "Administrateur":
         raise HTTPException(status_code=403, detail="Not authorized to view all users")
-    return db.query(models.User).all()
+    return db.query(models.User).filter(models.User.agency_id == current_user.agency_id).all()
+
+@router.post("/users", response_model=schemas.User)
+def create_staff_user(user_in: schemas.UserCreate, current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    if current_user.role != "Administrateur":
+        raise HTTPException(status_code=403, detail="Not authorized to create users")
+    
+    db_user = db.query(models.User).filter(models.User.email == user_in.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+        
+    import uuid
+    from datetime import date
+    import secrets
+    
+    token = secrets.token_urlsafe(32)
+    hashed_password = security.get_password_hash(user_in.password)
+    
+    new_user = models.User(
+        id=str(uuid.uuid4()),
+        agency_id=current_user.agency_id,
+        name=user_in.name,
+        email=user_in.email,
+        phone=user_in.phone,
+        password_hash=hashed_password,
+        role=user_in.role if user_in.role else "Agent Premium",
+        status="Actif",
+        permissions=user_in.permissions,
+        date_added=str(date.today()),
+        verification_token=None
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return new_user
 
 @router.put("/users/{user_id}", response_model=schemas.User)
 def update_user(user_id: str, user_update: schemas.UserUpdate, current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
