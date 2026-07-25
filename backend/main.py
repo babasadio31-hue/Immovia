@@ -59,6 +59,21 @@ async def lifespan(app: FastAPI):
                 db.commit()
             except Exception as e:
                 db.rollback()
+                
+        # Backfill expiration dates for agencies
+        try:
+            from datetime import datetime, timedelta
+            agencies = db.query(models.Agency).filter(models.Agency.subscription_expiry == None).all()
+            for agency in agencies:
+                if agency.date_added:
+                    try:
+                        added = datetime.strptime(agency.date_added, "%Y-%m-%d")
+                    except:
+                        added = datetime.now()
+                    agency.subscription_expiry = (added + timedelta(days=3)).strftime("%Y-%m-%d")
+            db.commit()
+        except Exception:
+            db.rollback()
 
         user_count = db.query(models.User).count()
         if user_count == 0:

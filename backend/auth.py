@@ -93,8 +93,10 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         else:
             raise HTTPException(status_code=400, detail="L'adresse email est déjà utilisée par une agence existante.")
     else:
+        from datetime import datetime, timedelta
         agency_id = str(uuid.uuid4())
         agency_name = user.company if user.company else f"Agence de {user.name}"
+        expiry_date = (date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
         
         new_agency = models.Agency(
             id=agency_id,
@@ -104,6 +106,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
             phone=user.phone or "",
             subscription_plan="Essai",
             subscription_status="Actif",
+            subscription_expiry=expiry_date,
             status="En attente",
             date_added=str(date.today())
         )

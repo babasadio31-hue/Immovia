@@ -177,6 +177,7 @@ function openEditAgencyModal(id) {
     document.getElementById('edit-agency-manager').value = agency.manager_name || '';
     document.getElementById('edit-agency-email').value = agency.email || '';
     document.getElementById('edit-agency-phone').value = agency.phone || '';
+    document.getElementById('edit-agency-plan').value = agency.subscription_plan || 'Essai';
     document.getElementById('edit-agency-modal').style.display = 'flex';
 }
 
@@ -187,7 +188,8 @@ document.getElementById('edit-agency-form')?.addEventListener('submit', async (e
         name: document.getElementById('edit-agency-name').value,
         manager_name: document.getElementById('edit-agency-manager').value,
         email: document.getElementById('edit-agency-email').value,
-        phone: document.getElementById('edit-agency-phone').value
+        phone: document.getElementById('edit-agency-phone').value,
+        subscription_plan: document.getElementById('edit-agency-plan').value
     };
     try {
         await fetchApi(`/agencies/${id}`, { 

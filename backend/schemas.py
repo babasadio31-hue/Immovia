@@ -141,3 +141,4 @@ class AgencyUpdate(BaseModel):
     manager_name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
+    subscription_plan: Optional[str] = None

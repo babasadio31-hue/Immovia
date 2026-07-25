@@ -83,6 +83,19 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
     if agency.phone is not None:
         db_agency.phone = agency.phone
         
+    if agency.subscription_plan is not None:
+        db_agency.subscription_plan = agency.subscription_plan
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        if agency.subscription_plan == "1 mois":
+            db_agency.subscription_expiry = (now + timedelta(days=30)).strftime("%Y-%m-%d")
+        elif agency.subscription_plan == "3 mois":
+            db_agency.subscription_expiry = (now + timedelta(days=90)).strftime("%Y-%m-%d")
+        elif agency.subscription_plan == "1 an":
+            db_agency.subscription_expiry = (now + timedelta(days=365)).strftime("%Y-%m-%d")
+        elif agency.subscription_plan == "Essai":
+            db_agency.subscription_expiry = (now + timedelta(days=3)).strftime("%Y-%m-%d")
+            
     db.commit()
     return {"message": "Agence modifiée avec succès"}
 
