@@ -30,11 +30,11 @@ class TicketResponse(BaseModel):
         orm_mode = True
 
 @router.post("/", response_model=TicketResponse)
-def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db)):
+def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     new_ticket = models.SupportTicket(
         id=f"TKT-{uuid.uuid4().hex[:8].upper()}",
-        agency_id=None,
-        user_id=None,
+        agency_id=current_user.agency_id,
+        user_id=current_user.id,
         subject=ticket.subject,
         category=ticket.category,
         priority=ticket.priority,
@@ -50,6 +50,6 @@ def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db)):
     return new_ticket
 
 @router.get("/", response_model=List[TicketResponse])
-def get_tickets(db: Session = Depends(get_db)):
-    tickets = db.query(models.SupportTicket).order_by(models.SupportTicket.date.desc()).all()
+def get_tickets(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    tickets = db.query(models.SupportTicket).filter(models.SupportTicket.agency_id == current_user.agency_id).order_by(models.SupportTicket.date.desc()).all()
     return tickets

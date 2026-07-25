@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
             db.rollback()
                 
         # Back-office upgrades
-        tables = ["users", "owners", "properties", "tenants", "transactions"]
+        tables = ["users", "owners", "properties", "tenants", "transactions", "agency_settings", "support_tickets", "activity_logs"]
         for table in tables:
             try:
                 db.execute(text(f"ALTER TABLE {table} ADD COLUMN agency_id VARCHAR REFERENCES agencies(id)"))

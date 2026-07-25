@@ -124,6 +124,7 @@ class AgencySettings(Base):
     __tablename__ = "agency_settings"
     
     id = Column(Integer, primary_key=True, index=True)
+    agency_id = Column(String, ForeignKey("agencies.id"))
     name = Column(String)
     address = Column(String)
     phone = Column(String)

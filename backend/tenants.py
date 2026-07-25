@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/tenants", tags=["tenants"])
 
 @router.get("/", response_model=List[schemas.Tenant])
 def read_tenants(skip: int = 0, limit: int = 100, db: Session = Depends(auth.get_db), current_user: models.User = Depends(auth.get_current_active_user)):
-    tenants = db.query(models.Tenant).offset(skip).limit(limit).all()
+    tenants = db.query(models.Tenant).filter(models.Tenant.agency_id == current_user.agency_id).offset(skip).limit(limit).all()
     return tenants
 
 @router.post("/", response_model=schemas.Tenant)
@@ -16,7 +16,9 @@ def create_tenant(tenant: schemas.TenantCreate, db: Session = Depends(auth.get_d
     db_tenant = db.query(models.Tenant).filter(models.Tenant.id == tenant.id).first()
     if db_tenant:
         raise HTTPException(status_code=400, detail="Tenant already exists")
-    db_tenant = models.Tenant(**tenant.model_dump())
+    tenant_data = tenant.model_dump()
+    tenant_data['agency_id'] = current_user.agency_id
+    db_tenant = models.Tenant(**tenant_data)
     db.add(db_tenant)
     db.commit()
     db.refresh(db_tenant)
@@ -24,12 +26,13 @@ def create_tenant(tenant: schemas.TenantCreate, db: Session = Depends(auth.get_d
 
 @router.put("/{tenant_id}", response_model=schemas.Tenant)
 def update_tenant(tenant_id: str, tenant: schemas.TenantBase, db: Session = Depends(auth.get_db), current_user: models.User = Depends(auth.get_current_active_user)):
-    db_tenant = db.query(models.Tenant).filter(models.Tenant.id == tenant_id).first()
+    db_tenant = db.query(models.Tenant).filter(models.Tenant.id == tenant_id, models.Tenant.agency_id == current_user.agency_id).first()
     if not db_tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
     
     for key, value in tenant.model_dump().items():
-        setattr(db_tenant, key, value)
+        if key != 'agency_id':
+            setattr(db_tenant, key, value)
         
     db.commit()
     db.refresh(db_tenant)
@@ -37,7 +40,7 @@ def update_tenant(tenant_id: str, tenant: schemas.TenantBase, db: Session = Depe
 
 @router.delete("/{tenant_id}")
 def delete_tenant(tenant_id: str, db: Session = Depends(auth.get_db), current_user: models.User = Depends(auth.get_current_active_user)):
-    db_tenant = db.query(models.Tenant).filter(models.Tenant.id == tenant_id).first()
+    db_tenant = db.query(models.Tenant).filter(models.Tenant.id == tenant_id, models.Tenant.agency_id == current_user.agency_id).first()
     if not db_tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
     
