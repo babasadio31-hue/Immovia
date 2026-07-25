@@ -94,6 +94,10 @@ async function fetchApi(endpoint, options = {}) {
     showLogin();
     throw new Error('Non autorisé');
   }
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || 'Erreur lors de la requête API');
+  }
   return response.json();
 }
 
@@ -186,7 +190,11 @@ document.getElementById('edit-agency-form')?.addEventListener('submit', async (e
         phone: document.getElementById('edit-agency-phone').value
     };
     try {
-        await fetchApi(`/agencies/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+        await fetchApi(`/agencies/${id}`, { 
+            method: 'PUT', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data) 
+        });
         showToast('Agence modifiée avec succès', 'success');
         document.getElementById('edit-agency-modal').style.display = 'none';
         loadAgencies();
