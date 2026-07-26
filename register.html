@@ -394,12 +394,15 @@
         const urlParams = new URLSearchParams(window.location.search);
         const selectedPlan = urlParams.get('plan');
 
-        if (selectedPlan === 'premium') {
+        if (selectedPlan) {
             const headerDiv = document.querySelector('.login-header');
             if (headerDiv) {
                 const badge = document.createElement('div');
                 badge.style.cssText = 'background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 500;';
-                badge.innerHTML = '✨ <strong>Plan Premium (1.000 FCFA/mois)</strong> — Paiement immédiat requis pour accéder à l\'application.';
+                let planText = 'Plan Mensuel (10.000 FCFA/mois)';
+                if (selectedPlan === 'trimestriel') planText = 'Plan Trimestriel (25.000 FCFA/3 mois)';
+                else if (selectedPlan === 'annuel') planText = 'Plan Annuel (100.000 FCFA/an)';
+                badge.innerHTML = `✨ <strong>${planText}</strong> — 3 jours d\'essai gratuit inclus.`;
                 headerDiv.appendChild(badge);
             }
         }

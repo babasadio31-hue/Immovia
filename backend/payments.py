@@ -44,7 +44,7 @@ def get_subscription_status(current_user: models.User = Depends(auth.get_current
         "user_email": current_user.email,
         "plan": "Premium",
         "status": status_label,
-        "amount": "15 000 FCFA / mois",
+        "amount": "10 000 FCFA / mois",
         "trial_end_date": trial_end.strftime("%d/%m/%Y"),
         "is_trial_expired": is_trial_expired
     }

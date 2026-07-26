@@ -3615,7 +3615,7 @@ function setupSubscriptionModal() {
       badge.style.color = '#a78bfa';
       badge.style.borderColor = 'rgba(139, 92, 246, 0.4)';
     }
-    if (planEl) planEl.textContent = 'Premium (1 000 FCFA / mois)';
+    if (planEl) planEl.textContent = 'Premium (10 000 FCFA / mois)';
     if (trialEl) trialEl.textContent = 'Aucun (Paiement immédiat)';
     if (dateEl) dateEl.textContent = "Aujourd'hui";
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
