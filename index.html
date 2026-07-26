@@ -1,25 +1,52 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Immovi - Gestionnaire Premium d'Agence Immobilière</title>
-  <meta name="description" content="Gérez vos propriétaires, propriétés et transactions de loyers avec un tableau de bord moderne en glassmorphism.">
-  
+  <title>Immovi - Logiciel de Gestion Immobilière & Syndic N°1</title>
+  <meta name="description" content="Immovi est le logiciel de gestion immobilière moderne et innovant pour agences, syndics de copropriété et propriétaires. Simplifiez vos loyers et transactions.">
+  <meta name="keywords" content="Immovi, logiciel gestion immobilière, agence immobilière, syndic de copropriété, gestion loyer, Guinée, Afrique, Conakry, immobilier, SaaS">
+  <meta property="og:title" content="Immovi - Logiciel de Gestion Immobilière & Syndic N°1">
+  <meta property="og:description" content="La solution moderne pour digitaliser votre agence immobilière et vos transactions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://immovi.com/">
+  <meta property="og:image" content="https://immovi.com/assets/favicon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Immovi",
+    "operatingSystem": "Web, Windows, macOS, Android, iOS",
+    "applicationCategory": "BusinessApplication",
+    "description": "Logiciel cloud de gestion immobilière et de syndic de copropriété.",
+    "offers": {
+      "@type": "Offer",
+      "price": "250000",
+      "priceCurrency": "GNF"
+    }
+  }
+  </script>
+
   <!-- Font Outfit de Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css?v=20260722_2">
-  
+
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <style>
-    body { opacity: 0; transition: opacity 0.15s ease-in; }
+    body {
+      opacity: 0;
+      transition: opacity 0.15s ease-in;
+    }
   </style>
   <script>
     if (localStorage.getItem('immovi_theme') === 'light') {
@@ -27,41 +54,62 @@
     }
   </script>
 </head>
-<body>  <!-- Login Screen -->
-  <div id="login-screen" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--color-background); align-items: center; justify-content: center; overflow-y: auto; padding: 2rem 0;">
+
+<body> <!-- Login Screen -->
+  <div id="login-screen"
+    style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--color-background); align-items: center; justify-content: center; overflow-y: auto; padding: 2rem 0;">
     <div style="width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 1.5rem; margin: auto;">
-      
+
       <!-- Header Info -->
       <div style="text-align: center;">
-        <div style="width: 64px; height: 64px; background: var(--color-primary); color: white; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
+        <div
+          style="width: 64px; height: 64px; background: var(--color-primary); color: white; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
         </div>
         <div style="margin-bottom: 0.5rem;">
           <img src="assets/logo.png" alt="Immovi Logo" style="height: 40px;">
         </div>
-        <p style="color: var(--color-primary); font-weight: 500; font-size: 0.95rem; margin-bottom: 0.5rem;">La solution de gestion immobilière</p>
-        <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 0.2rem;">Développé par Sadio N'diaye</p>
+        <p style="color: var(--color-primary); font-weight: 500; font-size: 0.95rem; margin-bottom: 0.5rem;">La solution
+          de gestion immobilière</p>
+        <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 0.2rem;">Développé par Sadio
+          N'diaye</p>
         <p style="color: var(--color-text-muted); font-size: 0.85rem;">+223 92 83 17 34 — +223 62 84 95 77</p>
       </div>
 
       <!-- Tabs -->
       <div class="card glass" style="display: flex; padding: 0.5rem; border-radius: 12px; gap: 0.5rem;">
-        <button id="tab-login-btn" class="btn" style="flex: 1; justify-content: center; background: rgba(30, 58, 138, 0.1); color: var(--color-primary);" onclick="switchAuthTab('login')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <button id="tab-login-btn" class="btn"
+          style="flex: 1; justify-content: center; background: rgba(30, 58, 138, 0.1); color: var(--color-primary);"
+          onclick="switchAuthTab('login')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
           Connexion
         </button>
-        <button id="tab-register-btn" class="btn" style="flex: 1; justify-content: center; background: transparent; color: var(--color-text-muted);" onclick="switchAuthTab('register')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        <button id="tab-register-btn" class="btn"
+          style="flex: 1; justify-content: center; background: transparent; color: var(--color-text-muted);"
+          onclick="switchAuthTab('register')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+          </svg>
           Inscription
         </button>
       </div>
 
       <!-- Forms Card -->
       <div class="card glass" style="padding: 2rem;">
-        
+
         <!-- Login Form -->
         <div id="auth-login-section">
           <div style="margin-bottom: 2rem;">
@@ -77,7 +125,8 @@
               <label class="form-label" for="login-password">Mot de passe *</label>
               <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Se Connecter</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Se
+              Connecter</button>
           </form>
         </div>
 
@@ -85,22 +134,33 @@
         <div id="auth-register-section" style="display: none;">
           <div style="margin-bottom: 1.5rem;">
             <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Inscription</h2>
-            <p style="color: var(--color-text-muted); font-size: 0.9rem;">Essai gratuit de <span style="color: #10b981; font-weight: 600;">3 jours</span> — Aucune carte requise</p>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem;">Essai gratuit de <span
+                style="color: #10b981; font-weight: 600;">3 jours</span> — Aucune carte requise</p>
           </div>
           <form id="form-register">
             <div class="form-group" style="margin-bottom: 1rem;">
               <label class="form-label" for="reg-name">Nom complet *</label>
               <input type="text" id="reg-name" class="form-input" required placeholder="Votre nom complet">
             </div>
-            
+
             <div class="form-group" style="margin-bottom: 1rem;">
               <label class="form-label">Téléphone (avec indicatif) *</label>
-              <div style="display: flex; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 8px; align-items: center; overflow: hidden; padding-left: 10px;">
-                <span style="color: var(--color-text-muted); font-size: 0.85rem; white-space: nowrap; padding-right: 5px;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <div
+                style="display: flex; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 8px; align-items: center; overflow: hidden; padding-left: 10px;">
+                <span
+                  style="color: var(--color-text-muted); font-size: 0.85rem; white-space: nowrap; padding-right: 5px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
                 </span>
-                <input type="text" id="reg-phone-code" value="+223" style="width: 55px; border: none; background: transparent; padding: 10px 5px; outline: none; color: var(--color-text); border-right: 1px solid var(--color-border); font-size: 0.85rem;" required>
-                <input type="tel" id="reg-phone" style="border: none; background: transparent; padding: 10px; flex: 1; outline: none; color: var(--color-text);" required placeholder="Numéro de téléphone">
+                <input type="text" id="reg-phone-code" value="+223"
+                  style="width: 55px; border: none; background: transparent; padding: 10px 5px; outline: none; color: var(--color-text); border-right: 1px solid var(--color-border); font-size: 0.85rem;"
+                  required>
+                <input type="tel" id="reg-phone"
+                  style="border: none; background: transparent; padding: 10px; flex: 1; outline: none; color: var(--color-text);"
+                  required placeholder="Numéro de téléphone">
               </div>
             </div>
 
@@ -116,11 +176,19 @@
 
             <div class="form-group" style="margin-bottom: 1.5rem;">
               <label class="form-label" for="reg-company">Nom de l'agence *</label>
-              <input type="text" id="reg-company" class="form-input" placeholder="Nom de votre agence" style="border-color: rgba(16, 185, 129, 0.4);" required>
+              <input type="text" id="reg-company" class="form-input" placeholder="Nom de votre agence"
+                style="border-color: rgba(16, 185, 129, 0.4);" required>
             </div>
-            
-            <button type="submit" class="btn" style="width: 100%; justify-content: center; background: #10b981; color: white; border: none; font-weight: 600;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+
+            <button type="submit" class="btn"
+              style="width: 100%; justify-content: center; background: #10b981; color: white; border: none; font-weight: 600;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="23" y1="11" x2="17" y2="11" />
+              </svg>
               S'inscrire — Essai gratuit 3 jours
             </button>
           </form>
@@ -160,62 +228,89 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-brand">
-        <img src="assets/logo.png" alt="Immovi Logo" style="height: 110px; width: auto; max-width: 100%; object-fit: contain;">
+        <img src="assets/logo.png" alt="Immovi Logo"
+          style="height: 110px; width: auto; max-width: 100%; object-fit: contain;">
       </div>
-      
+
       <nav class="sidebar-menu">
         <button class="menu-btn active" id="btn-nav-dashboard" data-tab="dashboard">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" />
+            <rect x="14" y="3" width="7" height="5" />
+            <rect x="14" y="12" width="7" height="9" />
+            <rect x="3" y="16" width="7" height="5" />
           </svg>
           <span>Tableau de bord</span>
         </button>
         <button class="menu-btn" id="btn-nav-owners" data-tab="owners">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
           <span>Propriétaires</span>
         </button>
         <button class="menu-btn" id="btn-nav-tenants" data-tab="tenants">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
           <span>Locataires</span>
         </button>
         <button class="menu-btn" id="btn-nav-properties" data-tab="properties">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
           <span>Biens Immobiliers</span>
         </button>
         <button class="menu-btn" id="btn-nav-accounting" data-tab="accounting">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
           </svg>
           <span>Comptabilité</span>
         </button>
         <button class="menu-btn" id="btn-nav-staff" data-tab="staff">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
           <span>Personnel</span>
         </button>
         <button class="menu-btn" id="btn-nav-support" data-tab="support">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            <path
+              d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+            </path>
           </svg>
           <span>Support Technique</span>
         </button>
         <button class="menu-btn" id="btn-nav-settings" data-tab="settings">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
           </svg>
           <span>Paramètres</span>
         </button>
       </nav>
-      
+
       <div class="sidebar-footer">
         <div class="user-profile">
           <div class="avatar" id="sidebar-user-avatar">AD</div>
@@ -224,8 +319,12 @@
             <span class="user-role" id="sidebar-user-role">Administrateur</span>
           </div>
         </div>
-        <button id="btn-logout" title="Se déconnecter" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-muted); cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='rgba(244, 63, 94, 0.1)'; this.style.color='var(--color-rose)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--color-text-muted)';">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button id="btn-logout" title="Se déconnecter"
+          style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-muted); cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center;"
+          onmouseover="this.style.background='rgba(244, 63, 94, 0.1)'; this.style.color='var(--color-rose)';"
+          onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--color-text-muted)';">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -233,10 +332,10 @@
         </button>
       </div>
     </aside>
-    
+
     <!-- Main Content Area -->
     <main class="main-content">
-      
+
       <!-- Top Header -->
       <header class="top-header">
         <div class="welcome-text">
@@ -245,31 +344,38 @@
         </div>
         <div class="header-actions">
           <div style="display: flex; gap: 0.5rem; align-items: center;" class="no-print">
-            <select id="dashboard-filter-type" class="form-select btn-sm" style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+            <select id="dashboard-filter-type" class="form-select btn-sm"
+              style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
               <option value="all">Toutes les dates</option>
               <option value="day">Par Jour</option>
               <option value="month">Par Mois</option>
               <option value="year">Par Année</option>
             </select>
-            <input type="date" id="dashboard-filter-day" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-            <input type="month" id="dashboard-filter-month" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-            <input type="number" id="dashboard-filter-year" class="form-input btn-sm" placeholder="Ex: 2024" style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
+            <input type="date" id="dashboard-filter-day" class="form-input btn-sm"
+              style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+            <input type="month" id="dashboard-filter-month" class="form-input btn-sm"
+              style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+            <input type="number" id="dashboard-filter-year" class="form-input btn-sm" placeholder="Ex: 2024"
+              style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
           </div>
         </div>
       </header>
-      
+
       <!-- Content View Wrapper -->
       <div class="view-wrapper">
-        
+
         <!-- ================= DASHBOARD TAB ================= -->
         <section class="tab-view active" id="view-dashboard">
-          
+
           <div class="kpi-grid">
             <!-- Total Commissions (Agency Profit) -->
             <div class="card glass kpi-card glow-purple">
               <div class="kpi-icon icon-purple">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -278,12 +384,14 @@
                 <span class="kpi-trend trend-up">Revenus de l'agence</span>
               </div>
             </div>
-            
+
             <!-- Total Rents Collected -->
             <div class="card glass kpi-card glow-green">
               <div class="kpi-icon icon-green">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                  <path d="M12 6v6l4 2" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -292,12 +400,13 @@
                 <span class="kpi-trend trend-neutral">Volume global collecté</span>
               </div>
             </div>
-            
+
             <!-- Total Active Properties -->
             <div class="card glass kpi-card glow-rose">
               <div class="kpi-icon icon-rose">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -307,7 +416,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="dashboard-grid">
             <!-- Line Chart: Cash Flows -->
             <div class="card glass span-two-columns">
@@ -323,7 +432,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Recent Activity List -->
             <div class="card glass">
               <div class="card-header">
@@ -336,7 +445,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Landlords List Preview -->
             <div class="card glass">
               <div class="card-header">
@@ -349,7 +458,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Occupancy Overview -->
             <div class="card glass">
               <div class="card-header">
@@ -364,32 +473,37 @@
             </div>
           </div>
         </section>
-        
+
         <!-- ================= OWNERS TAB ================= -->
         <section class="tab-view" id="view-owners">
           <div class="card glass">
             <div class="card-header">
               <div>
                 <h4 class="card-title">Répertoire des Propriétaires</h4>
-                <p class="subtitle">Liste des bailleurs sous mandat de gestion. Cliquez sur un nom pour ouvrir son dossier.</p>
+                <p class="subtitle">Liste des bailleurs sous mandat de gestion. Cliquez sur un nom pour ouvrir son
+                  dossier.</p>
               </div>
               <button class="btn btn-secondary btn-sm" id="btn-open-owner-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Nouveau Propriétaire</span>
               </button>
             </div>
-            
+
             <div class="toolbar" style="margin-top: 1.5rem;">
               <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input type="text" id="input-search-owners" placeholder="Rechercher propriétaire, téléphone, email...">
               </div>
             </div>
-            
+
             <div class="table-container" style="margin-top: 1rem;">
               <table class="data-table" id="table-owners">
                 <thead>
@@ -399,7 +513,7 @@
                     <th>Email</th>
                     <th class="text-center">Biens <br>sous mandat</th>
                     <th class="text-center">Loyers Mensuels <br>Estimés</th>
-                      <th class="text-center">Valeur Biens <br>en Vente</th>
+                    <th class="text-center">Valeur Biens <br>en Vente</th>
                     <th class="text-center no-print">Actions</th>
                   </tr>
                 </thead>
@@ -410,64 +524,85 @@
             </div>
           </div>
         </section>
-        
+
         <!-- ================= OWNER DETAILS SUB-PAGE (5 sub-tabs) ================= -->
         <section class="tab-view" id="view-owner-details">
-          
+
           <!-- Retour Button -->
           <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-outline btn-sm" id="btn-back-to-owners" style="padding: 0.5rem 0.75rem;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
               </svg>
               <span style="display: inline-block; vertical-align: middle;">Retour aux propriétaires</span>
             </button>
           </div>
-          
+
           <!-- Dossier Header Card -->
-          <div class="card glass no-print" style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem;">
-            <div class="avatar" id="owner-detail-avatar" style="width: 60px; height: 60px; font-size: 1.5rem; border-radius: 16px;">OW</div>
+          <div class="card glass no-print"
+            style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem;">
+            <div class="avatar" id="owner-detail-avatar"
+              style="width: 60px; height: 60px; font-size: 1.5rem; border-radius: 16px;">OW</div>
             <div>
-              <h3 id="owner-detail-name" style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary);">Bailleur</h3>
+              <h3 id="owner-detail-name" style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary);">
+                Bailleur</h3>
               <p id="owner-detail-contact" class="subtitle" style="margin: 0;">Contact</p>
             </div>
           </div>
-          
+
           <!-- Sub-navigation horizontal bar -->
-          <div class="toolbar" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1.5rem; justify-content: flex-start; gap: 0.5rem;">
+          <div class="toolbar"
+            style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1.5rem; justify-content: flex-start; gap: 0.5rem;">
             <button class="btn btn-secondary btn-sm owner-sub-btn active" data-subtab="info">Informations</button>
             <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="biens">Biens Possédés</button>
             <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="locataires">Locataires</button>
             <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="retraits">Retraits de Loyers</button>
             <button class="btn btn-secondary btn-sm owner-sub-btn" data-subtab="fonds">Fonds Disponibles</button>
           </div>
-          
+
           <!-- Sub-panels containers -->
           <div class="owner-detail-panels">
-            
+
             <div class="owner-panel active" id="panel-owner-info">
               <div class="card glass">
                 <h4 class="card-title" style="margin-bottom: 1.5rem;">Fiche d'Information Bailleur</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
-                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
-                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Honoraires Mandat</span>
+                  <div
+                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span
+                      style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Honoraires
+                      Mandat</span>
                     <div style="display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
-                      <input type="number" id="input-edit-owner-commission" class="form-input" style="width: 70px; padding: 0.25rem; font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover); text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;" min="0" max="100">
+                      <input type="number" id="input-edit-owner-commission" class="form-input"
+                        style="width: 70px; padding: 0.25rem; font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover); text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;"
+                        min="0" max="100">
                       <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover);">%</span>
                     </div>
                   </div>
-                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
-                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Biens gérés sous contrat</span>
-                    <h5 id="owner-info-properties" style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem;">0</h5>
+                  <div
+                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span
+                      style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Biens
+                      gérés sous contrat</span>
+                    <h5 id="owner-info-properties" style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem;">0
+                    </h5>
                   </div>
-                  <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
-                    <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Total Fonds Encaissés</span>
-                    <h5 id="owner-info-collected" style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; color: var(--color-green);">0 FCFA</h5>
+                  <div
+                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
+                    <span
+                      style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Total
+                      Fonds Encaissés</span>
+                    <h5 id="owner-info-collected"
+                      style="font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; color: var(--color-green);">0
+                      FCFA</h5>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <!-- Panel 2: Biens Possédés -->
             <div class="owner-panel" id="panel-owner-biens">
               <div class="card glass">
@@ -490,7 +625,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Panel 3: Locataires -->
             <div class="owner-panel" id="panel-owner-locataires">
               <div class="card glass">
@@ -513,75 +648,103 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Panel 4: Retraits -->
             <div class="owner-panel" id="panel-owner-retraits">
               <!-- Controls (No-print) -->
-              <div class="no-print" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+              <div class="no-print"
+                style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
                 <!-- Save Button -->
                 <button class="btn btn-primary btn-sm" id="btn-save-receipt">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                    <polyline points="17 21 17 13 7 13 7 21"/>
-                    <polyline points="7 3 7 8 15 8"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Enregistrer les Flux</span>
                 </button>
                 <!-- Upload Logo Button -->
                 <button class="btn btn-outline btn-sm" id="btn-upload-logo-trigger">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Modifier le Logo</span>
                 </button>
                 <input type="file" id="input-logo-upload" accept="image/png" style="display: none;">
                 <!-- Reset Logo Button -->
                 <button class="btn btn-outline btn-sm" id="btn-reset-logo" style="display: none;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <polyline points="3 3 3 8 8 8" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Réinitialiser Logo</span>
                 </button>
                 <!-- Clear Button -->
                 <button class="btn btn-outline btn-sm" id="btn-clear-receipt">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Effacer</span>
                 </button>
                 <!-- Print Button -->
                 <button class="btn btn-secondary btn-sm" id="btn-print-receipt">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="6 9 6 2 18 2 18 9" />
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                    <rect x="6" y="14" width="12" height="8" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Imprimer la Fiche</span>
                 </button>
               </div>
 
               <div class="card glass receipt-card" id="owner-receipt-card" style="position: relative;">
-                
+
                 <!-- 1. En-tête : Infos Entreprise dynamique gérée par JS -->
                 <div id="dynamic-receipt-header"></div>
 
                 <!-- 2. Titre du Reçu et Date -->
-                <div class="receipt-title-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div class="receipt-title-section"
+                  style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                   <div>
-                    <h3 style="font-weight: 800; font-size: 1.4rem; color: var(--color-primary); letter-spacing: 1px; margin: 0; text-transform: uppercase;">Retrait de Loyer</h3>
-                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;" id="receipt-building-desc">Bâtiment sous gérance</p>
-                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">Loyer Mensuel Estimé : <strong id="receipt-estimated-rent" style="color: var(--color-green);">0 FCFA</strong></p>
+                    <h3
+                      style="font-weight: 800; font-size: 1.4rem; color: var(--color-primary); letter-spacing: 1px; margin: 0; text-transform: uppercase;">
+                      Retrait de Loyer</h3>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;"
+                      id="receipt-building-desc">Bâtiment sous gérance</p>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">Loyer Mensuel
+                      Estimé : <strong id="receipt-estimated-rent" style="color: var(--color-green);">0 FCFA</strong>
+                    </p>
                   </div>
                   <div style="text-align: right;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-end;">
                       <span style="font-size: 0.88rem; font-weight: 500;">Bamako, le :</span>
-                      <input type="text" id="receipt-date-input" class="form-input" style="width: 140px; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); font-size: 0.88rem; color: var(--color-text-primary);" value="13 janv-26">
+                      <input type="text" id="receipt-date-input" class="form-input"
+                        style="width: 140px; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); font-size: 0.88rem; color: var(--color-text-primary);"
+                        value="13 janv-26">
                     </div>
                   </div>
                 </div>
 
                 <!-- Recipient Info -->
-                <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
-                  <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);">
-                    Bailleur : <span id="receipt-owner-title-name" style="color: var(--color-primary-hover);">Monsieur Abdoulaye Cisse</span>
+                <div
+                  style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+                  <p
+                    style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);">
+                    Bailleur : <span id="receipt-owner-title-name" style="color: var(--color-primary-hover);">Monsieur
+                      Abdoulaye Cisse</span>
                   </p>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4;">
                     Nous vous informons que nous débitons votre compte des opérations suivantes :
@@ -611,8 +774,11 @@
                 <!-- Add Row Button (No-print) -->
                 <div class="no-print" style="margin-bottom: 2rem;">
                   <button class="btn btn-secondary btn-sm" id="btn-receipt-add-row">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     <span>Ajouter une ligne</span>
                   </button>
@@ -620,38 +786,52 @@
 
                 <!-- Receipt Calculations Box + Signatures Grid -->
                 <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 1.5rem;">
-                  
+
                   <!-- Calculs Alignés à GAUCHE -->
                   <div style="display: flex; justify-content: flex-start; margin-bottom: 2.5rem;">
                     <table style="width: 100%; max-width: 340px; border-collapse: collapse; font-size: 0.9rem;">
                       <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">TOTAL PAYÉ :</td>
-                        <td class="text-right" id="receipt-val-total" style="padding: 0.5rem 0; font-weight: 700; color: var(--color-text-primary);">0 FCFA</td>
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">TOTAL PAYÉ :
+                        </td>
+                        <td class="text-right" id="receipt-val-total"
+                          style="padding: 0.5rem 0; font-weight: 700; color: var(--color-text-primary);">0 FCFA</td>
                       </tr>
                       <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Frais de gérance :</td>
-                        <td class="text-right" id="receipt-val-frais" style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Frais de
+                          gérance :</td>
+                        <td class="text-right" id="receipt-val-frais"
+                          style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
                       </tr>
                       <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Reliquats :</td>
-                        <td class="text-right" id="receipt-val-reliquats" style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Reliquats :
+                        </td>
+                        <td class="text-right" id="receipt-val-reliquats"
+                          style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
                       </tr>
                       <tr style="border-top: 2px solid var(--color-primary); background: rgba(99, 102, 241, 0.05);">
-                        <td style="padding: 0.65rem 0.5rem; font-weight: 800; color: var(--color-text-primary);">NET À REVERSER :</td>
-                        <td class="text-right value-green" id="receipt-val-net" style="padding: 0.65rem 0.5rem; font-weight: 800; font-size: 1.15rem;">0 FCFA</td>
+                        <td style="padding: 0.65rem 0.5rem; font-weight: 800; color: var(--color-text-primary);">NET À
+                          REVERSER :</td>
+                        <td class="text-right value-green" id="receipt-val-net"
+                          style="padding: 0.65rem 0.5rem; font-weight: 800; font-size: 1.15rem;">0 FCFA</td>
                       </tr>
                     </table>
                   </div>
 
                   <!-- Signatures Grid en BAS -->
-                  <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); min-height: 120px;">
+                  <div
+                    style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); min-height: 120px;">
                     <div style="display: flex; flex-direction: column; justify-content: space-between;">
                       <span style="text-decoration: underline; text-underline-offset: 4px;">Le Bénéficiaire</span>
-                      <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature du propriétaire)</span>
+                      <span
+                        style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature
+                        du propriétaire)</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
+                    <div
+                      style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
                       <span style="text-decoration: underline; text-underline-offset: 4px;">Le Gérant</span>
-                      <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature de l'agence)</span>
+                      <span
+                        style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: normal; margin-top: 4rem;">(Signature
+                        de l'agence)</span>
                     </div>
                   </div>
 
@@ -659,49 +839,59 @@
 
               </div>
             </div>
-            
+
             <!-- Panel 5: Fonds -->
             <div class="owner-panel" id="panel-owner-fonds">
               <div class="card glass">
                 <h4 class="card-title" style="margin-bottom: 1.5rem;">État des Fonds et Reversabilité</h4>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.12);">
+
+                <div
+                  style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                  <div class="kpi-card glass"
+                    style="padding: 1.25rem; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.12);">
                     <div class="kpi-details">
                       <span class="kpi-label" style="font-size: 0.72rem;">Fonds Bruts Collectés</span>
                       <h3 class="kpi-value value-green" id="owner-fonds-brut" style="font-size: 1.5rem;">0 FCFA</h3>
                       <span class="kpi-trend trend-neutral">Volume global perçu (loyers et ventes)</span>
                     </div>
                   </div>
-                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(244, 63, 94, 0.04); border-color: rgba(244, 63, 94, 0.12);">
+                  <div class="kpi-card glass"
+                    style="padding: 1.25rem; background: rgba(244, 63, 94, 0.04); border-color: rgba(244, 63, 94, 0.12);">
                     <div class="kpi-details">
                       <span class="kpi-label" style="font-size: 0.72rem;">Honoraires d'Agence Mandat</span>
                       <h3 class="kpi-value value-rose" id="owner-fonds-com" style="font-size: 1.5rem;">0 FCFA</h3>
                       <span class="kpi-trend trend-neutral">Retenue commissions de gestion</span>
                     </div>
                   </div>
-                  <div class="kpi-card glass" style="padding: 1.25rem; background: rgba(139, 92, 246, 0.06); border-color: rgba(139, 92, 246, 0.2);">
+                  <div class="kpi-card glass"
+                    style="padding: 1.25rem; background: rgba(139, 92, 246, 0.06); border-color: rgba(139, 92, 246, 0.2);">
                     <div class="kpi-details">
                       <span class="kpi-label" style="font-size: 0.72rem;">Net Disponible à Reverser</span>
-                      <h3 class="kpi-value" id="owner-fonds-net" style="font-size: 1.65rem; color: var(--color-text-primary);">0 FCFA</h3>
+                      <h3 class="kpi-value" id="owner-fonds-net"
+                        style="font-size: 1.65rem; color: var(--color-text-primary);">0 FCFA</h3>
                       <span class="kpi-trend trend-up">Fonds disponibles pour retrait</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                   <button class="btn btn-primary" id="btn-request-withdrawal">Effectuer un retrait de fonds</button>
                   <button class="btn btn-outline" id="btn-owner-fonds-statement">Générer un relevé financier</button>
                   <button class="btn btn-outline btn-sm" id="btn-clear-fonds" style="margin-left: auto;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
                     <span style="display: inline-block; vertical-align: middle;">Effacer</span>
                   </button>
                 </div>
 
                 <div style="margin-top: 2.25rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
-                  <h5 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--color-text-primary);">Historique des Retraits de Fonds</h5>
+                  <h5
+                    style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--color-text-primary);">
+                    Historique des Retraits de Fonds</h5>
                   <div class="table-container">
                     <table class="data-table" id="table-owner-withdrawals" style="width: 100%;">
                       <thead>
@@ -721,11 +911,11 @@
                 </div>
               </div>
             </div>
-            
+
           </div>
-          
+
         </section>
-        
+
         <!-- ================= PROPERTIES TAB ================= -->
         <section class="tab-view" id="view-properties">
           <div class="card glass">
@@ -735,19 +925,24 @@
                 <p class="subtitle">Inventaire des appartements, studios et villas en gérance.</p>
               </div>
               <button class="btn btn-secondary btn-sm" id="btn-open-property-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Nouveau Bien</span>
               </button>
             </div>
-            
+
             <div class="toolbar" style="margin-top: 1.5rem;">
               <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input type="text" id="input-search-properties" placeholder="Rechercher bien, quartier, propriétaire, locataire...">
+                <input type="text" id="input-search-properties"
+                  placeholder="Rechercher bien, quartier, propriétaire, locataire...">
               </div>
               <div class="filters-group">
                 <select class="form-select" id="select-filter-properties-status">
@@ -760,31 +955,35 @@
                 </select>
               </div>
             </div>
-            
-            <div class="goals-detailed-grid" id="grid-detailed-properties" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+
+            <div class="goals-detailed-grid" id="grid-detailed-properties"
+              style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
               <!-- Dynamic Property Cards here -->
             </div>
           </div>
         </section>
-        
+
         <!-- ================= TRANSACTIONS TAB ================= -->
         <section class="tab-view" id="view-transactions">
           <div class="card glass">
             <div class="toolbar">
               <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input type="text" id="input-search-transactions" placeholder="Rechercher libellé, propriétaire, bien...">
+                <input type="text" id="input-search-transactions"
+                  placeholder="Rechercher libellé, propriétaire, bien...">
               </div>
-              
+
               <div class="filters-group">
                 <select class="form-select" id="select-filter-type">
                   <option value="all">Tous les flux</option>
                   <option value="income">Entrées (Commissions, Honoraires)</option>
                   <option value="expense">Sorties (Reversements, Dépenses)</option>
                 </select>
-                
+
                 <select class="form-select" id="select-sort-order">
                   <option value="date-desc">Plus récent d'abord</option>
                   <option value="date-asc">Plus ancien d'abord</option>
@@ -793,7 +992,7 @@
                 </select>
               </div>
             </div>
-            
+
             <div class="table-container">
               <table class="data-table" id="table-transactions">
                 <thead>
@@ -812,32 +1011,39 @@
                 </tbody>
               </table>
               <div class="empty-state hidden" id="empty-transactions-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
                 </svg>
                 <p>Aucun flux financier enregistré.</p>
               </div>
             </div>
           </div>
         </section>
-        
+
         <!-- ================= ANALYTICS TAB ================= -->
         <section class="tab-view" id="view-analytics">
           <div class="analytics-actions">
             <button class="btn btn-secondary" id="btn-export-csv">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               <span>Exporter en CSV</span>
             </button>
             <button class="btn btn-outline" id="btn-reset-data">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <polyline points="3 3 3 8 8 8" />
               </svg>
               <span>Réinitialiser les Données d'Agence</span>
             </button>
           </div>
-          
+
           <div class="analytics-layout-grid">
             <div class="card glass">
               <div class="card-header">
@@ -850,7 +1056,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="card glass">
               <div class="card-header">
                 <h4 class="card-title">Portefeuille Propriétaires</h4>
@@ -862,7 +1068,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="card glass span-two-columns">
               <div class="card-header">
                 <h4 class="card-title">Commissions vs Coûts d'Agence</h4>
@@ -876,7 +1082,7 @@
             </div>
           </div>
         </section>
-        
+
         <!-- ================= TENANTS TAB ================= -->
         <section class="tab-view" id="view-tenants">
           <div class="card glass">
@@ -886,22 +1092,27 @@
                 <p class="subtitle">Liste de tous les locataires actifs occupant les biens sous mandat.</p>
               </div>
               <button class="btn btn-primary btn-sm" id="btn-open-tenant-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Ajouter un Locataire</span>
               </button>
             </div>
-            
+
             <div class="toolbar" style="margin-top: 1.5rem;">
               <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input type="text" id="input-search-tenants" placeholder="Rechercher locataire, bien, propriétaire...">
               </div>
             </div>
-            
+
             <div class="table-container" style="margin-top: 1rem;">
               <table class="data-table" id="table-tenants">
                 <thead>
@@ -926,8 +1137,10 @@
         <section class="tab-view" id="view-tenant-dossier">
           <div style="margin-bottom: 1.5rem;" class="no-print">
             <button class="btn btn-outline btn-sm" id="btn-back-to-tenants">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                <polyline points="15 18 9 12 15 6"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <polyline points="15 18 9 12 15 6" />
               </svg>
               <span>Retour aux Locataires</span>
             </button>
@@ -941,42 +1154,68 @@
             <div class="card-body">
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Nom du Locataire</span>
-                  <span id="dossier-tenant-name" style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Nom
+                    du Locataire</span>
+                  <span id="dossier-tenant-name"
+                    style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Téléphone</span>
-                  <span id="dossier-tenant-phone" style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Téléphone</span>
+                  <span id="dossier-tenant-phone"
+                    style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">CNI / NINA</span>
-                  <span id="dossier-tenant-cni" style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">CNI
+                    / NINA</span>
+                  <span id="dossier-tenant-cni"
+                    style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bien Occupé</span>
-                  <span id="dossier-tenant-property" style="font-size: 1.15rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bien
+                    Occupé</span>
+                  <span id="dossier-tenant-property"
+                    style="font-size: 1.15rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bailleur</span>
-                  <span id="dossier-tenant-owner" style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Bailleur</span>
+                  <span id="dossier-tenant-owner"
+                    style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
               </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
+              <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Date d'Entrée (Début Bail)</span>
-                  <span id="dossier-tenant-lease-start" style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Date
+                    d'Entrée (Début Bail)</span>
+                  <span id="dossier-tenant-lease-start"
+                    style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Caution Versée</span>
-                  <span id="dossier-tenant-caution" style="font-size: 1.1rem; font-weight: 700; color: var(--color-rose); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Caution
+                    Versée</span>
+                  <span id="dossier-tenant-caution"
+                    style="font-size: 1.1rem; font-weight: 700; color: var(--color-rose); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Loyer Mensuel</span>
-                  <span id="dossier-tenant-rent" style="font-size: 1.1rem; font-weight: 700; color: var(--color-green); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Loyer
+                    Mensuel</span>
+                  <span id="dossier-tenant-rent"
+                    style="font-size: 1.1rem; font-weight: 700; color: var(--color-green); display: block; margin-top: 0.25rem;">-</span>
                 </div>
                 <div>
-                  <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Adresse Physique</span>
-                  <span id="dossier-tenant-address" style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
+                  <span
+                    style="font-size: 0.75rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Adresse
+                    Physique</span>
+                  <span id="dossier-tenant-address"
+                    style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); display: block; margin-top: 0.25rem;">-</span>
                 </div>
               </div>
             </div>
@@ -989,8 +1228,12 @@
                 <p class="subtitle">Historique comptable mensuel exhaustif des loyers perçus et des reliquats</p>
               </div>
               <button class="btn btn-secondary btn-sm no-print" id="btn-print-tenant-dossier">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                  <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <polyline points="6 9 6 2 18 2 18 9" />
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <rect x="6" y="14" width="12" height="8" />
                 </svg>
                 <span>Imprimer la Fiche</span>
               </button>
@@ -1014,7 +1257,8 @@
                   <!-- Dynamically populated -->
                 </tbody>
                 <tfoot>
-                  <tr style="border-top: 2px solid rgba(255,255,255,0.15); font-weight: 800; color: var(--color-text-primary);">
+                  <tr
+                    style="border-top: 2px solid rgba(255,255,255,0.15); font-weight: 800; color: var(--color-text-primary);">
                     <td colspan="2">TOTAL =</td>
                     <td class="text-right" id="tenant-dossier-total-paid">0 FCFA</td>
                     <td colspan="6"></td>
@@ -1024,17 +1268,19 @@
             </div>
           </div>
         </section>
-        
+
         <!-- ================= ACCOUNTING TAB ================= -->
         <section class="tab-view" id="view-accounting">
-          
+
           <!-- KPI Cards Grid for Accounting -->
           <div class="kpi-grid">
             <!-- Total Inflow (Gross collected Rents) -->
             <div class="card glass kpi-card glow-green" style="display: none;">
               <div class="kpi-icon icon-green">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -1043,12 +1289,15 @@
                 <span class="kpi-trend trend-neutral">Total loyers perçus</span>
               </div>
             </div>
-            
+
             <!-- Agency Net Revenue (Commissions) -->
             <div class="card glass kpi-card glow-purple">
               <div class="kpi-icon icon-purple">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -1057,12 +1306,14 @@
                 <span class="kpi-trend trend-up">Commissions encaissées</span>
               </div>
             </div>
-            
+
             <!-- Paid Out (Reversements Proprietaires) -->
             <div class="card glass kpi-card glow-rose">
               <div class="kpi-icon icon-rose">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+                  <polyline points="17 18 23 18 23 12" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -1071,12 +1322,22 @@
                 <span class="kpi-trend trend-neutral">Reversements & Dépenses</span>
               </div>
             </div>
-            
+
             <!-- Solde Net (Reste) -->
             <div class="card glass kpi-card glow-blue">
               <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="14" y2="12"/><line x1="6" y1="16" x2="6" y2="16"/><line x1="10" y1="16" x2="10" y2="16"/><line x1="14" y1="16" x2="14" y2="16"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                  <line x1="6" y1="8" x2="6" y2="8" />
+                  <line x1="10" y1="8" x2="10" y2="8" />
+                  <line x1="14" y1="8" x2="14" y2="8" />
+                  <line x1="6" y1="12" x2="6" y2="12" />
+                  <line x1="10" y1="12" x2="10" y2="12" />
+                  <line x1="14" y1="12" x2="14" y2="12" />
+                  <line x1="6" y1="16" x2="6" y2="16" />
+                  <line x1="10" y1="16" x2="10" y2="16" />
+                  <line x1="14" y1="16" x2="14" y2="16" />
                 </svg>
               </div>
               <div class="kpi-details">
@@ -1091,53 +1352,75 @@
             <div class="card-header">
               <div>
                 <h4 class="card-title">Grand Livre de Caisse</h4>
-                <p class="subtitle">Bilan comptable des fonds perçus (loyers et ventes), honoraires d'agence et reversements.</p>
+                <p class="subtitle">Bilan comptable des fonds perçus (loyers et ventes), honoraires d'agence et
+                  reversements.</p>
               </div>
             </div>
-            
+
             <!-- Sub-tabs navigation for accounting -->
-            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;" class="no-print">
-              <button class="btn btn-secondary btn-sm accounting-sub-btn active" data-subtab="entrées">Recettes (Entrées)</button>
-              <button class="btn btn-secondary btn-sm accounting-sub-btn" data-subtab="sorties">Dépenses & Retraits (Sorties)</button>
+            <div
+              style="display: flex; gap: 0.5rem; margin-top: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;"
+              class="no-print">
+              <button class="btn btn-secondary btn-sm accounting-sub-btn active" data-subtab="entrées">Recettes
+                (Entrées)</button>
+              <button class="btn btn-secondary btn-sm accounting-sub-btn" data-subtab="sorties">Dépenses & Retraits
+                (Sorties)</button>
             </div>
-            
+
             <div class="toolbar" style="margin-top: 1.5rem;">
               <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input type="text" id="input-search-accounting" placeholder="Rechercher un flux...">
               </div>
             </div>
-            
+
             <!-- Panel: Entrées -->
             <div class="accounting-panel active" id="panel-accounting-entrées">
-              <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; margin-bottom: 1rem; gap: 0.75rem;" class="no-print">
+              <div
+                style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; margin-bottom: 1rem; gap: 0.75rem;"
+                class="no-print">
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                  <select id="entrees-filter-type" class="form-select btn-sm" style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+                  <select id="entrees-filter-type" class="form-select btn-sm"
+                    style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
                     <option value="all">Toutes les dates</option>
                     <option value="day">Par Jour</option>
                     <option value="month">Par Mois</option>
                     <option value="year">Par Année</option>
                   </select>
-                  <input type="date" id="entrees-filter-day" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-                  <input type="month" id="entrees-filter-month" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-                  <input type="number" id="entrees-filter-year" class="form-input btn-sm" placeholder="Ex: 2024" style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
+                  <input type="date" id="entrees-filter-day" class="form-input btn-sm"
+                    style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="month" id="entrees-filter-month" class="form-input btn-sm"
+                    style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="number" id="entrees-filter-year" class="form-input btn-sm" placeholder="Ex: 2024"
+                    style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
                 </div>
                 <button class="btn btn-outline btn-sm" id="btn-print-entrees">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="6 9 6 2 18 2 18 9" />
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                    <rect x="6" y="14" width="12" height="8" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Imprimer</span>
                 </button>
                 <button class="btn btn-outline btn-sm" id="btn-clear-entrees">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Effacer</span>
                 </button>
               </div>
-              <h3 class="print-only" style="display: none; text-align: center; margin-top: 1rem; margin-bottom: 1rem; font-size: 1.5rem; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Historique des Entrées</h3>
+              <h3 class="print-only"
+                style="display: none; text-align: center; margin-top: 1rem; margin-bottom: 1rem; font-size: 1.5rem; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+                Historique des Entrées</h3>
               <div class="table-container" style="margin-top: 1rem;">
                 <table class="data-table" id="table-accounting-entrées" style="width: 100%;">
                   <thead>
@@ -1159,39 +1442,59 @@
 
             <!-- Panel: Sorties -->
             <div class="accounting-panel" id="panel-accounting-sorties" style="display: none;">
-              <h4 class="print-only" style="display: none; color: black; margin-bottom: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold;">Historique des Dépenses et Sorties</h4>
-              <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; margin-bottom: 1rem; gap: 0.75rem;" class="no-print">
+              <h4 class="print-only"
+                style="display: none; color: black; margin-bottom: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold;">
+                Historique des Dépenses et Sorties</h4>
+              <div
+                style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; margin-bottom: 1rem; gap: 0.75rem;"
+                class="no-print">
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                  <select id="sorties-filter-type" class="form-select btn-sm" style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+                  <select id="sorties-filter-type" class="form-select btn-sm"
+                    style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
                     <option value="all">Toutes les dates</option>
                     <option value="day">Par Jour</option>
                     <option value="month">Par Mois</option>
                     <option value="year">Par Année</option>
                   </select>
-                  <input type="date" id="sorties-filter-day" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-                  <input type="month" id="sorties-filter-month" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-                  <input type="number" id="sorties-filter-year" class="form-input btn-sm" placeholder="Ex: 2024" style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
+                  <input type="date" id="sorties-filter-day" class="form-input btn-sm"
+                    style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="month" id="sorties-filter-month" class="form-input btn-sm"
+                    style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+                  <input type="number" id="sorties-filter-year" class="form-input btn-sm" placeholder="Ex: 2024"
+                    style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
                 </div>
                 <button class="btn btn-outline btn-sm" id="btn-print-sorties">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="6 9 6 2 18 2 18 9" />
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                    <rect x="6" y="14" width="12" height="8" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Imprimer</span>
                 </button>
                 <button class="btn btn-outline btn-sm" id="btn-clear-sorties">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
                   <span style="display: inline-block; vertical-align: middle;">Effacer</span>
                 </button>
                 <button class="btn btn-secondary btn-sm" id="btn-accounting-add-expense">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
                   <span>Effectuer une sortie</span>
                 </button>
               </div>
-              <h3 class="print-only" style="display: none; text-align: center; margin-top: 1rem; margin-bottom: 1rem; font-size: 1.5rem; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Historique des Sorties</h3>
+              <h3 class="print-only"
+                style="display: none; text-align: center; margin-top: 1rem; margin-bottom: 1rem; font-size: 1.5rem; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+                Historique des Sorties</h3>
               <div class="table-container">
                 <table class="data-table" id="table-accounting-sorties" style="width: 100%;">
                   <thead>
@@ -1221,13 +1524,16 @@
                 <p class="subtitle">Gestion des membres de l'équipe de l'agence et de leurs rôles.</p>
               </div>
               <button class="btn btn-primary btn-sm" id="btn-open-staff-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Nouveau Membre</span>
               </button>
             </div>
-            
+
             <div class="table-container" style="margin-top: 1.5rem;">
               <table class="data-table" id="table-staff">
                 <thead>
@@ -1253,15 +1559,26 @@
           <div class="section-header" style="margin-bottom: 2rem;">
             <div class="header-content">
               <h3 class="page-title" style="margin-bottom: 0.5rem;">Support Technique</h3>
-              <p class="page-subtitle" style="color: var(--color-text-muted);">Gérez vos demandes d'assistance et signalez des problèmes</p>
+              <p class="page-subtitle" style="color: var(--color-text-muted);">Gérez vos demandes d'assistance et
+                signalez des problèmes</p>
             </div>
             <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
               <div style="position: relative;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="search-support" placeholder="Rechercher un ticket..." class="form-input" style="padding-left: 2.5rem; height: 38px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" id="search-support" placeholder="Rechercher un ticket..." class="form-input"
+                  style="padding-left: 2.5rem; height: 38px;">
               </div>
               <button class="btn btn-primary" id="btn-add-ticket">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
                 Nouveau Ticket
               </button>
             </div>
@@ -1288,7 +1605,13 @@
             </div>
             <div class="empty-state" id="empty-support" style="display: none; padding: 3rem 1rem;">
               <div class="empty-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                  <path
+                    d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                  </path>
+                </svg>
               </div>
               <h3>Aucun ticket</h3>
               <p>Vous n'avez aucune demande d'assistance en cours.</p>
@@ -1299,182 +1622,261 @@
 
         <!-- ================= SETTINGS (PARAMÈTRES) TAB ================= -->
         <section class="tab-view" id="view-settings">
-          <div class="settings-tabs-nav" style="display: flex; gap: 2rem; border-bottom: 1px solid var(--glass-border); margin-bottom: 2rem;">
-            <button class="settings-tab-btn active" data-settings-target="settings-general" style="padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary); background: none; border-top: none; border-left: none; border-right: none; color: var(--color-text-primary); font-weight: 500; cursor: pointer; font-size: 1rem;">Général</button>
-            <button class="settings-tab-btn" data-settings-target="settings-appearance" style="padding-bottom: 0.5rem; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; color: var(--color-text-muted); font-weight: 500; cursor: pointer; font-size: 1rem;">Apparence</button>
+          <div class="settings-tabs-nav"
+            style="display: flex; gap: 2rem; border-bottom: 1px solid var(--glass-border); margin-bottom: 2rem;">
+            <button class="settings-tab-btn active" data-settings-target="settings-general"
+              style="padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary); background: none; border-top: none; border-left: none; border-right: none; color: var(--color-text-primary); font-weight: 500; cursor: pointer; font-size: 1rem;">Général</button>
+            <button class="settings-tab-btn" data-settings-target="settings-appearance"
+              style="padding-bottom: 0.5rem; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; color: var(--color-text-muted); font-weight: 500; cursor: pointer; font-size: 1rem;">Apparence</button>
           </div>
 
           <!-- General Tab -->
           <div id="settings-general" class="settings-tab-content active">
-            <div class="split-view-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;">
-            
-            <!-- Company Info settings card -->
-            <div class="card glass">
-              <div class="card-header">
-                <h4 class="card-title">Informations de l'Agence</h4>
+            <div class="split-view-grid"
+              style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;">
+
+              <!-- Company Info settings card -->
+              <div class="card glass">
+                <div class="card-header">
+                  <h4 class="card-title">Informations de l'Agence</h4>
+                </div>
+                <form id="form-settings-agency"
+                  style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-name" class="form-label">Nom de l'agence</label>
+                    <input type="text" id="input-settings-name" class="form-input" placeholder="ex. Immovi S.A.R.L"
+                      required>
+                  </div>
+                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="input-settings-address" class="form-label">Adresse physique</label>
+                    <input type="text" id="input-settings-address" class="form-input"
+                      placeholder="ex. Rue du Golf, Immeuble Horizon, Bamako, Mali" required>
+                  </div>
+                  <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-phone" class="form-label">Téléphone</label>
+                      <input type="text" id="input-settings-phone" class="form-input" placeholder="ex. +223 20 22 44 66"
+                        required>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-email" class="form-label">Email</label>
+                      <input type="email" id="input-settings-email" class="form-input"
+                        placeholder="ex. contact@immovi.ml" required>
+                    </div>
+                  </div>
+                  <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-currency" class="form-label">Devise</label>
+                      <input type="text" id="input-settings-currency" class="form-input" placeholder="ex. FCFA"
+                        required>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-commission" class="form-label">Honoraires par défaut (%)</label>
+                      <input type="number" id="input-settings-commission" class="form-input" min="1" max="100"
+                        placeholder="10" required>
+                    </div>
+                  </div>
+                  <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-nif" class="form-label">Numéro d'Identification Fiscale (NIF)</label>
+                      <input type="text" id="input-settings-nif" class="form-input" placeholder="ex. NIF: 123456789">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="input-settings-slogan" class="form-label">Slogan / Description d'activité</label>
+                      <input type="text" id="input-settings-slogan" class="form-input"
+                        placeholder="ex. Agence Immobilière & Syndic de Copropriété">
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 0.5rem; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer les Paramètres</button>
+                  </div>
+                </form>
               </div>
-              <form id="form-settings-agency" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
-                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                  <label for="input-settings-name" class="form-label">Nom de l'agence</label>
-                  <input type="text" id="input-settings-name" class="form-input" placeholder="ex. Immovi S.A.R.L" required>
-                </div>
-                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                  <label for="input-settings-address" class="form-label">Adresse physique</label>
-                  <input type="text" id="input-settings-address" class="form-input" placeholder="ex. Rue du Golf, Immeuble Horizon, Bamako, Mali" required>
-                </div>
-                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-phone" class="form-label">Téléphone</label>
-                    <input type="text" id="input-settings-phone" class="form-input" placeholder="ex. +223 20 22 44 66" required>
-                  </div>
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-email" class="form-label">Email</label>
-                    <input type="email" id="input-settings-email" class="form-input" placeholder="ex. contact@immovi.ml" required>
-                  </div>
-                </div>
-                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-currency" class="form-label">Devise</label>
-                    <input type="text" id="input-settings-currency" class="form-input" placeholder="ex. FCFA" required>
-                  </div>
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-commission" class="form-label">Honoraires par défaut (%)</label>
-                    <input type="number" id="input-settings-commission" class="form-input" min="1" max="100" placeholder="10" required>
-                  </div>
-                </div>
-                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-nif" class="form-label">Numéro d'Identification Fiscale (NIF)</label>
-                    <input type="text" id="input-settings-nif" class="form-input" placeholder="ex. NIF: 123456789">
-                  </div>
-                  <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="input-settings-slogan" class="form-label">Slogan / Description d'activité</label>
-                    <input type="text" id="input-settings-slogan" class="form-input" placeholder="ex. Agence Immobilière & Syndic de Copropriété">
+
+              <!-- Logo and System settings card -->
+              <div class="card glass" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div>
+                  <h4 class="card-title" style="margin-bottom: 0.5rem;">Logo de l'Agence</h4>
+                  <p class="subtitle">Importez un logo d'entreprise PNG pour habiller vos reçus et documents officiels.
+                  </p>
+                  <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+                    <button class="btn btn-secondary btn-sm" id="btn-settings-upload-logo">Modifier le Logo</button>
+                    <input type="file" id="input-settings-upload-logo" accept="image/png, image/jpeg, image/svg+xml"
+                      style="display: none;">
+                    <button class="btn btn-outline btn-sm" id="btn-settings-reset-logo"
+                      style="border-color: rgba(244, 63, 94, 0.3); color: var(--color-rose-hover);">Réinitialiser</button>
                   </div>
                 </div>
 
-                <div style="margin-top: 0.5rem; display: flex; justify-content: flex-end;">
-                  <button type="submit" class="btn btn-primary btn-sm">Enregistrer les Paramètres</button>
-                </div>
-              </form>
-            </div>
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08);">
 
-            <!-- Logo and System settings card -->
-            <div class="card glass" style="display: flex; flex-direction: column; gap: 1.5rem;">
-              <div>
-                <h4 class="card-title" style="margin-bottom: 0.5rem;">Logo de l'Agence</h4>
-                <p class="subtitle">Importez un logo d'entreprise PNG pour habiller vos reçus et documents officiels.</p>
-                <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
-                  <button class="btn btn-secondary btn-sm" id="btn-settings-upload-logo">Modifier le Logo</button>
-                  <input type="file" id="input-settings-upload-logo" accept="image/png, image/jpeg, image/svg+xml" style="display: none;">
-                  <button class="btn btn-outline btn-sm" id="btn-settings-reset-logo" style="border-color: rgba(244, 63, 94, 0.3); color: var(--color-rose-hover);">Réinitialiser</button>
+                <div>
+                  <h4 class="card-title" style="margin-bottom: 0.5rem;">Système & Données</h4>
+                  <p class="subtitle">Actions globales de maintenance et d'administration des données de l'application.
+                  </p>
+                  <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button class="btn btn-secondary btn-sm" id="btn-settings-export-json"
+                      style="width: 100%; justify-content: flex-start;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      <span>Exporter la sauvegarde (JSON)</span>
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="btn-settings-import-json"
+                      style="width: 100%; justify-content: flex-start;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                      <span>Importer une sauvegarde (JSON)</span>
+                    </button>
+                    <input type="file" id="input-settings-import-file" accept=".json" style="display: none;">
+                    <button class="btn btn-outline btn-sm" id="btn-settings-reset-data"
+                      style="width: 100%; justify-content: flex-start; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover);">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <polyline points="3 3 3 8 8 8" />
+                      </svg>
+                      <span>Réinitialiser les données de l'application</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Subscription & Billing settings card -->
+                <div class="card glass" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                  <div>
+                    <div
+                      style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <h4 class="card-title" style="margin-bottom: 0;">Mon Abonnement</h4>
+                      <span class="badge badge-purple" id="sub-card-badge"
+                        style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">Compte
+                        Fondateur — Illimité à vie</span>
+                    </div>
+                    <p class="subtitle">Gérez la souscription de votre agence, vos échéances et vos options de
+                      facturation.</p>
+                  </div>
+
+                  <div
+                    style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                      <span style="color: var(--color-text-muted);">Formule actuelle :</span>
+                      <strong style="color: var(--color-text-primary);" id="sub-card-plan">Super Admin / Fondateur
+                        (Gratuit à vie)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                      <span style="color: var(--color-emerald); font-weight: 600;" id="sub-card-trial">Accès complet
+                        illimité</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                      <span style="color: var(--color-text-muted);">Prochain prélèvement :</span>
+                      <span style="color: var(--color-text-primary); font-weight: 500;" id="sub-card-next-date">Aucune
+                        échéance (Accès permanent)</span>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button class="btn btn-outline btn-sm" id="btn-open-cancel-sub"
+                      style="display: none; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="15" y1="9" x2="9" y2="15" />
+                        <line x1="9" y1="9" x2="15" y2="15" />
+                      </svg>
+                      <span>Résilier mon abonnement</span>
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="btn-delete-account"
+                      style="border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%; margin-top: 0.5rem;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                      <span>Supprimer mon compte</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08);">
-
-              <div>
-                <h4 class="card-title" style="margin-bottom: 0.5rem;">Système & Données</h4>
-                <p class="subtitle">Actions globales de maintenance et d'administration des données de l'application.</p>
-                <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                  <button class="btn btn-secondary btn-sm" id="btn-settings-export-json" style="width: 100%; justify-content: flex-start;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <span>Exporter la sauvegarde (JSON)</span>
-                  </button>
-                  <button class="btn btn-outline btn-sm" id="btn-settings-import-json" style="width: 100%; justify-content: flex-start;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    <span>Importer une sauvegarde (JSON)</span>
-                  </button>
-                  <input type="file" id="input-settings-import-file" accept=".json" style="display: none;">
-                  <button class="btn btn-outline btn-sm" id="btn-settings-reset-data" style="width: 100%; justify-content: flex-start; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
-                    </svg>
-                    <span>Réinitialiser les données de l'application</span>
-                  </button>
-                </div>
-              </div>
-            <!-- Subscription & Billing settings card -->
-            <div class="card glass" style="display: flex; flex-direction: column; gap: 1.25rem;">
-              <div>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                  <h4 class="card-title" style="margin-bottom: 0;">Mon Abonnement</h4>
-                  <span class="badge badge-purple" id="sub-card-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">Compte Fondateur — Illimité à vie</span>
-                </div>
-                <p class="subtitle">Gérez la souscription de votre agence, vos échéances et vos options de facturation.</p>
-              </div>
-
-              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                  <span style="color: var(--color-text-muted);">Formule actuelle :</span>
-                  <strong style="color: var(--color-text-primary);" id="sub-card-plan">Super Admin / Fondateur (Gratuit à vie)</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                  <span style="color: var(--color-emerald); font-weight: 600;" id="sub-card-trial">Accès complet illimité</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                  <span style="color: var(--color-text-muted);">Prochain prélèvement :</span>
-                  <span style="color: var(--color-text-primary); font-weight: 500;" id="sub-card-next-date">Aucune échéance (Accès permanent)</span>
-                </div>
-              </div>
-
-              <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
-                <button class="btn btn-outline btn-sm" id="btn-open-cancel-sub" style="display: none; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                  <span>Résilier mon abonnement</span>
-                </button>
-                <button class="btn btn-outline btn-sm" id="btn-delete-account" style="border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%; margin-top: 0.5rem;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                  <span>Supprimer mon compte</span>
-                </button>
-              </div>
-            </div>
             </div>
           </div>
-          </div>
-          
+
           <!-- Appearance Tab -->
-          <div id="settings-appearance" class="settings-tab-content" style="min-height: 200px; padding: 1rem; border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px;">
+          <div id="settings-appearance" class="settings-tab-content"
+            style="min-height: 200px; padding: 1rem; border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px;">
             <div style="margin-bottom: 2rem;">
-              <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; color: var(--color-text-primary);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              <h3
+                style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; color: var(--color-text-primary);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green);">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="9" y1="21" x2="9" y2="9" />
+                </svg>
                 Mode d'affichage
               </h3>
               <div style="display: flex; flex-wrap: wrap; gap: 1rem; max-width: 800px;">
                 <!-- Clair -->
-                <div class="theme-card" id="theme-card-light" onclick="setThemeOption('light')" style="flex: 1; min-width: 250px; display: flex; gap: 1.25rem; padding: 1.5rem; border-radius: 8px; cursor: pointer; align-items: center; min-height: 80px; box-sizing: border-box;">
-                  <div style="background: white; border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 48px; height: 48px; flex-shrink: 0;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <div class="theme-card" id="theme-card-light" onclick="setThemeOption('light')"
+                  style="flex: 1; min-width: 250px; display: flex; gap: 1.25rem; padding: 1.5rem; border-radius: 8px; cursor: pointer; align-items: center; min-height: 80px; box-sizing: border-box;">
+                  <div
+                    style="background: white; border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 48px; height: 48px; flex-shrink: 0;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
                   </div>
                   <div>
-                    <h4 style="margin: 0 0 0.35rem 0; font-size: 1.15rem; color: var(--color-text-primary); font-weight: 500;">Mode Clair</h4>
-                    <p style="margin: 0; color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.4;">Interface lumineuse avec un contraste optimal</p>
+                    <h4
+                      style="margin: 0 0 0.35rem 0; font-size: 1.15rem; color: var(--color-text-primary); font-weight: 500;">
+                      Mode Clair</h4>
+                    <p style="margin: 0; color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.4;">
+                      Interface lumineuse avec un contraste optimal</p>
                   </div>
                 </div>
-                
+
                 <!-- Sombre -->
-                <div class="theme-card" id="theme-card-dark" onclick="setThemeOption('dark')" style="flex: 1; min-width: 250px; display: flex; gap: 1.25rem; padding: 1.5rem; border-radius: 8px; cursor: pointer; align-items: center; min-height: 80px; box-sizing: border-box;">
-                  <div style="background: #0f172a; border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <div class="theme-card" id="theme-card-dark" onclick="setThemeOption('dark')"
+                  style="flex: 1; min-width: 250px; display: flex; gap: 1.25rem; padding: 1.5rem; border-radius: 8px; cursor: pointer; align-items: center; min-height: 80px; box-sizing: border-box;">
+                  <div
+                    style="background: #0f172a; border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
                   </div>
                   <div>
-                    <h4 style="margin: 0 0 0.35rem 0; font-size: 1.15rem; color: var(--color-text-primary); font-weight: 500;">Mode Sombre</h4>
-                    <p style="margin: 0; color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.4;">Interface sombre pour une meilleure visibilité nocturne</p>
+                    <h4
+                      style="margin: 0 0 0.35rem 0; font-size: 1.15rem; color: var(--color-text-primary); font-weight: 500;">
+                      Mode Sombre</h4>
+                    <p style="margin: 0; color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.4;">
+                      Interface sombre pour une meilleure visibilité nocturne</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        
+
       </div>
     </main>
   </div>
-  
+
   <!-- ================= MODALS SECTION ================= -->
 
   <!-- Modal: Add Ticket Support -->
@@ -1483,7 +1885,8 @@
       <div class="modal-header">
         <h3>Nouveau Ticket de Support</h3>
         <button class="btn-icon" id="btn-close-ticket">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -1493,7 +1896,8 @@
         <form id="form-ticket">
           <div class="form-group">
             <label class="form-label">Sujet *</label>
-            <input type="text" class="form-input" id="ticket-subject" required placeholder="Ex: Problème de génération de quittance">
+            <input type="text" class="form-input" id="ticket-subject" required
+              placeholder="Ex: Problème de génération de quittance">
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
             <div class="form-group" style="margin-bottom: 0;">
@@ -1518,7 +1922,8 @@
           </div>
           <div class="form-group">
             <label class="form-label">Description détaillée *</label>
-            <textarea class="form-input" id="ticket-message" rows="5" required placeholder="Décrivez votre problème ou votre demande en détail..."></textarea>
+            <textarea class="form-input" id="ticket-message" rows="5" required
+              placeholder="Décrivez votre problème ou votre demande en détail..."></textarea>
           </div>
           <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
             <button type="button" class="btn btn-outline" id="btn-cancel-ticket">Annuler</button>
@@ -1528,15 +1933,17 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Modal: Add Owner (Nouveau Propriétaire) -->
   <div class="modal-overlay" id="modal-owner">
     <div class="modal-card glass animate-slide-up">
       <div class="modal-header">
         <h3>Nouveau Propriétaire</h3>
         <button class="modal-close" id="btn-close-owner-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -1565,39 +1972,43 @@
             <label for="input-owner-commission" class="form-label">Taux d'honoraires de gestion (%)</label>
             <input type="number" id="input-owner-commission" class="form-input" min="1" max="100" value="10" required>
           </div>
-          
+
           <div class="form-row" style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <div class="form-group" style="flex: 1;">
-                  <label for="input-owner-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
-                  <input type="date" id="input-owner-mandate-start" class="form-input">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                  <label for="input-owner-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
-                  <input type="date" id="input-owner-mandate-end" class="form-input">
-              </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="input-owner-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
+              <input type="date" id="input-owner-mandate-start" class="form-input">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="input-owner-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
+              <input type="date" id="input-owner-mandate-end" class="form-input">
+            </div>
           </div>
-          
+
           <!-- Section: Bien Immobilier Initial (Facultatif) -->
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.08);">
-            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.75rem;">Bien Immobilier Associé (Facultatif)</h4>
-              <div class="form-group">
-                  <label class="form-label">Type de Transaction</label>
-                  <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
-                    <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                      <input type="radio" name="owner_prop_transaction" value="Location" checked> En Location
-                    </label>
-                    <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                      <input type="radio" name="owner_prop_transaction" value="Vente"> En Vente
-                    </label>
-                  </div>
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.75rem;">
+              Bien Immobilier Associé (Facultatif)</h4>
+            <div class="form-group">
+              <label class="form-label">Type de Transaction</label>
+              <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
+                <label
+                  style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                  <input type="radio" name="owner_prop_transaction" value="Location" checked> En Location
+                </label>
+                <label
+                  style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                  <input type="radio" name="owner_prop_transaction" value="Vente"> En Vente
+                </label>
               </div>
-              <div class="form-group">
-                <label for="input-owner-prop-name" class="form-label">Nom du Bien (Libellé)</label>
-                <input type="text" id="input-owner-prop-name" class="form-input" placeholder="ex. Appartement F3 GOLF">
-              </div>
+            </div>
+            <div class="form-group">
+              <label for="input-owner-prop-name" class="form-label">Nom du Bien (Libellé)</label>
+              <input type="text" id="input-owner-prop-name" class="form-input" placeholder="ex. Appartement F3 GOLF">
+            </div>
             <div class="form-group">
               <label for="input-owner-prop-address" class="form-label">Adresse / Quartier</label>
-              <input type="text" id="input-owner-prop-address" class="form-input" placeholder="ex. Badalabougou, Bamako">
+              <input type="text" id="input-owner-prop-address" class="form-input"
+                placeholder="ex. Badalabougou, Bamako">
             </div>
             <div class="form-grid">
               <div class="form-group">
@@ -1617,7 +2028,8 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="input-owner-prop-caution" class="form-label">Caution (FCFA)</label>
-                  <input type="number" id="input-owner-prop-caution" class="form-input" min="0" placeholder="ex. 300000">
+                  <input type="number" id="input-owner-prop-caution" class="form-input" min="0"
+                    placeholder="ex. 300000">
                 </div>
                 <div class="form-group">
                   <label for="input-owner-prop-rent" class="form-label">Loyer Mensuel (FCFA)</label>
@@ -1638,7 +2050,8 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="input-owner-prop-price" class="form-label">Prix de Vente (FCFA)</label>
-                  <input type="number" id="input-owner-prop-price" class="form-input" min="0" placeholder="ex. 25000000">
+                  <input type="number" id="input-owner-prop-price" class="form-input" min="0"
+                    placeholder="ex. 25000000">
                 </div>
                 <div class="form-group">
                   <label for="select-owner-prop-sale-status" class="form-label">Statut de Vente</label>
@@ -1659,15 +2072,17 @@
       </form>
     </div>
   </div>
-  
+
   <!-- Modal: Add Property (Nouveau Bien) -->
   <div class="modal-overlay" id="modal-property">
     <div class="modal-card glass animate-slide-up">
       <div class="modal-header">
         <h3 id="modal-property-title">Nouveau Bien Immobilier</h3>
         <button class="modal-close" id="btn-close-property-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -1677,21 +2092,25 @@
           <div class="form-group">
             <label class="form-label">Type de Transaction</label>
             <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
-                <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                  <input type="radio" name="property_transaction" value="Location" checked> En Location
-                </label>
-                <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                  <input type="radio" name="property_transaction" value="Vente"> En Vente
-                </label>
+              <label
+                style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="property_transaction" value="Location" checked> En Location
+              </label>
+              <label
+                style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="property_transaction" value="Vente"> En Vente
+              </label>
             </div>
           </div>
           <div class="form-group">
             <label for="input-property-name" class="form-label">Nom du Bien (Libellé)</label>
-            <input type="text" id="input-property-name" class="form-input" placeholder="ex. Villa Moderne Fann" required>
+            <input type="text" id="input-property-name" class="form-input" placeholder="ex. Villa Moderne Fann"
+              required>
           </div>
           <div class="form-group">
             <label for="input-property-address" class="form-label">Adresse / Quartier</label>
-            <input type="text" id="input-property-address" class="form-input" placeholder="ex. Almadies, Dakar" required>
+            <input type="text" id="input-property-address" class="form-input" placeholder="ex. Almadies, Dakar"
+              required>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -1702,17 +2121,18 @@
             </div>
             <div class="form-group">
               <label for="input-property-commission" class="form-label">Honoraires sur ce bien (%)</label>
-              <input type="number" id="input-property-commission" class="form-input" min="0" max="100" placeholder="ex. 10">
+              <input type="number" id="input-property-commission" class="form-input" min="0" max="100"
+                placeholder="ex. 10">
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 1.25rem;">
             <label for="select-property-type" class="form-label">Type de bien</label>
             <select id="select-property-type" class="form-select" required>
-                <option value="Appartement" selected>Appartement</option>
-                <option value="Villa">Villa</option>
-                <option value="Magasin">Magasin</option>
-                <option value="Terrain">Terrain</option>
-                <option value="Autre">Autre</option>
+              <option value="Appartement" selected>Appartement</option>
+              <option value="Villa">Villa</option>
+              <option value="Magasin">Magasin</option>
+              <option value="Terrain">Terrain</option>
+              <option value="Autre">Autre</option>
             </select>
           </div>
 
@@ -1745,7 +2165,8 @@
                 </div>
                 <div class="form-group">
                   <label for="input-property-tenant-phone" class="form-label">Téléphone du Locataire</label>
-                  <input type="text" id="input-property-tenant-phone" class="form-input" placeholder="ex. +221 70 123 45 67">
+                  <input type="text" id="input-property-tenant-phone" class="form-input"
+                    placeholder="ex. +221 70 123 45 67">
                 </div>
               </div>
             </div>
@@ -1768,18 +2189,18 @@
               </div>
             </div>
           </div>
-          
+
           <div class="form-row" style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <div class="form-group" style="flex: 1;">
-                  <label for="input-property-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
-                  <input type="date" id="input-property-mandate-start" class="form-input">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                  <label for="input-property-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
-                  <input type="date" id="input-property-mandate-end" class="form-input">
-              </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="input-property-mandate-start" class="form-label">Début du mandat (Facultatif)</label>
+              <input type="date" id="input-property-mandate-start" class="form-input">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="input-property-mandate-end" class="form-label">Fin du mandat (Facultatif)</label>
+              <input type="date" id="input-property-mandate-end" class="form-input">
+            </div>
           </div>
-          
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-property">Annuler</button>
@@ -1795,8 +2216,10 @@
       <div class="modal-header">
         <h3 id="modal-transaction-title">Nouvelle Dépense / Sortie</h3>
         <button class="modal-close" id="btn-close-transaction-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -1812,7 +2235,7 @@
               </label>
             </div>
           </div>
-          
+
           <div class="form-grid">
             <div class="form-group">
               <label for="select-tx-motif" class="form-label">Motif de dépense</label>
@@ -1823,14 +2246,15 @@
                 <option value="Taxes et Impôts">Taxes et Impôts</option>
                 <option value="Autre">Autre</option>
               </select>
-              <input type="text" id="input-tx-motif-autre" class="form-input" placeholder="Précisez le motif..." style="display: none; margin-top: 0.5rem;">
+              <input type="text" id="input-tx-motif-autre" class="form-input" placeholder="Précisez le motif..."
+                style="display: none; margin-top: 0.5rem;">
             </div>
             <div class="form-group">
               <label for="input-tx-description" class="form-label">Description (Libellé)</label>
               <input type="text" id="input-tx-description" class="form-input" placeholder="ex. Plomberie F3" required>
             </div>
           </div>
-          
+
           <div class="form-grid">
             <div class="form-group">
               <label for="input-tx-amount" class="form-label">Montant (FCFA)</label>
@@ -1841,7 +2265,7 @@
               <input type="date" id="input-tx-date" class="form-input" required>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="select-tx-property" class="form-label">Bien Immobilier Associé (Optionnel)</label>
             <select id="select-tx-property" class="form-select">
@@ -1865,26 +2289,34 @@
         <h3>Relevé Financier Bailleur</h3>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
           <button class="btn btn-secondary btn-sm" id="btn-print-statement">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
             </svg>
             <span>Imprimer le Relevé</span>
           </button>
           <button class="modal-close" id="btn-close-statement-modal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
       </div>
-      
-      <div class="modal-body statement-print-area" id="statement-print-area" style="max-height: 70vh; overflow-y: auto; padding: 1.5rem 1rem;">
-        
+
+      <div class="modal-body statement-print-area" id="statement-print-area"
+        style="max-height: 70vh; overflow-y: auto; padding: 1.5rem 1rem;">
+
         <!-- Header Info (Company & Date) - dynamically injected -->
         <div id="dynamic-statement-header"></div>
 
         <!-- Bailleur Profile Info -->
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <div
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
           <p style="margin: 0 0 0.4rem 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);">
             Bailleur : <span id="statement-owner-name" style="color: var(--color-primary-hover);">Abdoulaye Cisse</span>
           </p>
@@ -1894,43 +2326,72 @@
         </div>
 
         <!-- Summary Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-          <div style="background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
-            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Fonds Encaissés</span>
-            <span id="statement-val-gross" style="font-size: 1rem; font-weight: 700; color: var(--color-green); margin-top: 0.25rem; display: block;">0 FCFA</span>
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div
+            style="background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span
+              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Fonds
+              Encaissés</span>
+            <span id="statement-val-gross"
+              style="font-size: 1rem; font-weight: 700; color: var(--color-green); margin-top: 0.25rem; display: block;">0
+              FCFA</span>
           </div>
-          <div style="background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
-            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Honoraires Agence</span>
-            <span id="statement-val-com" style="font-size: 1rem; font-weight: 700; color: var(--color-rose); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          <div
+            style="background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span
+              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Honoraires
+              Agence</span>
+            <span id="statement-val-com"
+              style="font-size: 1rem; font-weight: 700; color: var(--color-rose); margin-top: 0.25rem; display: block;">0
+              FCFA</span>
           </div>
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px; text-align: center;">
-            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Fonds Reversés (Retirés)</span>
-            <span id="statement-val-withdrawn" style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          <div
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span
+              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Fonds
+              Reversés (Retirés)</span>
+            <span id="statement-val-withdrawn"
+              style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin-top: 0.25rem; display: block;">0
+              FCFA</span>
           </div>
-          <div style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.18); padding: 0.75rem; border-radius: 8px; text-align: center;">
-            <span style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Solde Net Disponible</span>
-            <span id="statement-val-balance" style="font-size: 1rem; font-weight: 700; color: var(--color-primary-hover); margin-top: 0.25rem; display: block;">0 FCFA</span>
+          <div
+            style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.18); padding: 0.75rem; border-radius: 8px; text-align: center;">
+            <span
+              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Solde
+              Net Disponible</span>
+            <span id="statement-val-balance"
+              style="font-size: 1rem; font-weight: 700; color: var(--color-primary-hover); margin-top: 0.25rem; display: block;">0
+              FCFA</span>
           </div>
         </div>
 
         <!-- Ledger Table of Transactions -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <h5 style="font-size: 0.9rem; font-weight: 600; margin: 0; color: var(--color-text-primary);">Historique des Mouvements Financiers</h5>
+          <h5 style="font-size: 0.9rem; font-weight: 600; margin: 0; color: var(--color-text-primary);">Historique des
+            Mouvements Financiers</h5>
           <div style="display: flex; gap: 0.5rem; align-items: center;" class="no-print">
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <select id="statement-filter-type" class="form-select btn-sm" style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+              <select id="statement-filter-type" class="form-select btn-sm"
+                style="width: auto; padding-top: 0.35rem; padding-bottom: 0.35rem;">
                 <option value="all">Toutes les dates</option>
                 <option value="day">Par Jour</option>
                 <option value="month">Par Mois</option>
                 <option value="year">Par Année</option>
               </select>
-              <input type="date" id="statement-filter-day" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-              <input type="month" id="statement-filter-month" class="form-input btn-sm" style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
-              <input type="number" id="statement-filter-year" class="form-input btn-sm" placeholder="Ex: 2024" style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
+              <input type="date" id="statement-filter-day" class="form-input btn-sm"
+                style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+              <input type="month" id="statement-filter-month" class="form-input btn-sm"
+                style="display: none; width: auto; padding: 0.25rem 0.5rem; height: 32px;">
+              <input type="number" id="statement-filter-year" class="form-input btn-sm" placeholder="Ex: 2024"
+                style="display: none; width: 80px; padding: 0.25rem 0.5rem; height: 32px;" min="2000" max="2100">
             </div>
             <button class="btn btn-outline btn-sm" id="btn-clear-statement">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>
               <span style="display: inline-block; vertical-align: middle;">Effacer</span>
             </button>
@@ -1963,21 +2424,29 @@
       <div class="modal-header">
         <h3>Retrait de Fonds</h3>
         <button class="modal-close" id="btn-close-withdrawal-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
       <form id="form-withdrawal">
         <div class="modal-body">
-          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
-            <span style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; display: block;">Solde Net Disponible</span>
-            <span id="withdrawal-available-balance" style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">0 FCFA</span>
+          <div
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+            <span
+              style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; display: block;">Solde
+              Net Disponible</span>
+            <span id="withdrawal-available-balance"
+              style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">0
+              FCFA</span>
           </div>
-          
+
           <div class="form-group">
             <label for="input-withdrawal-amount" class="form-label">Montant à Retirer (FCFA)</label>
-            <input type="number" id="input-withdrawal-amount" class="form-input" placeholder="0" min="1" step="1" required>
+            <input type="number" id="input-withdrawal-amount" class="form-input" placeholder="0" min="1" step="1"
+              required>
           </div>
         </div>
         <div class="modal-footer">
@@ -1994,8 +2463,10 @@
       <div class="modal-header">
         <h3>Ajouter un Nouveau Locataire</h3>
         <button class="modal-close" id="btn-close-tenant-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -2012,7 +2483,8 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="input-tenant-rent" class="form-label">Loyer Mensuel (FCFA)</label>
-              <input type="text" id="input-tenant-rent" class="form-input" style="color: var(--color-text-muted);" readonly value="0 FCFA">
+              <input type="text" id="input-tenant-rent" class="form-input" style="color: var(--color-text-muted);"
+                readonly value="0 FCFA">
             </div>
             <div class="form-group">
               <label for="input-tenant-caution" class="form-label">Caution Demandée (FCFA)</label>
@@ -2035,21 +2507,23 @@
               <input type="email" id="input-tenant-email" class="form-input" placeholder="ex. contact@email.com">
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="input-tenant-cni" class="form-label">CNI / NINA</label>
               <input type="text" id="input-tenant-cni" class="form-input" placeholder="Numéro de pièce d'identité">
             </div>
             <div class="form-group">
-              <label for="input-tenant-lease-start" class="form-label">Date d'Entrée (Début) <span class="text-rose">*</span></label>
+              <label for="input-tenant-lease-start" class="form-label">Date d'Entrée (Début) <span
+                  class="text-rose">*</span></label>
               <input type="date" id="input-tenant-lease-start" class="form-input" required>
             </div>
           </div>
 
           <div class="form-group">
             <label for="input-tenant-address" class="form-label">Adresse Physique (Locataire)</label>
-            <input type="text" id="input-tenant-address" class="form-input" placeholder="ex. Badalabougou, Rue 120, Bamako" required>
+            <input type="text" id="input-tenant-address" class="form-input"
+              placeholder="ex. Badalabougou, Rue 120, Bamako" required>
           </div>
         </div>
         <div class="modal-footer">
@@ -2066,8 +2540,10 @@
       <div class="modal-header">
         <h3 id="modal-staff-title">Nouveau Collaborateur</h3>
         <button class="modal-close" id="btn-close-staff-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -2085,12 +2561,14 @@
             </div>
             <div class="form-group">
               <label for="input-staff-email" class="form-label">Adresse Email</label>
-              <input type="email" id="input-staff-email" class="form-input" placeholder="ex. contact@immovi.ml" required>
+              <input type="email" id="input-staff-email" class="form-input" placeholder="ex. contact@immovi.ml"
+                required>
             </div>
           </div>
           <div class="form-group" style="margin-top: 1rem;">
             <label for="input-staff-password" class="form-label">Mot de passe de connexion</label>
-            <input type="password" id="input-staff-password" class="form-input" placeholder="Laissez vide lors d'une modification pour conserver l'actuel">
+            <input type="password" id="input-staff-password" class="form-input"
+              placeholder="Laissez vide lors d'une modification pour conserver l'actuel">
           </div>
           <div class="form-grid" style="margin-top: 1rem;">
             <div class="form-group">
@@ -2110,32 +2588,42 @@
               </select>
             </div>
           </div>
-          
+
           <div class="form-group" style="margin-top: 1.5rem;">
             <label class="form-label" style="display: flex; justify-content: space-between;">
               Autorisations d'Accès (Pages)
-              <button type="button" class="btn btn-outline btn-sm" id="btn-staff-select-all" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; border-color: rgba(255,255,255,0.1);">Tout cocher</button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-staff-select-all"
+                style="padding: 0.2rem 0.5rem; font-size: 0.75rem; border-color: rgba(255,255,255,0.1);">Tout
+                cocher</button>
             </label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem;">
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem;">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="dashboard" checked> Tableau de bord
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="owners"> Propriétaires
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="tenants"> Locataires
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="properties"> Biens Immobiliers
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="accounting"> Comptabilité
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="staff"> Personnel
               </label>
-              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
+              <label
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--color-text-muted);">
                 <input type="checkbox" class="staff-permission-cb" value="settings"> Paramètres
               </label>
             </div>
@@ -2154,27 +2642,37 @@
     <div class="modal-card glass animate-slide-up" style="max-width: 400px; width: 90%; text-align: center;">
       <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
         <button class="modal-close" id="btn-close-confirm-modal">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
       <div class="modal-body" style="padding-top: 0; padding-bottom: 2rem;">
-        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(244, 63, 94, 0.1); color: var(--color-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        <div
+          style="width: 60px; height: 60px; border-radius: 50%; background: rgba(244, 63, 94, 0.1); color: var(--color-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
         </div>
-        <h4 id="confirm-dialog-title" style="font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 1rem;">Êtes-vous sûr ?</h4>
-        <p id="confirm-dialog-message" style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
+        <h4 id="confirm-dialog-title"
+          style="font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 1rem;">Êtes-vous
+          sûr ?</h4>
+        <p id="confirm-dialog-message"
+          style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
           Cette action est irréversible.
         </p>
       </div>
-      <div class="modal-footer" style="justify-content: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
+      <div class="modal-footer"
+        style="justify-content: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1.5rem;">
         <button type="button" class="btn btn-outline" id="btn-confirm-cancel" style="min-width: 120px;">Annuler</button>
-        <button type="button" class="btn btn-primary" id="btn-confirm-ok" style="min-width: 120px; background: var(--color-rose); border-color: var(--color-rose); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">Oui, Confirmer</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-ok"
+          style="min-width: 120px; background: var(--color-rose); border-color: var(--color-rose); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">Oui,
+          Confirmer</button>
       </div>
     </div>
   </div>
@@ -2183,13 +2681,21 @@
   <div class="modal-overlay" id="modal-cancel-subscription" style="z-index: 10000;">
     <div class="modal-card glass animate-slide-up" style="max-width: 480px; width: 90%;">
       <div class="modal-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
-        <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--color-rose-hover); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <h4
+          style="font-size: 1.2rem; font-weight: 700; color: var(--color-rose-hover); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
           <span>Résilier l'abonnement Premium</span>
         </h4>
         <button class="modal-close" id="btn-close-cancel-sub">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -2197,7 +2703,8 @@
       <div class="modal-body" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1rem;">
         <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary); margin: 0;">
           Êtes-vous sûr de vouloir résilier votre abonnement Premium ? <br><br>
-          Vous conserverez tous vos accès Premium jusqu'à la fin de votre période d'essai / payée le <strong style="color: var(--color-text-primary);" id="cancel-modal-date">22 Août 2026</strong>. <br><br>
+          Vous conserverez tous vos accès Premium jusqu'à la fin de votre période d'essai / payée le <strong
+            style="color: var(--color-text-primary);" id="cancel-modal-date">22 Août 2026</strong>. <br><br>
           Après cette date, votre compte basculera automatiquement vers le <strong>Plan Starter (Gratuit)</strong>.
         </p>
 
@@ -2212,20 +2719,24 @@
         </div>
       </div>
 
-      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+      <div class="modal-footer"
+        style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
         <button type="button" class="btn btn-outline btn-sm" id="btn-keep-sub">Conserver mon abonnement</button>
-        <button type="button" class="btn btn-sm" id="btn-confirm-cancel-sub" style="background: var(--color-rose); color: white; border-color: var(--color-rose);">Confirmer la résiliation</button>
+        <button type="button" class="btn btn-sm" id="btn-confirm-cancel-sub"
+          style="background: var(--color-rose); color: white; border-color: var(--color-rose);">Confirmer la
+          résiliation</button>
       </div>
     </div>
   </div>
 
   <div class="toast-container" id="toast-container"></div>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- Inclusion du fichier d'API -->
+  <!-- Inclusion du fichier d'API -->
   <script src="api.js?v=20260725_3"></script>
   <!-- Script Principal avec versioning cache-buster -->
   <script src="app.js?v=20260724_v5"></script>
 </body>
+
 </html>
