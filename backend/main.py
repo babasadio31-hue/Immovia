@@ -109,6 +109,13 @@ async def lifespan(app: FastAPI):
         except Exception:
             db.rollback()
 
+        # Ensure ONLY true super admins have Super Administrateur or Super Admin role
+        try:
+            db.execute(text("UPDATE users SET role = 'Administrateur' WHERE role IN ('Super Administrateur', 'Super Admin') AND email NOT IN ('admin@immovii.com', 'admin@immovi.com') AND id != 'admin-001'"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
         try:
             admin_email = os.getenv("ADMIN_EMAIL", "admin@immovii.com")
             admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
