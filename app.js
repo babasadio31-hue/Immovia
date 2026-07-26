@@ -675,6 +675,10 @@ function setupEventListeners() {
   if (searchPropertiesInput) {
     searchPropertiesInput.addEventListener('input', renderPropertiesGrid);
   }
+  const filterPropertiesStatus = document.getElementById('select-filter-properties-status');
+  if (filterPropertiesStatus) {
+    filterPropertiesStatus.addEventListener('change', renderPropertiesGrid);
+  }
   const searchAccountingInput = document.getElementById('input-search-accounting');
   if (searchAccountingInput) {
     searchAccountingInput.addEventListener('input', renderAccounting);
@@ -1726,7 +1730,25 @@ function renderPropertiesGrid() {
   const searchInput = document.getElementById('input-search-properties');
   const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
+  const statusFilterSelect = document.getElementById('select-filter-properties-status');
+  const statusFilter = statusFilterSelect ? statusFilterSelect.value : 'all';
+
   const filteredProperties = state.properties.filter(prop => {
+    const isVente = prop.transaction_type === 'Vente' || prop.transaction_type === 'vente' || ['Vendu', 'Disponible à la vente', 'Sous compromis'].includes(prop.status);
+    if (statusFilter === 'vacant') {
+      const isVacant = !isVente && (prop.status === 'Libre' || prop.status === 'Vacant');
+      if (!isVacant) return false;
+    } else if (statusFilter === 'vente') {
+      const isAvailVente = isVente && prop.status !== 'Vendu';
+      if (!isAvailVente) return false;
+    } else if (statusFilter === 'loue') {
+      if (prop.status !== 'Loué') return false;
+    } else if (statusFilter === 'vendu') {
+      if (prop.status !== 'Vendu') return false;
+    } else if (statusFilter === 'maintenance') {
+      if (prop.status !== 'Maintenance') return false;
+    }
+
     if (!searchTerm) return true;
     const propNameMatch = (prop.name || '').toLowerCase().includes(searchTerm);
     const addressMatch = (prop.address || '').toLowerCase().includes(searchTerm);

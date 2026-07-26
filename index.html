@@ -749,6 +749,16 @@
                 </svg>
                 <input type="text" id="input-search-properties" placeholder="Rechercher bien, quartier, propriétaire, locataire...">
               </div>
+              <div class="filters-group">
+                <select class="form-select" id="select-filter-properties-status">
+                  <option value="all">Tous les biens</option>
+                  <option value="vacant">Libres / Vacants (Location)</option>
+                  <option value="vente">En Vente (Disponibles)</option>
+                  <option value="loue">Occupés (Loués)</option>
+                  <option value="vendu">Vendus</option>
+                  <option value="maintenance">En Travaux</option>
+                </select>
+              </div>
             </div>
             
             <div class="goals-detailed-grid" id="grid-detailed-properties" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
