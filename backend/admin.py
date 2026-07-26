@@ -10,8 +10,12 @@ from . import models, schemas, auth, database
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 def get_super_admin(current_user: models.User = Depends(auth.get_current_active_user)):
-    if current_user.role not in ["Administrateur", "Super Administrateur"]:
-        raise HTTPException(status_code=403, detail="Non autorisé. Réservé aux super administrateurs.")
+    is_super = (
+        current_user.email == "admin@immovi.com"
+        or current_user.role in ["Admin", "Super Admin", "Super Administrateur"]
+    )
+    if not is_super:
+        raise HTTPException(status_code=403, detail="Non autorisé. Réservé aux super administrateurs de la plateforme.")
     return current_user
 
 @router.get("/dashboard")

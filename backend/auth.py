@@ -120,7 +120,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         email=user.email,
         phone=user.phone,
         password_hash=hashed_password,
-        role=user.role if user.role else "Administrateur",
+        role=(user.role if user.role in ["Administrateur", "Gestionnaire", "Comptable", "Agent"] else "Administrateur"),
         status="En attente",
         permissions=user.permissions,
         date_added=str(date.today()),
@@ -253,9 +253,9 @@ def update_user(user_id: str, user_update: schemas.UserUpdate, current_user: mod
     if current_user.role != "Administrateur" and current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to update this user")
     
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    db_user = db.query(models.User).filter(models.User.id == user_id, models.User.agency_id == current_user.agency_id).first()
     if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not found or not in your agency")
     
     if user_update.name is not None: db_user.name = user_update.name
     if user_update.phone is not None: db_user.phone = user_update.phone
@@ -275,7 +275,7 @@ def delete_user(user_id: str, current_user: models.User = Depends(get_current_ac
     if current_user.role != "Administrateur" and current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this user")
         
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    db_user = db.query(models.User).filter(models.User.id == user_id, models.User.agency_id == current_user.agency_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
         
