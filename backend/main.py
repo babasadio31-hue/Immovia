@@ -62,6 +62,38 @@ async def lifespan(app: FastAPI):
             except Exception as e:
                 db.rollback()
                 
+        # Update PostgreSQL foreign key constraints to use ON DELETE CASCADE so SQL deletions never fail
+        cascade_queries = [
+            "ALTER TABLE activity_logs DROP CONSTRAINT IF EXISTS activity_logs_user_id_fkey",
+            "ALTER TABLE activity_logs ADD CONSTRAINT activity_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
+            "ALTER TABLE support_tickets DROP CONSTRAINT IF EXISTS support_tickets_user_id_fkey",
+            "ALTER TABLE support_tickets ADD CONSTRAINT support_tickets_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
+            "ALTER TABLE users DROP CONSTRAINT IF EXISTS users_agency_id_fkey",
+            "ALTER TABLE users ADD CONSTRAINT users_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE owners DROP CONSTRAINT IF EXISTS owners_agency_id_fkey",
+            "ALTER TABLE owners ADD CONSTRAINT owners_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE properties DROP CONSTRAINT IF EXISTS properties_agency_id_fkey",
+            "ALTER TABLE properties ADD CONSTRAINT properties_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE tenants DROP CONSTRAINT IF EXISTS tenants_agency_id_fkey",
+            "ALTER TABLE tenants ADD CONSTRAINT tenants_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_agency_id_fkey",
+            "ALTER TABLE transactions ADD CONSTRAINT transactions_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE agency_settings DROP CONSTRAINT IF EXISTS agency_settings_agency_id_fkey",
+            "ALTER TABLE agency_settings ADD CONSTRAINT agency_settings_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE support_tickets DROP CONSTRAINT IF EXISTS support_tickets_agency_id_fkey",
+            "ALTER TABLE support_tickets ADD CONSTRAINT support_tickets_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE activity_logs DROP CONSTRAINT IF EXISTS activity_logs_agency_id_fkey",
+            "ALTER TABLE activity_logs ADD CONSTRAINT activity_logs_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE",
+            "ALTER TABLE subscriptions DROP CONSTRAINT IF EXISTS subscriptions_agency_id_fkey",
+            "ALTER TABLE subscriptions ADD CONSTRAINT subscriptions_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE"
+        ]
+        for q in cascade_queries:
+            try:
+                db.execute(text(q))
+                db.commit()
+            except Exception:
+                db.rollback()
+                
         # Backfill expiration dates for agencies
         try:
             from datetime import datetime, timedelta

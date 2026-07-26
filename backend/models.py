@@ -154,8 +154,8 @@ class SupportTicket(Base):
     __tablename__ = "support_tickets"
     
     id = Column(String, primary_key=True, index=True)
-    agency_id = Column(String, ForeignKey("agencies.id"))
-    user_id = Column(String, ForeignKey("users.id"))
+    agency_id = Column(String, ForeignKey("agencies.id", ondelete="CASCADE"))
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"))
     subject = Column(String)
     category = Column(String)
     priority = Column(String)
@@ -167,8 +167,8 @@ class ActivityLog(Base):
     __tablename__ = "activity_logs"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    agency_id = Column(String, ForeignKey("agencies.id"), nullable=True)
-    user_id = Column(String, ForeignKey("users.id"), nullable=True)
+    agency_id = Column(String, ForeignKey("agencies.id", ondelete="CASCADE"), nullable=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     action = Column(String) # e.g., "Connexion", "Paiement", "Création Bien"
     details = Column(String)
     date = Column(String)
