@@ -226,14 +226,26 @@ async function loadJournal() {
   try {
     const logs = await fetchApi('/activity');
     const tbody = document.getElementById('tbody-journal');
-    tbody.innerHTML = logs.map(l => `
-      <tr>
-        <td>#${l.id}</td>
-        <td>${l.date}</td>
-        <td><span class="badge badge-gray">${l.action}</span></td>
-        <td>${l.details}</td>
-      </tr>
-    `).join('');
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center; padding: 2.5rem; color: #9CA3AF;">
+            <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; margin-bottom: 0.75rem; display: block; opacity: 0.5;"></i>
+            <strong style="color: #E5E7EB; font-size: 1rem;">Aucune activité enregistrée pour le moment.</strong><br>
+            <span style="font-size: 0.85rem; display: inline-block; margin-top: 0.35rem; max-width: 500px;">Le Journal d'Activité enregistre l'historique de sécurité et de traçabilité de la plateforme (connexions, inscriptions, actions d'administration, alertes). Les événements s'afficheront ici automatiquement.</span>
+          </td>
+        </tr>
+      `;
+    } else {
+      tbody.innerHTML = logs.map(l => `
+        <tr>
+          <td>#${l.id}</td>
+          <td>${l.date}</td>
+          <td><span class="badge badge-gray">${l.action}</span></td>
+          <td>${l.details}</td>
+        </tr>
+      `).join('');
+    }
   } catch(e) {}
 }
 

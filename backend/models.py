@@ -209,3 +209,20 @@ class NewsletterCampaign(Base):
     status = Column(String, default="Envoyé")
     sent_count = Column(Integer, default=0)
     date = Column(String)
+
+
+def log_activity(db, action: str, details: str, user_id: str = None, agency_id: str = None):
+    try:
+        from datetime import datetime
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = ActivityLog(
+            action=action,
+            details=details,
+            date=now_str,
+            user_id=user_id,
+            agency_id=agency_id
+        )
+        db.add(log_entry)
+        db.commit()
+    except Exception as e:
+        db.rollback()

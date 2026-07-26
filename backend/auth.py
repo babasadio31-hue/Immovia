@@ -60,6 +60,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = security.create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
+    models.log_activity(db, "Connexion", f"Connexion réussie : {user.email}", user_id=user.id, agency_id=user.agency_id)
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=schemas.User)
@@ -152,6 +153,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     except Exception as e:
         print("Erreur envoi email bienvenue:", e)
 
+    models.log_activity(db, "Inscription", f"Nouveau compte inscrit : {new_user.email} ({new_user.name})", user_id=new_user.id, agency_id=new_user.agency_id)
     return new_user
 
 @router.get("/verify")

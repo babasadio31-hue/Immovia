@@ -153,6 +153,7 @@ def suspend_user(user_id: str, db: Session = Depends(database.get_db), admin: mo
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
     user.status = "Suspendu"
     db.commit()
+    models.log_activity(db, "Suspension Compte", f"Suspension de l'utilisateur : {user.email}", user_id=user.id, agency_id=user.agency_id)
     return {"message": "Utilisateur suspendu avec succès"}
 
 @router.put("/users/{user_id}/activate")
@@ -162,6 +163,7 @@ def activate_user(user_id: str, db: Session = Depends(database.get_db), admin: m
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
     user.status = "Actif"
     db.commit()
+    models.log_activity(db, "Activation Compte", f"Activation de l'utilisateur : {user.email}", user_id=user.id, agency_id=user.agency_id)
     return {"message": "Utilisateur activé avec succès"}
 
 @router.delete("/users/{user_id}")

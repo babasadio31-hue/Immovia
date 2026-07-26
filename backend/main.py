@@ -93,6 +93,19 @@ async def lifespan(app: FastAPI):
             db.add(admin_user)
             db.commit()
 
+        # Log system startup activity
+        try:
+            log_count = db.query(models.ActivityLog).count()
+            if log_count == 0:
+                models.log_activity(db, "Système", "Démarrage et initialisation du Journal d'Activité Immovi")
+                users = db.query(models.User).all()
+                for u in users[:5]:
+                    models.log_activity(db, "Compte Existant", f"Utilisateur en base : {u.email} ({u.role})", user_id=u.id, agency_id=u.agency_id)
+            else:
+                models.log_activity(db, "Système", "Démarrage du service Immovi API")
+        except Exception:
+            pass
+
     finally:
         db.close()
     yield
