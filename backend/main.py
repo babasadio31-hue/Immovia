@@ -79,11 +79,13 @@ async def lifespan(app: FastAPI):
 
         user_count = db.query(models.User).count()
         if user_count == 0:
-            hashed_pwd = security.get_password_hash("admin123")
+            admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
+            admin_password = os.getenv("ADMIN_PASSWORD", "Immovi#2026!Secure")
+            hashed_pwd = security.get_password_hash(admin_password)
             admin_user = models.User(
                 id="admin-001",
                 name="Administrateur",
-                email="admin@immovi.com",
+                email=admin_email,
                 password_hash=hashed_pwd,
                 role="Admin",
                 status="Actif",
