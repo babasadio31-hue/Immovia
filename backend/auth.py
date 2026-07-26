@@ -164,7 +164,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
         
     if db_user.status != "En attente":
         from fastapi.responses import RedirectResponse
-        return RedirectResponse(url="https://immoviia-production.up.railway.app/login.html?verified=1")
+        return RedirectResponse(url="https://immovia-production.up.railway.app/login.html?verified=1")
 
     # Update user status and associate with agency
     db_user.status = "Actif"
@@ -204,7 +204,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
         print("Erreur envoi email confirmation:", e)
         
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="https://immoviia-production.up.railway.app/login.html?verified=1")
+    return RedirectResponse(url="https://immovia-production.up.railway.app/login.html?verified=1")
 
 
 @router.get("/users", response_model=list[schemas.User])
