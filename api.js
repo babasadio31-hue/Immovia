@@ -1,20 +1,20 @@
 // Fichier de communication avec l'API Backend (Railway)
 
-// TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
+// TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immoviia-production.up.railway.app)
 // Si on est en local ou en ligne, on pointe de force vers l'URL de production
-const API_BASE_URL = 'https://immovia-production.up.railway.app/api';
+const API_BASE_URL = 'https://immoviia-production.up.railway.app/api';
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {
-  return localStorage.getItem('immovi_jwt');
+  return localStorage.getItem('immovii_jwt');
 }
 
 function setAuthToken(token) {
-  localStorage.setItem('immovi_jwt', token);
+  localStorage.setItem('immovii_jwt', token);
 }
 
 function removeAuthToken() {
-  localStorage.removeItem('immovi_jwt');
+  localStorage.removeItem('immovii_jwt');
 }
 
 // Fonction générique pour faire les appels API avec le token de sécurité

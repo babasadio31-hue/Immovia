@@ -133,11 +133,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Envoi de l'email de confirmation
     try:
         from . import email_service
-        subject = "Bienvenue sur Immovi - Vérifiez votre adresse email"
-        verify_url = f"https://immovia-production.up.railway.app/api/auth/verify?token={token}"
+        subject = "Bienvenue sur Immovii - Vérifiez votre adresse email"
+        verify_url = f"https://immoviia-production.up.railway.app/api/auth/verify?token={token}"
         html_content = f"""
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto;'>
-            <h2 style='color: #2E5BFF;'>Bienvenue sur Immovi, {new_user.name} !</h2>
+            <h2 style='color: #2E5BFF;'>Bienvenue sur Immovii, {new_user.name} !</h2>
             <p>Nous sommes ravis de vous compter parmi nous.</p>
             <p>Afin de finaliser la création de votre compte et configurer votre espace agence, veuillez vérifier votre adresse email en cliquant sur le bouton ci-dessous :</p>
             <div style='text-align: center; margin: 30px 0;'>
@@ -146,7 +146,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
             <p>Si le bouton ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :</p>
             <p style='color: #6B7280; font-size: 0.9em; word-break: break-all;'>{verify_url}</p>
             <br>
-            <p>L'équipe Immovi</p>
+            <p>L'équipe Immovii</p>
         </div>
         """
         email_service.send_email(user.email, subject, html_content)
@@ -164,7 +164,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
         
     if db_user.status != "En attente":
         from fastapi.responses import RedirectResponse
-        return RedirectResponse(url="https://immovia-production.up.railway.app/login.html?verified=1")
+        return RedirectResponse(url="https://immoviia-production.up.railway.app/login.html?verified=1")
 
     # Update user status and associate with agency
     db_user.status = "Actif"
@@ -180,7 +180,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
     # Send welcome email now that it's verified
     try:
         from . import email_service
-        subject = "Votre espace Immovi est prêt !"
+        subject = "Votre espace Immovii est prêt !"
         html_content = f"""
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto;'>
             <h2 style='color: #2E5BFF;'>Votre compte a été vérifié avec succès !</h2>
@@ -193,10 +193,10 @@ def verify_email(token: str, db: Session = Depends(get_db)):
             <p>Vous avez un accès complet à toutes les fonctionnalités pendant cette période pour découvrir la puissance de notre plateforme de gestion immobilière.</p>
             <p>À l'issue de cet essai, vous serez invité à souscrire à l'un de nos abonnements pour continuer à utiliser le service.</p>
             <div style='text-align: center; margin: 30px 0;'>
-                <a href='https://immovia-production.up.railway.app/login.html' style='background-color: #2E5BFF; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Accéder à mon tableau de bord</a>
+                <a href='https://immoviia-production.up.railway.app/login.html' style='background-color: #2E5BFF; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Accéder à mon tableau de bord</a>
             </div>
             <br>
-            <p>L'équipe Immovi</p>
+            <p>L'équipe Immovii</p>
         </div>
         """
         email_service.send_email(db_user.email, subject, html_content)
@@ -204,7 +204,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
         print("Erreur envoi email confirmation:", e)
         
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="https://immovia-production.up.railway.app/login.html?verified=1")
+    return RedirectResponse(url="https://immoviia-production.up.railway.app/login.html?verified=1")
 
 
 @router.get("/users", response_model=list[schemas.User])

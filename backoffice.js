@@ -1,5 +1,5 @@
 const API_URL = '/api';
-let adminToken = localStorage.getItem('immovi_admin_token');
+let adminToken = localStorage.getItem('immovii_admin_token');
 
 // Elements
 const loginView = document.getElementById('login-view');
@@ -41,7 +41,7 @@ loginForm.addEventListener('submit', async (e) => {
     if (!response.ok) throw new Error(data.detail || 'Login failed');
     
     adminToken = data.access_token;
-    localStorage.setItem('immovi_admin_token', adminToken);
+    localStorage.setItem('immovii_admin_token', adminToken);
     
     showToast('Connexion réussie', 'success');
     showInterface();
@@ -54,7 +54,7 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 btnLogout.addEventListener('click', () => {
-  localStorage.removeItem('immovi_admin_token');
+  localStorage.removeItem('immovii_admin_token');
   adminToken = null;
   showLogin();
 });
@@ -90,7 +90,7 @@ async function fetchApi(endpoint, options = {}) {
     }
   });
   if (response.status === 401 || response.status === 403) {
-    localStorage.removeItem('immovi_admin_token');
+    localStorage.removeItem('immovii_admin_token');
     showLogin();
     throw new Error('Non autorisé');
   }

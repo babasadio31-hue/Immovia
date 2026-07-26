@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 import os
 
 def get_super_admin(current_user: models.User = Depends(auth.get_current_active_user)):
-    admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@immovii.com")
     is_super = (
         current_user.email == admin_email
         or current_user.role in ["Administrateur", "Admin", "Super Admin", "Super Administrateur"]

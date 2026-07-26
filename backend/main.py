@@ -77,7 +77,7 @@ async def lifespan(app: FastAPI):
         except Exception:
             db.rollback()
 
-        admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@immovii.com")
         admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
         admin_user = db.query(models.User).filter(models.User.email == admin_email).first()
         if not admin_user:
@@ -104,12 +104,12 @@ async def lifespan(app: FastAPI):
         try:
             log_count = db.query(models.ActivityLog).count()
             if log_count == 0:
-                models.log_activity(db, "Système", "Démarrage et initialisation du Journal d'Activité Immovi")
+                models.log_activity(db, "Système", "Démarrage et initialisation du Journal d'Activité Immovii")
                 users = db.query(models.User).all()
                 for u in users[:5]:
                     models.log_activity(db, "Compte Existant", f"Utilisateur en base : {u.email} ({u.role})", user_id=u.id, agency_id=u.agency_id)
             else:
-                models.log_activity(db, "Système", "Démarrage du service Immovi API")
+                models.log_activity(db, "Système", "Démarrage du service Immovii API")
         except Exception:
             pass
 
@@ -117,7 +117,7 @@ async def lifespan(app: FastAPI):
         db.close()
     yield
 
-app = FastAPI(title="Immovi API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Immovii API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -141,7 +141,7 @@ app.include_router(tickets.router)
 
 @app.get("/api")
 def read_root():
-    return {"message": "Bienvenue sur l'API Immovi ! Le backend est en ligne."}
+    return {"message": "Bienvenue sur l'API Immovii ! Le backend est en ligne."}
 
 from pydantic import BaseModel
 import uuid

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Immovi - Moteur de Gestion d'Agence Immobilière (FCFA)
+   Immovii - Moteur de Gestion d'Agence Immobilière (FCFA)
    ========================================================================== */
 
 // État Global de l'Agence
@@ -57,7 +57,7 @@ function initApp() {
   
   // Onglet initial
   switchTab('dashboard');
-  showToast('Immovi : Système chargé avec succès.', 'success');
+  showToast('Immovii : Système chargé avec succès.', 'success');
 }
 
 function applyUserSession(userId) {
@@ -98,7 +98,7 @@ function handleLogin(e) {
       showToast('Votre compte est inactif.', 'error');
       return;
     }
-    sessionStorage.setItem('immovi_session', user.id);
+    sessionStorage.setItem('immovii_session', user.id);
     document.getElementById('login-password').value = '';
     async function startApp() {
   const token = getAuthToken();
@@ -118,8 +118,8 @@ startApp(); // reload the app with session
 
 function handleLogout() {
   removeAuthToken();
-  localStorage.removeItem('immovi_local_user');
-  sessionStorage.removeItem('immovi_session');
+  localStorage.removeItem('immovii_local_user');
+  sessionStorage.removeItem('immovii_session');
   window.location.href = 'login.html';
 }
 
@@ -171,7 +171,7 @@ async function loadData() {
       dateAdded: u.date_added
     }));
     
-    const currentTheme = localStorage.getItem('immovi_theme') || (state.agencySettings && state.agencySettings.theme) || 'dark';
+    const currentTheme = localStorage.getItem('immovii_theme') || (state.agencySettings && state.agencySettings.theme) || 'dark';
     if (apiSettings && apiSettings.name) {
       state.agencySettings = {
         ...state.agencySettings,
@@ -686,9 +686,9 @@ function setupEventListeners() {
 
   // Réinitialisation des données de l'agence
   document.getElementById('btn-reset-data').addEventListener('click', () => {
-    showCustomConfirm('Voulez-vous vraiment réinitialiser le cache local d\'Immovi ?', false, 'Réinitialisation').then(async confirmed => {
+    showCustomConfirm('Voulez-vous vraiment réinitialiser le cache local d\'Immovii ?', false, 'Réinitialisation').then(async confirmed => {
       if (confirmed) {
-        localStorage.removeItem('immovi_state');
+        localStorage.removeItem('immovii_state');
         state = { owners: [], properties: [], transactions: [] };
         await loadData();
         populateDropdowns();
@@ -2793,7 +2793,7 @@ function exportToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', 'immovi_transactions.csv');
+  link.setAttribute('download', 'immovii_transactions.csv');
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -2806,7 +2806,7 @@ function exportToCSV() {
 // ==========================================================================
 
 function loadLogo() {
-  const customLogo = localStorage.getItem('immovi_custom_logo');
+  const customLogo = localStorage.getItem('immovii_custom_logo');
   const container = document.getElementById('receipt-logo-container');
   const resetBtn = document.getElementById('btn-reset-logo');
   const brandText = document.getElementById('receipt-brand-text');
@@ -2850,7 +2850,7 @@ function handleLogoUpload(e) {
   
   const reader = new FileReader();
   reader.onload = function(evt) {
-    localStorage.setItem('immovi_custom_logo', evt.target.result);
+    localStorage.setItem('immovii_custom_logo', evt.target.result);
     loadLogo();
     showToast('Le logo PNG a été enregistré avec succès.', 'success');
   };
@@ -2858,7 +2858,7 @@ function handleLogoUpload(e) {
 }
 
 function resetLogo() {
-  localStorage.removeItem('immovi_custom_logo');
+  localStorage.removeItem('immovii_custom_logo');
   loadLogo();
   showToast('Logo réinitialisé avec succès.', 'success');
 }
@@ -3513,12 +3513,12 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       if (err.message === 'Session expirée' || (err.message && err.message.includes('Session'))) {
         removeAuthToken();
-        localStorage.removeItem('immovi_local_user');
+        localStorage.removeItem('immovii_local_user');
         window.location.href = 'login.html';
         return;
       }
       
-      const localUserRaw = localStorage.getItem('immovi_local_user');
+      const localUserRaw = localStorage.getItem('immovii_local_user');
       if (localUserRaw) {
         currentUser = JSON.parse(localUserRaw);
       } else {
@@ -3564,7 +3564,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (btnLogout) {
         btnLogout.addEventListener('click', () => {
           removeAuthToken();
-          localStorage.removeItem('immovi_local_user');
+          localStorage.removeItem('immovii_local_user');
           window.location.href = 'login.html';
         });
       }
@@ -3595,7 +3595,7 @@ function setupSubscriptionModal() {
   const dateEl = document.getElementById('sub-card-next-date');
 
   const currentUser = state.currentUser;
-  const isSuperAdmin = currentUser && (currentUser.role === 'Administrateur' || currentUser.email === 'admin@immovi.ml');
+  const isSuperAdmin = currentUser && (currentUser.role === 'Administrateur' || currentUser.email === 'admin@immovii.ml');
 
   if (isSuperAdmin) {
     if (badge) {
@@ -3687,10 +3687,10 @@ function renderSettingsView() {
 function setThemeOption(theme) {
   if (theme === 'light') {
     document.documentElement.classList.add('theme-light');
-    localStorage.setItem('immovi_theme', 'light');
+    localStorage.setItem('immovii_theme', 'light');
   } else {
     document.documentElement.classList.remove('theme-light');
-    localStorage.setItem('immovi_theme', 'dark');
+    localStorage.setItem('immovii_theme', 'dark');
   }
   updateThemeCardUI(theme);
 }
@@ -3712,7 +3712,7 @@ function updateThemeCardUI(theme) {
 }
 
 function initThemeSystem() {
-  const savedTheme = localStorage.getItem('immovi_theme') || 'dark';
+  const savedTheme = localStorage.getItem('immovii_theme') || 'dark';
   if (savedTheme === 'light') {
     document.documentElement.classList.add('theme-light');
   } else {
@@ -4006,7 +4006,7 @@ function handleLogoUpload(e) {
     state.agencySettings.logoBase64 = evt.target.result;
     try {
       await API.updateSettings({
-        name: state.agencySettings.name || 'Immovi S.A.R.L',
+        name: state.agencySettings.name || 'Immovii S.A.R.L',
         address: state.agencySettings.address || '',
         phone: state.agencySettings.phone || '',
         email: state.agencySettings.email || '',
@@ -4028,7 +4028,7 @@ async function resetLogo() {
     delete state.agencySettings.logoBase64;
     try {
       await API.updateSettings({
-        name: state.agencySettings.name || 'Immovi S.A.R.L',
+        name: state.agencySettings.name || 'Immovii S.A.R.L',
         address: state.agencySettings.address || '',
         phone: state.agencySettings.phone || '',
         email: state.agencySettings.email || '',
@@ -4052,7 +4052,7 @@ function renderGlobalPrintHeader() {
   // Mettre à jour le grand titre de l'en-tête selon le nom de l'agence configuré
   const greetingTitle = document.getElementById('greeting-title');
   if (greetingTitle) {
-    const rawName = (settings.name && settings.name.trim()) ? settings.name.trim() : 'Immovi S.A.R.L';
+    const rawName = (settings.name && settings.name.trim()) ? settings.name.trim() : 'Immovii S.A.R.L';
     const displayTitle = rawName.toLowerCase().includes('gestion')
       ? rawName
       : `Gestion d'Agence ${rawName}`;
@@ -4071,10 +4071,10 @@ function renderGlobalPrintHeader() {
   const htmlContent = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--color-text-primary); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
       <div style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-primary);">
-        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
+        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVII S.A.R.L'}</h4>
         <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
         <p style="margin: 0;">${settings.address || "Adresse de l'agence"}</p>
-        <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
+        <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovii.ml'}</p>
         ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
       </div>
       <div style="text-align: right;">
@@ -4097,10 +4097,10 @@ function renderGlobalPrintHeader() {
     dynamicStatementHeader.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--glass-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
         <div>
-          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVI S.A.R.L'}</h4>
+          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVII S.A.R.L'}</h4>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
           <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || "Adresse de l'agence"}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovi.ml'}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovii.ml'}</p>
           ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
         </div>
         <div style="text-align: right;">
@@ -4123,7 +4123,7 @@ function exportAppSaveJSON() {
   
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `immovi_backup_${new Date().toISOString().split('T')[0]}.json`);
+  link.setAttribute('download', `immovii_backup_${new Date().toISOString().split('T')[0]}.json`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -4158,7 +4158,7 @@ function handleImportJSONFile(e) {
         switchTab('dashboard');
         showToast('Sauvegarde restaurée avec succès. L\'application a été mise à jour.', 'success');
       } else {
-        showToast('Fichier invalide : structure Immovi manquante.', 'error');
+        showToast('Fichier invalide : structure Immovii manquante.', 'error');
       }
     } catch (err) {
       console.error(err);
@@ -4188,12 +4188,12 @@ window.deleteStaff = deleteStaff;
 window.setThemeOption = function(theme) {
   state.agencySettings = state.agencySettings || {};
   state.agencySettings.theme = theme;
-  localStorage.setItem('immovi_theme', theme);
+  localStorage.setItem('immovii_theme', theme);
   applyThemeUI();
 };
 
 function applyThemeUI() {
-  const storedTheme = localStorage.getItem('immovi_theme');
+  const storedTheme = localStorage.getItem('immovii_theme');
   const theme = storedTheme || (state.agencySettings && state.agencySettings.theme ? state.agencySettings.theme : 'dark');
   
   if (theme === 'light') {
@@ -4309,7 +4309,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     
-    const agencyName = (state.agencySettings && state.agencySettings.name) ? state.agencySettings.name : "Agence Immovia";
+    const agencyName = (state.agencySettings && state.agencySettings.name) ? state.agencySettings.name : "Agence Immoviia";
     doc.text(agencyName, 20, 52);
     
     let yPosEmetteur = 58;

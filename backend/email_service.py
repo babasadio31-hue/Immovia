@@ -4,7 +4,7 @@ import json
 BREVO_API_KEY = "xkeysib-cfd993319bb7a51ddc93a" + "4bbaef4c73d699e8694d4081b68a9c867bb2d59d008-cTeq7bCQgCVaaavW"
 API_URL = "https://api.brevo.com/v3/smtp/email"
 DEFAULT_SENDER_EMAIL = "bbcongo99@gmail.com"
-DEFAULT_SENDER_NAME = "Baba Tech Immovi"
+DEFAULT_SENDER_NAME = "Baba Tech Immovii"
 
 def send_email(to_email: str, subject: str, html_content: str):
     headers = {

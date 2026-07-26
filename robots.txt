@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /backoffice.html
 Disallow: /agency-dashboard.html
 
-Sitemap: https://immovi.com/sitemap.xml
+Sitemap: https://immovii.com/sitemap.xml

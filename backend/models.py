@@ -179,7 +179,7 @@ class PlatformSettings(Base):
     id = Column(Integer, primary_key=True, index=True)
     logo_url = Column(String, nullable=True)
     favicon_url = Column(String, nullable=True)
-    app_name = Column(String, default="Immovi")
+    app_name = Column(String, default="Immovii")
     currency = Column(String, default="FCFA")
     languages = Column(JSON, nullable=True)
     api_keys = Column(JSON, nullable=True)

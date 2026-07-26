@@ -9,10 +9,10 @@ def get_settings(db: Session = Depends(auth.get_db), current_user: models.User =
     settings = db.query(models.AgencySettings).filter(models.AgencySettings.agency_id == current_user.agency_id).first()
     if not settings:
         return schemas.AgencySettingsBase(
-            name="Immovi S.A.R.L",
+            name="Immovii S.A.R.L",
             address="Rue du Golf, Immeuble Horizon, Bamako, Mali",
             phone="+223 20 22 44 66",
-            email="contact@immovi.ml",
+            email="contact@immovii.ml",
             currency="FCFA",
             commission_rate=10.0
         )

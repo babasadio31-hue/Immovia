@@ -19,7 +19,7 @@ content = re.sub(
     state.transactions = apiTransactions || [];
     state.tenants = apiTenants || [];
     
-    const savedState = localStorage.getItem('immovi_state');
+    const savedState = localStorage.getItem('immovii_state');
     if (savedState) {
         const local = JSON.parse(savedState);
         state.staff = local.staff || [];
@@ -38,7 +38,7 @@ content = re.sub(
 
 # 2. Remplacer saveData
 content = re.sub(
-    r"function saveData\(\) \{\n  localStorage\.setItem\('immovi_state', JSON\.stringify\(state\)\);\n\}",
+    r"function saveData\(\) \{\n  localStorage\.setItem\('immovii_state', JSON\.stringify\(state\)\);\n\}",
     "function saveData() { /* API persistance used instead */ }",
     content
 )

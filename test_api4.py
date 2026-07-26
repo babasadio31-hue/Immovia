@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 
-login_data = {"username": "admin@immovi.com", "password": "admin123"}
+login_data = {"username": "admin@immovii.com", "password": "admin123"}
 r1 = requests.post("http://localhost:8085/api/auth/token", data=login_data)
 token = r1.json().get("access_token")
 
