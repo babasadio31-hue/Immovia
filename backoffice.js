@@ -163,6 +163,7 @@ async function loadAgencies() {
         <td><span class="badge badge-blue">${a.subscription_plan}</span></td>
         <td>
           <button class="btn-icon" onclick="openEditAgencyModal('${a.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-icon danger" title="Supprimer l'agence" onclick="deleteAgency('${a.id}')"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -204,6 +205,29 @@ document.getElementById('edit-agency-form')?.addEventListener('submit', async (e
         showToast(err.message, 'error');
     }
 });
+
+async function deleteAgency(agencyId) {
+  customConfirm("ATTENTION : Voulez-vous vraiment supprimer définitivement cette agence et toutes ses données (biens, locataires, transactions, utilisateurs) ? Cette action est irréversible !", async () => {
+    showLoading();
+    try {
+      const response = await fetch(`${API_URL}/admin/agencies/${agencyId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || 'Erreur lors de la suppression');
+      
+      showToast(data.message, 'success');
+      loadAgencies(); // refresh list
+      loadUsers();
+      loadDashboard(); // refresh stats
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+}
 
 async function loadProperties() {
   try {

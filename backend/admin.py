@@ -106,6 +106,30 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
     db.commit()
     return {"message": "Agence modifiée avec succès"}
 
+@router.delete("/agencies/{agency_id}")
+def delete_agency(agency_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_agency = db.query(models.Agency).filter(models.Agency.id == agency_id).first()
+    if not db_agency:
+        raise HTTPException(status_code=404, detail="Agence introuvable")
+        
+    tables_with_agency = [
+        models.ActivityLog,
+        models.SupportTicket,
+        models.Subscription,
+        models.AgencySettings,
+        models.Transaction,
+        models.Tenant,
+        models.Property,
+        models.Owner,
+        models.User
+    ]
+    for table in tables_with_agency:
+        db.query(table).filter(table.agency_id == agency_id).delete(synchronize_session=False)
+        
+    db.delete(db_agency)
+    db.commit()
+    return {"message": "Agence et toutes ses données supprimées avec succès"}
+
 @router.get("/properties")
 def get_all_properties(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     properties = db.query(models.Property).all()
@@ -179,14 +203,15 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db), admin: mod
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
         
-    is_admin = user.role == "Administrateur"
     agency_id = user.agency_id
-        
-    db.delete(user)
-    db.commit()
     
-    if is_admin and agency_id:
-        remaining_users = db.query(models.User).filter(models.User.agency_id == agency_id).count()
+    # 1. Supprimer les logs et tickets rattachés à cet utilisateur pour ne pas violer de clé étrangère
+    db.query(models.ActivityLog).filter(models.ActivityLog.user_id == user_id).delete(synchronize_session=False)
+    db.query(models.SupportTicket).filter(models.SupportTicket.user_id == user_id).delete(synchronize_session=False)
+    
+    # 2. Si c'est le dernier utilisateur d'une agence, nettoyer l'intégralité des données de l'agence AVANT
+    if agency_id:
+        remaining_users = db.query(models.User).filter(models.User.agency_id == agency_id, models.User.id != user_id).count()
         if remaining_users == 0:
             tables_with_agency = [
                 models.ActivityLog,
@@ -202,9 +227,12 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db), admin: mod
                 db.query(table).filter(table.agency_id == agency_id).delete(synchronize_session=False)
                 
             db.query(models.Agency).filter(models.Agency.id == agency_id).delete(synchronize_session=False)
-            db.commit()
+            
+    # 3. Supprimer enfin l'utilisateur en toute sécurité
+    db.delete(user)
+    db.commit()
 
-    return {"message": "Utilisateur supprimé"}
+    return {"message": "Utilisateur et ses données supprimés avec succès"}
 
 @router.get("/users/{user_id}/details")
 def get_user_details(user_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
