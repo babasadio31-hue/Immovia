@@ -35,7 +35,9 @@ async def lifespan(app: FastAPI):
             "ALTER TABLE properties ADD COLUMN mandate_start VARCHAR",
             "ALTER TABLE properties ADD COLUMN mandate_end VARCHAR",
             "ALTER TABLE owners ADD COLUMN mandate_start VARCHAR",
-            "ALTER TABLE owners ADD COLUMN mandate_end VARCHAR"
+            "ALTER TABLE owners ADD COLUMN mandate_end VARCHAR",
+            "ALTER TABLE tenants ADD COLUMN cni VARCHAR",
+            "ALTER TABLE properties ADD COLUMN tenant_cni VARCHAR"
         ]
         
         for upgrade in upgrades:

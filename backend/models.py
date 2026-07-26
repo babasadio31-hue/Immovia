@@ -82,6 +82,7 @@ class Property(Base):
     commission_rate = Column(Float, nullable=True)
     tenant_name = Column(String, nullable=True)
     tenant_phone = Column(String, nullable=True)
+    tenant_cni = Column(String, nullable=True)
     mandate_start = Column(String, nullable=True)
     mandate_end = Column(String, nullable=True)
 
@@ -97,6 +98,7 @@ class Tenant(Base):
     id = Column(String, primary_key=True, index=True)
     property_id = Column(String, ForeignKey("properties.id"))
     name = Column(String)
+    cni = Column(String, nullable=True)
     phone = Column(String)
     email = Column(String)
     address = Column(String) # previous address

@@ -71,6 +71,7 @@ class PropertyBase(BaseModel):
     commission_rate: Optional[float] = None
     tenant_name: Optional[str] = None
     tenant_phone: Optional[str] = None
+    tenant_cni: Optional[str] = None
     mandate_start: Optional[str] = None
     mandate_end: Optional[str] = None
 
@@ -86,6 +87,7 @@ class Property(PropertyBase):
 class TenantBase(BaseModel):
     property_id: str
     name: str
+    cni: Optional[str] = None
     phone: str
     email: Optional[str] = None
     address: Optional[str] = None

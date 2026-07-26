@@ -1196,12 +1196,13 @@ function renderOwnersTable() {
 
 // Helper pour simuler la résolution automatique des locataires selon le bien occupé
 function getTenantForProperty(propertyId) {
+    const prop = state.properties.find(p => p.id === propertyId);
     const realTenant = state.tenants.find(t => t.propertyId === propertyId || t.property_id === propertyId);
     if (realTenant) {
         return {
           id: realTenant.id,
           name: realTenant.name,
-          cni: realTenant.cni || '',
+          cni: realTenant.cni || (prop ? (prop.tenantCni || prop.tenant_cni) : '') || '',
           phone: realTenant.phone || 'Non renseigne',
           address: realTenant.address || 'Non renseignee',
           leaseStart: realTenant.entry_date || realTenant.leaseStart || '2026-03-15',
@@ -1209,11 +1210,10 @@ function getTenantForProperty(propertyId) {
         };
       }
 
-    const prop = state.properties.find(p => p.id === propertyId);
     if (prop && prop.tenantName && prop.leaseStart) {
     return {
       name: prop.tenantName,
-      cni: prop.tenantCni || '',
+      cni: prop.tenantCni || prop.tenant_cni || '',
       phone: prop.tenantPhone || 'Non renseigné',
       address: prop.tenantAddress || 'Non renseignée',
       leaseStart: prop.leaseStart,
@@ -2542,7 +2542,10 @@ function openEditTenantModal(id) {
   if(elEmail) elEmail.value = tenant.email || '';
   
   const elCni = document.getElementById('input-tenant-cni');
-  if(elCni) elCni.value = tenant.cni || '';
+  if(elCni) {
+    const prop = state.properties.find(p => p.id === (tenant.propertyId || tenant.property_id));
+    elCni.value = tenant.cni || (prop ? (prop.tenantCni || prop.tenant_cni) : '') || '';
+  }
   
   const elName = document.getElementById('input-tenant-name');
   if(elName) elName.value = tenant.name || '';
@@ -3480,7 +3483,8 @@ async function handleTenantSubmit(e) {
         ...prop,
         status: 'Loué',
         tenant_name: name,
-        tenant_phone: phone
+        tenant_phone: phone,
+        tenant_cni: cni
       });
   
       document.getElementById('modal-tenant').classList.remove('active');
