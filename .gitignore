@@ -26,6 +26,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Node modules
+node_modules/
+
 # Environment variables
 .env
 *.env
