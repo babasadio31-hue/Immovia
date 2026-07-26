@@ -1201,6 +1201,7 @@ function getTenantForProperty(propertyId) {
         return {
           id: realTenant.id,
           name: realTenant.name,
+          cni: realTenant.cni || '',
           phone: realTenant.phone || 'Non renseigne',
           address: realTenant.address || 'Non renseignee',
           leaseStart: realTenant.entry_date || realTenant.leaseStart || '2026-03-15',
@@ -1212,13 +1213,14 @@ function getTenantForProperty(propertyId) {
     if (prop && prop.tenantName && prop.leaseStart) {
     return {
       name: prop.tenantName,
+      cni: prop.tenantCni || '',
       phone: prop.tenantPhone || 'Non renseigné',
       address: prop.tenantAddress || 'Non renseignée',
       leaseStart: prop.leaseStart,
       caution: prop.caution || (prop.rent * 2)
     };
   }
-  return { name: 'Locataire Inconnu', phone: 'Non renseigné', address: 'Non renseignée', leaseStart: 'N/A', caution: 0 };
+  return { name: 'Locataire Inconnu', cni: '', phone: 'Non renseigné', address: 'Non renseignée', leaseStart: 'N/A', caution: 0 };
 }
 
 // Helper pour simuler les décalages de date
@@ -2880,6 +2882,7 @@ function renderTenantsTable() {
     
     // Filtres
     const matchesSearch = tenant.name.toLowerCase().includes(searchTerm) ||
+                          (tenant.cni || '').toLowerCase().includes(searchTerm) ||
                           prop.name.toLowerCase().includes(searchTerm) ||
                           ownerName.toLowerCase().includes(searchTerm);
                           
@@ -2887,7 +2890,10 @@ function renderTenantsTable() {
       tenantRowsCount++;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${prop.id}')">${tenant.name}</a></td>
+        <td>
+          <a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${prop.id}')">${tenant.name}</a>
+          ${tenant.cni ? `<span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">CNI/NINA: <strong style="color: var(--color-text-primary);">${tenant.cni}</strong></span>` : ''}
+        </td>
         <td>${tenant.phone}</td>
         <td>
           <span class="badge badge-purple">${prop.name}</span>
@@ -3277,6 +3283,7 @@ function openTenantDossier(propertyId) {
   // Remplissage de la fiche signalétique
   document.getElementById('dossier-tenant-name').textContent = tenant.name;
   document.getElementById('dossier-tenant-phone').textContent = tenant.phone;
+  document.getElementById('dossier-tenant-cni').textContent = tenant.cni || 'Non spécifié';
   document.getElementById('dossier-tenant-property').textContent = prop.name;
   document.getElementById('dossier-tenant-owner').textContent = ownerName;
   document.getElementById('dossier-tenant-lease-start').textContent = formatDateString(tenant.leaseStart);
@@ -4323,11 +4330,13 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     
     doc.setFont("helvetica", "normal");
     doc.text(tenant.name || "Locataire Inconnu", locataireX, 52);
-    if (tenant.phone) doc.text(`Tél : ${tenant.phone}`, locataireX, 58);
-    if (tenant.email) doc.text(`Email : ${tenant.email}`, locataireX, 64);
+    let tenantY = 58;
+    if (tenant.phone) { doc.text(`Tél : ${tenant.phone}`, locataireX, tenantY); tenantY += 6; }
+    if (tenant.cni) { doc.text(`CNI / NINA : ${tenant.cni}`, locataireX, tenantY); tenantY += 6; }
+    if (tenant.email) { doc.text(`Email : ${tenant.email}`, locataireX, tenantY); tenantY += 6; }
 
     // Ligne de séparation
-    const lineY = Math.max(yPosEmetteur, 64) + 8;
+    const lineY = Math.max(yPosEmetteur, tenantY) + 4;
     doc.line(20, lineY, pageWidth - 20, lineY);
 
     // Détails de la quittance
