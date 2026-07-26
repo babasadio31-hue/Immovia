@@ -27,7 +27,7 @@ class TicketResponse(BaseModel):
     date: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/", response_model=TicketResponse)
 def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
