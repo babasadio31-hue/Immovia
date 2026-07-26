@@ -77,22 +77,27 @@ async def lifespan(app: FastAPI):
         except Exception:
             db.rollback()
 
-        user_count = db.query(models.User).count()
-        if user_count == 0:
-            admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
-            admin_password = os.getenv("ADMIN_PASSWORD", "Immovi#2026!Secure")
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
+        admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+        admin_user = db.query(models.User).filter(models.User.email == admin_email).first()
+        if not admin_user:
             hashed_pwd = security.get_password_hash(admin_password)
             admin_user = models.User(
                 id="admin-001",
                 name="Administrateur",
                 email=admin_email,
                 password_hash=hashed_pwd,
-                role="Admin",
+                role="Super Administrateur",
                 status="Actif",
                 permissions=["all"],
                 date_added="2026-07-16"
             )
             db.add(admin_user)
+            db.commit()
+        else:
+            admin_user.role = "Super Administrateur"
+            admin_user.status = "Actif"
+            admin_user.password_hash = security.get_password_hash(admin_password)
             db.commit()
 
         # Log system startup activity

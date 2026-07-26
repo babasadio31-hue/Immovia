@@ -15,7 +15,7 @@ def get_super_admin(current_user: models.User = Depends(auth.get_current_active_
     admin_email = os.getenv("ADMIN_EMAIL", "admin@immovi.com")
     is_super = (
         current_user.email == admin_email
-        or current_user.role in ["Admin", "Super Admin", "Super Administrateur"]
+        or current_user.role in ["Administrateur", "Admin", "Super Admin", "Super Administrateur"]
     )
     if not is_super:
         raise HTTPException(status_code=403, detail="Non autorisé. Réservé aux super administrateurs de la plateforme.")
