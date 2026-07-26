@@ -134,7 +134,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     try:
         from . import email_service
         subject = "Bienvenue sur Immovii - Vérifiez votre adresse email"
-        verify_url = f"https://immoviia-production.up.railway.app/api/auth/verify?token={token}"
+        verify_url = f"https://immovia-production.up.railway.app/api/auth/verify?token={token}"
         html_content = f"""
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto;'>
             <h2 style='color: #2E5BFF;'>Bienvenue sur Immovii, {new_user.name} !</h2>
@@ -193,7 +193,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
             <p>Vous avez un accès complet à toutes les fonctionnalités pendant cette période pour découvrir la puissance de notre plateforme de gestion immobilière.</p>
             <p>À l'issue de cet essai, vous serez invité à souscrire à l'un de nos abonnements pour continuer à utiliser le service.</p>
             <div style='text-align: center; margin: 30px 0;'>
-                <a href='https://immoviia-production.up.railway.app/login.html' style='background-color: #2E5BFF; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Accéder à mon tableau de bord</a>
+                <a href='https://immovia-production.up.railway.app/login.html' style='background-color: #2E5BFF; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Accéder à mon tableau de bord</a>
             </div>
             <br>
             <p>L'équipe Immovii</p>

@@ -1,8 +1,8 @@
 // Fichier de communication avec l'API Backend (Railway)
 
-// TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immoviia-production.up.railway.app)
+// TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
 // Si on est en local ou en ligne, on pointe de force vers l'URL de production
-const API_BASE_URL = 'https://immoviia-production.up.railway.app/api';
+const API_BASE_URL = 'https://immovia-production.up.railway.app/api';
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {
