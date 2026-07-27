@@ -3595,7 +3595,13 @@ function setupSubscriptionModal() {
   const dateEl = document.getElementById('sub-card-next-date');
 
   const currentUser = state.currentUser;
-  const isSuperAdmin = currentUser && (currentUser.role === 'Administrateur' || currentUser.email === 'admin@immovii.ml');
+  const isSuperAdmin = currentUser && (
+    currentUser.role === 'Super Administrateur' ||
+    currentUser.role === 'Super Admin' ||
+    currentUser.email === 'admin@immovii.com' ||
+    currentUser.email === 'admin@immovi.com' ||
+    currentUser.email === 'admin@immovii.ml'
+  );
 
   if (isSuperAdmin) {
     if (badge) {
@@ -3609,15 +3615,16 @@ function setupSubscriptionModal() {
     if (dateEl) dateEl.textContent = 'Aucune échéance (Accès permanent)';
     if (btnOpenCancel) btnOpenCancel.style.display = 'none';
   } else {
+    const isTrial = !currentUser || !currentUser.subscription_plan || currentUser.subscription_plan.toLowerCase().includes('essai') || currentUser.subscription_plan === 'Essai 3 jours';
     if (badge) {
-      badge.textContent = 'Plan Premium — Actif';
-      badge.style.background = 'rgba(139, 92, 246, 0.2)';
-      badge.style.color = '#a78bfa';
-      badge.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+      badge.textContent = isTrial ? 'Essai Gratuit — 3 jours' : 'Plan Premium — Actif';
+      badge.style.background = isTrial ? 'rgba(59, 130, 246, 0.15)' : 'rgba(139, 92, 246, 0.2)';
+      badge.style.color = isTrial ? '#60a5fa' : '#a78bfa';
+      badge.style.borderColor = isTrial ? 'rgba(59, 130, 246, 0.3)' : 'rgba(139, 92, 246, 0.4)';
     }
-    if (planEl) planEl.textContent = 'Premium (10 000 FCFA / mois)';
-    if (trialEl) trialEl.textContent = 'Aucun (Paiement immédiat)';
-    if (dateEl) dateEl.textContent = "Aujourd'hui";
+    if (planEl) planEl.textContent = isTrial ? 'Formule Standard (Essai 3 jours gratuit)' : 'Premium (10 000 FCFA / mois)';
+    if (trialEl) trialEl.textContent = isTrial ? 'Essai en cours (3 jours gratuits)' : 'Aucun (Paiement effectué)';
+    if (dateEl) dateEl.textContent = (currentUser && currentUser.subscription_expiry) ? currentUser.subscription_expiry : 'Dans 3 jours (10 000 FCFA / mois)';
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
   }
 
