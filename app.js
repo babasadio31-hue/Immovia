@@ -58,6 +58,9 @@ function initApp() {
   // Onglet initial
   switchTab('dashboard');
   showToast('Immovii : Système chargé avec succès.', 'success');
+  
+  // Vérification expiration de l'abonnement
+  checkSubscriptionExpiration();
 }
 
 function applyUserSession(userId) {
@@ -122,17 +125,23 @@ function handleLogout() {
   sessionStorage.removeItem('immovii_session');
   window.location.href = 'login.html';
 }
+window.handleLogout = handleLogout;
+window.logout = handleLogout;
 
 async function loadData() {
   try {
-    const [apiOwners, apiProperties, apiTenants, apiTransactions, apiSettings, apiUsers] = await Promise.all([
+    const [apiOwners, apiProperties, apiTenants, apiTransactions, apiSettings, apiUsers, apiMe] = await Promise.all([
       API.getOwners().catch(() => []),
       API.getProperties().catch(() => []),
       API.getTenants().catch(() => []),
       API.getTransactions().catch(() => []),
       API.getSettings().catch(() => null),
-      (typeof API.getUsers === 'function') ? API.getUsers().catch(() => []) : Promise.resolve([])
+      (typeof API.getUsers === 'function') ? API.getUsers().catch(() => []) : Promise.resolve([]),
+      (typeof API.getCurrentUser === 'function') ? API.getCurrentUser().catch(() => null) : Promise.resolve(null)
     ]);
+    if (apiMe) {
+      state.currentUser = apiMe;
+    }
     state.owners = (apiOwners || []).map(o => {
         let cr = 10;
         let actualNotes = o.notes || "";
@@ -184,7 +193,10 @@ async function loadData() {
         nif: apiSettings.nif || '',
         slogan: apiSettings.slogan || '',
         logoBase64: apiSettings.logo_base64 || null,
-        theme: currentTheme
+        theme: currentTheme,
+        subscription_plan: apiSettings.subscription_plan,
+        subscription_status: apiSettings.subscription_status,
+        subscription_expiry: apiSettings.subscription_expiry
       };
     }
     renderGlobalPrintHeader();
@@ -1524,13 +1536,9 @@ function openOwnerDossier(ownerId) {
   // ================= TAB 4: RETRAITS DE LOYERS (REÇU INTERACTIF) =================
   document.getElementById('receipt-owner-title-name').textContent = owner.name;
   
-  let buildingDescText = "Bâtiments sous gérance";
-  if (owner.id === 'owner-3') {
-    buildingDescText = "Monsieur Abdoulaye Cisse, propriétaire d'un immeuble sis au GOLF (Immeuble I : appartements et magasin)";
-  } else {
-    const propNames = ownerProperties.map(p => p.name).join(' et ');
-    buildingDescText = `${owner.name}, propriétaire de (${propNames})`;
-  }
+  const countBiens = ownerProperties.length;
+  const countLoues = ownerProperties.filter(p => p.status === 'Loué').length;
+  const buildingDescText = `Propriétaire bailleur : ${owner.name} (${countBiens} bien${countBiens > 1 ? 's' : ''} en gestion, ${countLoues} loué${countLoues > 1 ? 's' : ''})`;
   document.getElementById('receipt-building-desc').textContent = buildingDescText;
   
   const estimatedRent = ownerProperties.filter(p => p.transaction_type === 'Location').reduce((sum, p) => sum + p.rent, 0);
@@ -3581,6 +3589,81 @@ window.addEventListener('DOMContentLoaded', () => {
   startApp();
 });
 
+// --- Affichage et Vérification de l'Expiration de l'Abonnement ---
+function showSubscriptionExpiredModal() {
+  const modal = document.getElementById('modal-subscription-expired');
+  if (!modal) return;
+
+  modal.style.display = 'flex';
+  modal.classList.add('active');
+
+  modal.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  const cards = modal.querySelectorAll('.expire-plan-card');
+  const btnWhatsapp = document.getElementById('btn-renew-whatsapp');
+  const phone = "22362849577"; // +223 62 84 95 77
+
+  const updateWhatsappLink = (planName, planPrice) => {
+    if (!btnWhatsapp) return;
+    const msg = `Bonjour, je souhaite renouveler mon abonnement Immovii avec ${planName} (${planPrice}) pour mon agence.`;
+    btnWhatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  };
+
+  let selected = modal.querySelector('.expire-plan-card.selected') || cards[0];
+  if (selected) {
+    const pName = selected.getAttribute('data-plan') || 'Mensuel';
+    const pPrice = selected.getAttribute('data-price') || '10 000 FCFA/mois';
+    updateWhatsappLink(pName, pPrice);
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      cards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const pName = card.getAttribute('data-plan');
+      const pPrice = card.getAttribute('data-price');
+      updateWhatsappLink(pName, pPrice);
+    });
+  });
+}
+window.showSubscriptionExpiredModal = showSubscriptionExpiredModal;
+
+function checkSubscriptionExpiration() {
+  const currentUser = state.currentUser;
+  const isSuperAdmin = currentUser && (
+    currentUser.role === 'Super Administrateur' ||
+    currentUser.role === 'Super Admin' ||
+    currentUser.email === 'admin@immovii.com' ||
+    currentUser.email === 'admin@immovi.com' ||
+    currentUser.email === 'admin@immovii.ml'
+  );
+  if (isSuperAdmin) {
+    return false;
+  }
+
+  const subStatus = (currentUser && currentUser.subscription_status) || (state.agencySettings && state.agencySettings.subscription_status);
+  const subExpiry = (currentUser && currentUser.subscription_expiry) || (state.agencySettings && state.agencySettings.subscription_expiry);
+
+  let isExpired = false;
+  if (subStatus && (subStatus.toLowerCase() === 'expiré' || subStatus === 'Expiré' || subStatus.toLowerCase() === 'expire')) {
+    isExpired = true;
+  }
+  if (!isExpired && subExpiry) {
+    const todayStr = getTodayDateString();
+    if (todayStr > subExpiry) {
+      isExpired = true;
+    }
+  }
+
+  if (isExpired) {
+    showSubscriptionExpiredModal();
+    return true;
+  }
+  return false;
+}
+
 // --- Gestionnaire de Résiliation & Affichage d'Abonnement ---
 function setupSubscriptionModal() {
   const btnOpenCancel = document.getElementById('btn-open-cancel-sub');
@@ -3615,16 +3698,26 @@ function setupSubscriptionModal() {
     if (dateEl) dateEl.textContent = 'Aucune échéance (Accès permanent)';
     if (btnOpenCancel) btnOpenCancel.style.display = 'none';
   } else {
+    const subStatus = (currentUser && currentUser.subscription_status) || (state.agencySettings && state.agencySettings.subscription_status);
+    const subExpiry = (currentUser && currentUser.subscription_expiry) || (state.agencySettings && state.agencySettings.subscription_expiry);
+    const isExpired = (subStatus === 'Expiré' || (subExpiry && getTodayDateString() > subExpiry));
     const isTrial = !currentUser || !currentUser.subscription_plan || currentUser.subscription_plan.toLowerCase().includes('essai') || currentUser.subscription_plan === 'Essai 3 jours';
     if (badge) {
-      badge.textContent = isTrial ? 'Essai Gratuit — 3 jours' : 'Plan Premium — Actif';
-      badge.style.background = isTrial ? 'rgba(59, 130, 246, 0.15)' : 'rgba(139, 92, 246, 0.2)';
-      badge.style.color = isTrial ? '#60a5fa' : '#a78bfa';
-      badge.style.borderColor = isTrial ? 'rgba(59, 130, 246, 0.3)' : 'rgba(139, 92, 246, 0.4)';
+      if (isExpired) {
+        badge.textContent = 'Abonnement expiré';
+        badge.style.background = 'rgba(244, 63, 94, 0.15)';
+        badge.style.color = '#f43f5e';
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+      } else {
+        badge.textContent = isTrial ? 'Essai Gratuit — 3 jours' : 'Plan Premium — Actif';
+        badge.style.background = isTrial ? 'rgba(59, 130, 246, 0.15)' : 'rgba(139, 92, 246, 0.2)';
+        badge.style.color = isTrial ? '#60a5fa' : '#a78bfa';
+        badge.style.borderColor = isTrial ? 'rgba(59, 130, 246, 0.3)' : 'rgba(139, 92, 246, 0.4)';
+      }
     }
-    if (planEl) planEl.textContent = isTrial ? 'Formule Standard (Essai 3 jours gratuit)' : 'Premium (10 000 FCFA / mois)';
-    if (trialEl) trialEl.textContent = isTrial ? 'Essai en cours (3 jours gratuits)' : 'Aucun (Paiement effectué)';
-    if (dateEl) dateEl.textContent = (currentUser && currentUser.subscription_expiry) ? currentUser.subscription_expiry : 'Dans 3 jours (10 000 FCFA / mois)';
+    if (planEl) planEl.textContent = isExpired ? 'Abonnement Expiré (Renouvellement requis)' : (isTrial ? 'Formule Standard (Essai 3 jours gratuit)' : 'Premium (10 000 FCFA / mois)');
+    if (trialEl) trialEl.textContent = isExpired ? 'Essai terminé — Veuillez renouveler' : (isTrial ? 'Essai en cours (3 jours gratuits)' : 'Aucun (Paiement effectué)');
+    if (dateEl) dateEl.textContent = subExpiry ? subExpiry : 'Dans 3 jours (10 000 FCFA / mois)';
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
   }
 

@@ -1777,6 +1777,14 @@
                   </div>
 
                   <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button class="btn btn-primary btn-sm" id="btn-renew-sub-open" onclick="showSubscriptionExpiredModal()"
+                      style="justify-content: center; width: 100%; background: #10b981; border-color: #10b981; color: white; font-weight: 600;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                      <span>Renouveler / Choisir un plan</span>
+                    </button>
                     <button class="btn btn-outline btn-sm" id="btn-open-cancel-sub"
                       style="display: none; border-color: rgba(244, 63, 94, 0.4); color: var(--color-rose-hover); justify-content: center; width: 100%;">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -2722,6 +2730,59 @@
           style="background: var(--color-rose); color: white; border-color: var(--color-rose);">Confirmer la
           résiliation</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal: Abonnement Expiré (Verrouillage du compte) -->
+  <div class="modal-overlay" id="modal-subscription-expired" style="z-index: 999999; backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.88); display: none;">
+    <div class="modal-card glass animate-slide-up" style="max-width: 520px; width: 92%; padding: 2.5rem 2rem; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px; background: rgba(15, 23, 42, 0.96); box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8); text-align: center;">
+      
+      <div class="expire-icon-container" style="width: 72px; height: 72px; border-radius: 50%; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 0 25px rgba(244, 63, 94, 0.2);">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+
+      <h2 style="color: #ffffff; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; font-family: 'Outfit', sans-serif;">Abonnement expiré</h2>
+      
+      <p style="color: #94a3b8; font-size: 0.98rem; line-height: 1.6; max-width: 440px; margin: 0 auto 1.5rem auto;">
+        Votre abonnement a expiré. Vos données sont conservées en toute sécurité. Renouvelez pour retrouver l'accès complet.
+      </p>
+
+      <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1rem; font-weight: 500;">
+        Cliquez sur un plan pour voir les modes de paiement :
+      </p>
+
+      <div id="expire-plans-list" style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left;">
+        <div class="expire-plan-card selected" data-plan="Mensuel" data-price="10 000 FCFA/mois">
+          <span class="expire-plan-name">Mensuel</span>
+          <span class="expire-plan-price">10 000 FCFA/mois</span>
+        </div>
+        <div class="expire-plan-card" data-plan="Trimestriel" data-price="25 000 FCFA/trimestre">
+          <span class="expire-plan-name">Trimestriel</span>
+          <span class="expire-plan-price">25 000 FCFA/trimestre</span>
+        </div>
+        <div class="expire-plan-card" data-plan="Annuel" data-price="100 000 FCFA/an">
+          <span class="expire-plan-name">Annuel</span>
+          <span class="expire-plan-price">100 000 FCFA/an</span>
+        </div>
+      </div>
+
+      <a id="btn-renew-whatsapp" href="https://wa.me/22362849577?text=Bonjour,%20je%20souhaite%20renouveler%20mon%20abonnement%20Immovii%20avec%20le%20plan%20Mensuel%20(10%20000%20FCFA/mois)." target="_blank" class="btn-renew-whatsapp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.996 0C5.372 0 0 5.373 0 11.997c0 2.122.553 4.195 1.604 6.012L.055 24l6.16-1.616a11.942 11.942 0 0 0 5.78 1.492c6.626 0 11.998-5.373 11.998-11.997C23.994 5.373 18.622 0 11.996 0zm0 21.841a9.832 9.832 0 0 1-5.01-1.371l-.36-.214-3.712.974.992-3.621-.235-.373A9.824 9.824 0 0 1 2.163 12c0-5.428 4.414-9.841 9.833-9.841 5.42 0 9.836 4.413 9.836 9.841 0 5.428-4.416 9.841-9.836 9.841zm5.395-7.375c-.296-.148-1.75-.863-2.023-.961-.271-.099-.47-.148-.667.148-.198.297-.768.961-.94 1.158-.173.198-.346.223-.642.074-.297-.149-1.254-.462-2.39-1.472-.884-.787-1.48-1.759-1.654-2.057-.173-.297-.018-.458.13-.606.134-.133.297-.346.446-.519.148-.173.198-.297.297-.495.099-.198.05-.371-.025-.519-.074-.148-.667-1.609-.914-2.203-.242-.579-.488-.501-.667-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.478 1.065 2.875 1.213 3.074c.148.198 2.095 3.2 5.076 4.487.71.306 1.264.489 1.695.626.713.226 1.362.194 1.874.118.575-.086 1.75-.714 1.998-1.403.247-.689.247-1.28.173-1.404-.074-.124-.272-.198-.569-.346z"/>
+        </svg>
+        <span>Renouveler via WhatsApp</span>
+      </a>
+
+      <div style="margin-top: 1.4rem;">
+        <a href="javascript:void(0)" onclick="handleLogout()" style="color: #38bdf8; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; transition: color 0.2s;">
+          ← Retour à la connexion
+        </a>
+      </div>
+
     </div>
   </div>
 
