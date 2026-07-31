@@ -480,7 +480,7 @@ function setupEventListeners() {
               avatar_url: owner.avatar_url || ""
             });
             openOwnerDossier(state.activeOwnerId); // Refresh dossier
-            showToast(`Honoraires mis à jour (${newRate}%)`, 'success');
+            showToast(`Commission mise à jour (${newRate}%)`, 'success');
           } catch (err) {
             showToast(err.message, 'error');
           }
@@ -1124,7 +1124,7 @@ function renderDashboardOverviewChart() {
           displayColors: false,
           callbacks: {
             label: function(context) {
-              return `Honoraire agence cumulé : ${formatCurrency(context.raw)}`;
+              return `Commission agence cumulée : ${formatCurrency(context.raw)}`;
             }
           }
         }
@@ -1457,7 +1457,7 @@ function openOwnerDossier(ownerId) {
 
   // Remplissage En-tête Dossier Bailleurs
   document.getElementById('owner-detail-name').textContent = owner.name;
-  document.getElementById('owner-detail-contact').textContent = `${owner.phone} | ${owner.email} | Honoraires : ${owner.commissionRate}%`;
+  document.getElementById('owner-detail-contact').textContent = `${owner.phone} | ${owner.email} | Commission : ${owner.commissionRate}%`;
   document.getElementById('owner-detail-avatar').textContent = owner.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);

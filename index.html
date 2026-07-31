@@ -573,8 +573,8 @@
                   <div
                     style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 12px;">
                     <span
-                      style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Honoraires
-                      Mandat</span>
+                      style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Commission
+                      (%)</span>
                     <div style="display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
                       <input type="number" id="input-edit-owner-commission" class="form-input"
                         style="width: 70px; padding: 0.25rem; font-size: 1.25rem; font-weight: 700; color: var(--color-primary-hover); text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;"
@@ -797,8 +797,8 @@
                           style="padding: 0.5rem 0; font-weight: 700; color: var(--color-text-primary);">0 FCFA</td>
                       </tr>
                       <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Frais de
-                          gérance :</td>
+                        <td style="padding: 0.5rem 0; color: var(--color-text-muted); font-weight: 600;">Commission :
+                        </td>
                         <td class="text-right" id="receipt-val-frais"
                           style="padding: 0.5rem 0; font-weight: 700; color: var(--color-rose);">0 FCFA</td>
                       </tr>
@@ -858,9 +858,9 @@
                   <div class="kpi-card glass"
                     style="padding: 1.25rem; background: rgba(244, 63, 94, 0.04); border-color: rgba(244, 63, 94, 0.12);">
                     <div class="kpi-details">
-                      <span class="kpi-label" style="font-size: 0.72rem;">Honoraires d'Agence Mandat</span>
+                      <span class="kpi-label" style="font-size: 0.72rem;">Commission d'Agence</span>
                       <h3 class="kpi-value value-rose" id="owner-fonds-com" style="font-size: 1.5rem;">0 FCFA</h3>
-                      <span class="kpi-trend trend-neutral">Retenue commissions de gestion</span>
+                      <span class="kpi-trend trend-neutral">Commission agence (%)</span>
                     </div>
                   </div>
                   <div class="kpi-card glass"
@@ -980,7 +980,7 @@
               <div class="filters-group">
                 <select class="form-select" id="select-filter-type">
                   <option value="all">Tous les flux</option>
-                  <option value="income">Entrées (Commissions, Honoraires)</option>
+                  <option value="income">Entrées (Commissions)</option>
                   <option value="expense">Sorties (Reversements, Dépenses)</option>
                 </select>
 
@@ -1072,7 +1072,7 @@
             <div class="card glass span-two-columns">
               <div class="card-header">
                 <h4 class="card-title">Commissions vs Coûts d'Agence</h4>
-                <p class="subtitle">Historique des entrées d'honoraires et dépenses opérationnelles</p>
+                <p class="subtitle">Historique des entrées de commissions et dépenses opérationnelles</p>
               </div>
               <div class="card-body">
                 <div class="chart-container-large">
@@ -1301,7 +1301,7 @@
                 </svg>
               </div>
               <div class="kpi-details">
-                <span class="kpi-label">Revenus Honoraires</span>
+                <span class="kpi-label">Revenus Commissions</span>
                 <h3 class="kpi-value" id="accounting-net-agency" style="color: var(--color-text-primary);">0 FCFA</h3>
                 <span class="kpi-trend trend-up">Commissions encaissées</span>
               </div>
@@ -1352,7 +1352,7 @@
             <div class="card-header">
               <div>
                 <h4 class="card-title">Grand Livre de Caisse</h4>
-                <p class="subtitle">Bilan comptable des fonds perçus (loyers et ventes), honoraires d'agence et
+                <p class="subtitle">Bilan comptable des fonds perçus (loyers et ventes), commissions d'agence et
                   reversements.</p>
               </div>
             </div>
@@ -1429,7 +1429,7 @@
                       <th>Description</th>
                       <th>Propriétaire</th>
                       <th>Bien Associé</th>
-                      <th class="text-right">Part Agence (Commission)</th>
+                      <th class="text-right">Commission</th>
                       <th class="text-center no-print">Actions</th>
                     </tr>
                   </thead>
@@ -1671,7 +1671,7 @@
                         required>
                     </div>
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                      <label for="input-settings-commission" class="form-label">Honoraires par défaut (%)</label>
+                      <label for="input-settings-commission" class="form-label">Commission par défaut (%)</label>
                       <input type="number" id="input-settings-commission" class="form-input" min="1" max="100"
                         placeholder="10" required>
                     </div>
@@ -1973,7 +1973,7 @@
             <input type="text" id="input-owner-address" class="form-input" placeholder="ex. ACI 2000, Bamako">
           </div>
           <div class="form-group">
-            <label for="input-owner-commission" class="form-label">Taux d'honoraires de gestion (%)</label>
+            <label for="input-owner-commission" class="form-label">Commission (%)</label>
             <input type="number" id="input-owner-commission" class="form-input" min="1" max="100" value="10" required>
           </div>
 
@@ -2124,7 +2124,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="input-property-commission" class="form-label">Honoraires sur ce bien (%)</label>
+              <label for="input-property-commission" class="form-label">Commission sur ce bien (%)</label>
               <input type="number" id="input-property-commission" class="form-input" min="0" max="100"
                 placeholder="ex. 10">
             </div>
@@ -2344,7 +2344,7 @@
           <div
             style="background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.12); padding: 0.75rem; border-radius: 8px; text-align: center;">
             <span
-              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Honoraires
+              style="font-size: 0.7rem; color: var(--color-text-muted); display: block; text-transform: uppercase; font-weight: 600;">Commission
               Agence</span>
             <span id="statement-val-com"
               style="font-size: 1rem; font-weight: 700; color: var(--color-rose); margin-top: 0.25rem; display: block;">0
