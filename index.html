@@ -846,13 +846,21 @@
                 <h4 class="card-title" style="margin-bottom: 1.5rem;">État de la Balance Financière</h4>
 
                 <div
-                  style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                  style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                   <div class="kpi-card glass"
                     style="padding: 1.25rem; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.12);">
                     <div class="kpi-details">
                       <span class="kpi-label" style="font-size: 0.72rem;">Fonds Bruts Collectés</span>
                       <h3 class="kpi-value value-green" id="owner-fonds-brut" style="font-size: 1.5rem;">0 FCFA</h3>
                       <span class="kpi-trend trend-neutral">Volume global perçu (loyers et ventes)</span>
+                    </div>
+                  </div>
+                  <div class="kpi-card glass"
+                    style="padding: 1.25rem; background: rgba(6, 182, 212, 0.04); border-color: rgba(6, 182, 212, 0.12);">
+                    <div class="kpi-details">
+                      <span class="kpi-label" style="font-size: 0.72rem;">Cautions</span>
+                      <h3 class="kpi-value value-cyan" id="owner-fonds-caution" style="font-size: 1.5rem; color: #06b6d4;">0 FCFA</h3>
+                      <span class="kpi-trend trend-neutral" id="owner-fonds-caution-trend">Cautions des locataires</span>
                     </div>
                   </div>
                   <div class="kpi-card glass"
@@ -869,7 +877,7 @@
                       <span class="kpi-label" style="font-size: 0.72rem;">Montant à Verser</span>
                       <h3 class="kpi-value" id="owner-fonds-net"
                         style="font-size: 1.65rem; color: var(--color-text-primary);">0 FCFA</h3>
-                      <span class="kpi-trend trend-up">Solde disponible pour retrait</span>
+                      <span class="kpi-trend trend-up" id="owner-fonds-net-details">Solde disponible pour retrait</span>
                     </div>
                   </div>
                 </div>
@@ -2437,11 +2445,19 @@
       </div>
       <form id="form-withdrawal">
         <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="select-withdrawal-type" class="form-label">Type de Retrait</label>
+            <select id="select-withdrawal-type" class="form-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-primary); font-size: 0.95rem;">
+              <option value="loyers" style="background: #1e2420; color: #fff;">Loyers (Loyers & Ventes)</option>
+              <option value="cautions" style="background: #1e2420; color: #fff;">Cautions</option>
+            </select>
+          </div>
+
           <div
             style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
-            <span
+            <span id="withdrawal-balance-label"
               style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; display: block;">Solde
-              Net Disponible</span>
+              Net Disponible (Loyers)</span>
             <span id="withdrawal-available-balance"
               style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary-hover); display: block; margin-top: 0.25rem;">0
               FCFA</span>

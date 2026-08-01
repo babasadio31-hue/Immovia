@@ -1442,6 +1442,84 @@ function recalculateReceiptSummary() {
   document.getElementById('receipt-val-net').textContent = formatCurrency(netReverser);
 }
 
+function isCautionWithdrawal(tx) {
+  if (!tx) return false;
+  if (tx.motif === 'cautions' || tx.motif === 'caution') return true;
+  if (tx.description && (tx.description.toLowerCase().includes('caution') || tx.description.toLowerCase().includes('cautions'))) return true;
+  return false;
+}
+
+function getOwnerFinancialBalance(ownerId) {
+  const owner = state.owners.find(o => o.id === ownerId);
+  if (!owner) {
+    return {
+      pendingBrut: 0,
+      pendingCom: 0,
+      pendingNetLoyers: 0,
+      sumCautions: 0,
+      sumRecentWithdrawalsCautions: 0,
+      pendingNetCautions: 0,
+      totalNet: 0
+    };
+  }
+
+  const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);
+  const ownerPropIds = ownerProperties.map(p => p.id);
+  
+  const ownerIncomes = state.transactions.filter(t => t.type === 'income' && ownerPropIds.includes(t.propertyId));
+  const recentIncomes = ownerIncomes.filter(t => {
+    const daysDiff = (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24);
+    return daysDiff <= 9;
+  });
+  const pendingBrut = recentIncomes.reduce((sum, t) => sum + t.amount, 0);
+  const pendingCom = recentIncomes.reduce((sum, t) => {
+    let rate = owner.commissionRate;
+    const prop = state.properties.find(p => p.id === t.propertyId);
+    if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
+    return sum + (t.amount * rate) / 100;
+  }, 0);
+
+  const recentWithdrawalsLoyers = state.transactions.filter(t => 
+      t.type === 'expense' && 
+      ownerPropIds.includes(t.propertyId) && 
+      !isCautionWithdrawal(t) &&
+      (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
+  );
+  const sumRecentWithdrawalsLoyers = recentWithdrawalsLoyers.reduce((sum, w) => sum + w.amount, 0);
+  const pendingNetLoyers = Math.max(0, (pendingBrut - pendingCom) - sumRecentWithdrawalsLoyers);
+
+  // Calcul des cautions
+  const sumCautions = ownerProperties.reduce((sum, p) => {
+    if (p.status !== 'Loué') return sum;
+    const realTenant = state.tenants.find(t => (t.propertyId === p.id || t.property_id === p.id));
+    if (realTenant && (realTenant.caution_amount !== undefined || realTenant.caution !== undefined)) {
+      return sum + (Number(realTenant.caution_amount || realTenant.caution) || 0);
+    }
+    const tInfo = getTenantForProperty(p.id);
+    return sum + (Number(tInfo.caution) || 0);
+  }, 0);
+
+  const cautionWithdrawals = state.transactions.filter(t =>
+    t.type === 'expense' &&
+    ownerPropIds.includes(t.propertyId) &&
+    isCautionWithdrawal(t)
+  );
+  const sumRecentWithdrawalsCautions = cautionWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+  const pendingNetCautions = Math.max(0, sumCautions - sumRecentWithdrawalsCautions);
+
+  const totalNet = pendingNetLoyers + pendingNetCautions;
+
+  return {
+    pendingBrut,
+    pendingCom,
+    pendingNetLoyers,
+    sumCautions,
+    sumRecentWithdrawalsCautions,
+    pendingNetCautions,
+    totalNet
+  };
+}
+
 function openOwnerDossier(ownerId) {
   const owner = state.owners.find(o => o.id === ownerId);
   if (!owner) return;
@@ -1567,31 +1645,23 @@ function openOwnerDossier(ownerId) {
   }
 
   // ================= TAB 5: FONDS DISPONIBLES =================
-  const recentIncomes = ownerIncomes.filter(t => {
-    const daysDiff = (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24);
-    return daysDiff <= 9;
-  });
-
-  const pendingBrut = recentIncomes.reduce((sum, t) => sum + t.amount, 0);
-  const pendingCom = recentIncomes.reduce((sum, t) => {
-    let rate = owner.commissionRate;
-    const prop = state.properties.find(p => p.id === t.propertyId);
-    if (prop && prop.commissionRate !== undefined && prop.commissionRate !== null && !isNaN(prop.commissionRate)) rate = prop.commissionRate;
-    return sum + (t.amount * rate) / 100;
-  }, 0);
-  
-  // Calculer la somme des retraits récents (type expense et datant de moins de 9 jours)
-  const recentWithdrawals = state.transactions.filter(t => 
-      t.type === 'expense' && 
-      ownerPropIds.includes(t.propertyId) && 
-    (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
-  );
-  const sumRecentWithdrawals = recentWithdrawals.reduce((sum, w) => sum + w.amount, 0);
-  const pendingNet = Math.max(0, (pendingBrut - pendingCom) - sumRecentWithdrawals);
+  const balance = getOwnerFinancialBalance(owner.id);
+  const pendingBrut = balance.pendingBrut;
+  const pendingCom = balance.pendingCom;
+  const sumCautions = balance.sumCautions;
+  const pendingNetLoyers = balance.pendingNetLoyers;
+  const pendingNetCautions = balance.pendingNetCautions;
+  const totalNet = balance.totalNet;
 
   document.getElementById('owner-fonds-brut').textContent = formatCurrency(pendingBrut);
+  const elCaution = document.getElementById('owner-fonds-caution');
+  if (elCaution) elCaution.textContent = formatCurrency(sumCautions);
   document.getElementById('owner-fonds-com').textContent = formatCurrency(pendingCom);
-  document.getElementById('owner-fonds-net').textContent = formatCurrency(pendingNet);
+  document.getElementById('owner-fonds-net').textContent = formatCurrency(totalNet);
+  const elNetDetails = document.getElementById('owner-fonds-net-details');
+  if (elNetDetails) {
+    elNetDetails.textContent = `Loyers : ${formatCurrency(pendingNetLoyers)} | Cautions : ${formatCurrency(pendingNetCautions)}`;
+  }
 
   // Rendu de l'historique des retraits
   const tbodyWithdrawals = document.getElementById('body-owner-withdrawals-table');
@@ -1606,10 +1676,14 @@ function openOwnerDossier(ownerId) {
     } else {
       ownerWithdrawals.sort((a, b) => new Date(b.date) - new Date(a.date));
       ownerWithdrawals.forEach(w => {
+        const isCaution = isCautionWithdrawal(w);
+        const badgeType = isCaution 
+          ? '<span class="badge badge-cyan" style="margin-left:6px; font-size: 0.7rem;">Cautions</span>'
+          : '<span class="badge badge-purple" style="margin-left:6px; font-size: 0.7rem;">Loyers</span>';
         tbodyWithdrawals.innerHTML += `
           <tr>
             <td>${formatDateString(w.date)}</td>
-            <td style="font-weight: 500;">${w.description}</td>
+            <td style="font-weight: 500;">${w.description} ${badgeType}</td>
             <td class="text-right value-rose" style="font-weight: 700;">-${formatCurrency(w.amount)}</td>
             <td class="text-center"><span class="badge badge-green">Payé</span></td>
             <td class="text-center no-print">
@@ -1626,14 +1700,33 @@ function openOwnerDossier(ownerId) {
   }
 
   document.getElementById('btn-request-withdrawal').onclick = () => {
-    if (pendingNet === 0) {
+    if (totalNet === 0 && pendingNetLoyers === 0 && pendingNetCautions === 0) {
       showToast('Aucun fonds disponible pour retrait immédiat.', 'error');
       return;
     }
-    document.getElementById('withdrawal-available-balance').textContent = formatCurrency(pendingNet);
-    const amountInput = document.getElementById('input-withdrawal-amount');
-    amountInput.value = pendingNet;
-    amountInput.max = pendingNet;
+    const selectType = document.getElementById('select-withdrawal-type');
+    const labelType = document.getElementById('withdrawal-balance-label');
+    const updateModalBalance = (type) => {
+      const avail = type === 'cautions' ? pendingNetCautions : pendingNetLoyers;
+      document.getElementById('withdrawal-available-balance').textContent = formatCurrency(avail);
+      if (labelType) {
+        labelType.textContent = type === 'cautions' ? 'Solde Net Disponible (Cautions)' : 'Solde Net Disponible (Loyers)';
+      }
+      const amountInput = document.getElementById('input-withdrawal-amount');
+      amountInput.value = avail;
+      amountInput.max = Math.max(1, avail);
+    };
+
+    if (selectType) {
+      selectType.value = pendingNetLoyers > 0 ? 'loyers' : (pendingNetCautions > 0 ? 'cautions' : 'loyers');
+      selectType.onchange = (e) => updateModalBalance(e.target.value);
+      updateModalBalance(selectType.value);
+    } else {
+      document.getElementById('withdrawal-available-balance').textContent = formatCurrency(pendingNetLoyers);
+      const amountInput = document.getElementById('input-withdrawal-amount');
+      amountInput.value = pendingNetLoyers;
+      amountInput.max = Math.max(1, pendingNetLoyers);
+    }
     document.getElementById('modal-withdrawal').classList.add('active');
   };
 
@@ -1680,9 +1773,10 @@ function openOwnerDossier(ownerId) {
           tbodyStatement.innerHTML = '<tr><td colspan="5" class="text-center">Aucune transaction enregistrée.</td></tr>';
         } else {
           sortedTx.forEach(t => {
+            const isCaution = isCautionWithdrawal(t);
             const typeLabel = t.type === 'income' 
               ? '<span class="badge badge-green">Loyer perçu</span>' 
-              : '<span class="badge badge-rose">Retrait</span>';
+              : (isCaution ? '<span class="badge badge-cyan">Retrait (Caution)</span>' : '<span class="badge badge-rose">Retrait</span>');
               
             const brutDisplay = t.type === 'income' 
               ? `<span class="value-green">+${formatCurrency(t.amount)}</span>` 
@@ -3196,43 +3290,35 @@ async function handleWithdrawalSubmit(e) {
   const owner = state.owners.find(o => o.id === state.activeOwnerId);
   if (!owner) return;
   
-  // Re-calculate balance
-  const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);
-  const ownerPropIds = ownerProperties.map(p => p.id);
-  const ownerIncomes = state.transactions.filter(t => t.type === 'income' && ownerPropIds.includes(t.propertyId));
-  const recentIncomes = ownerIncomes.filter(t => {
-    const daysDiff = (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24);
-    return daysDiff <= 9;
-  });
-  const pendingBrut = recentIncomes.reduce((sum, t) => sum + t.amount, 0);
-  const pendingCom = (pendingBrut * owner.commissionRate) / 100;
-  const recentWithdrawals = state.transactions.filter(t => 
-      t.type === 'expense' && 
-      ownerPropIds.includes(t.propertyId) && 
-    (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
-  );
-  const sumRecentWithdrawals = recentWithdrawals.reduce((sum, w) => sum + w.amount, 0);
-  const pendingNet = Math.max(0, (pendingBrut - pendingCom) - sumRecentWithdrawals);
+  const selectType = document.getElementById('select-withdrawal-type');
+  const withdrawalType = selectType ? selectType.value : 'loyers';
 
-  if (amount > pendingNet) {
-    showToast(`Montant supérieur au solde disponible (${formatCurrency(pendingNet)}).`, 'error');
+  // Re-calculate balance
+  const balance = getOwnerFinancialBalance(owner.id);
+  const availableNet = withdrawalType === 'cautions' ? balance.pendingNetCautions : balance.pendingNetLoyers;
+
+  if (amount > availableNet) {
+    showToast(`Montant supérieur au solde disponible pour ${withdrawalType === 'cautions' ? 'les cautions' : 'les loyers'} (${formatCurrency(availableNet)}).`, 'error');
     return;
   }
 
+  const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);
+
   const newWithdrawal = {
     id: 'tx-withdrawal-' + Date.now(),
-    description: `Retrait de fonds : ${owner.name}`,
+    description: withdrawalType === 'cautions' ? `Retrait de cautions : ${owner.name}` : `Retrait de loyers : ${owner.name}`,
     amount: amount,
     type: 'expense',
-    property_id: ownerProperties[0].id,
-    date: getTodayDateString()
+    property_id: ownerProperties[0] ? ownerProperties[0].id : null,
+    date: getTodayDateString(),
+    motif: withdrawalType
   };
 
   await API.createTransaction(newWithdrawal);
   await loadData();
   
   document.getElementById('modal-withdrawal').classList.remove('active');
-  showToast(`Le retrait de ${formatCurrency(amount)} a été enregistré avec succès.`, 'success');
+  showToast(`Le retrait de ${formatCurrency(amount)} (${withdrawalType === 'cautions' ? 'Cautions' : 'Loyers'}) a été enregistré avec succès.`, 'success');
   openOwnerDossier(owner.id);
 }
 
