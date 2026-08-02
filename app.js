@@ -599,6 +599,17 @@ function setupEventListeners() {
   });
   document.getElementById('form-withdrawal').addEventListener('submit', handleWithdrawalSubmit);
 
+  // Modale Communication E-mail Groupé
+  document.getElementById('btn-open-email-comm-tenants')?.addEventListener('click', () => openEmailCommModal('all_tenants'));
+  document.getElementById('btn-open-email-comm-owners')?.addEventListener('click', () => openEmailCommModal('all_owners'));
+  document.getElementById('btn-close-email-comm-modal')?.addEventListener('click', () => {
+    document.getElementById('modal-email-comm')?.classList.remove('active');
+  });
+  document.getElementById('btn-cancel-email-comm')?.addEventListener('click', () => {
+    document.getElementById('modal-email-comm')?.classList.remove('active');
+  });
+  document.getElementById('form-email-comm')?.addEventListener('submit', handleEmailCommSubmit);
+
   // Modale Locataires
   const btnOpenTenantModal = document.getElementById('btn-open-tenant-modal');
   if (btnOpenTenantModal) {
@@ -3339,6 +3350,141 @@ function deleteWithdrawalTransaction(txId) {
       }
     }
   });
+}
+
+// ==========================================================================
+// Communication E-mail Groupé (4 Niveaux de Ciblage via Brevo)
+// ==========================================================================
+
+function openEmailCommModal(defaultTargetType = 'all_tenants') {
+  const modal = document.getElementById('modal-email-comm');
+  if (!modal) return;
+
+  const selectTargetType = document.getElementById('select-comm-target-type');
+  const groupProperty = document.getElementById('group-comm-property-select');
+  const selectProperty = document.getElementById('select-comm-property');
+  const groupIndividual = document.getElementById('group-comm-individual-select');
+  const selectIndividual = document.getElementById('select-comm-individual');
+  const selectTemplate = document.getElementById('select-comm-template');
+  const inputSubject = document.getElementById('input-comm-subject');
+  const inputMessage = document.getElementById('input-comm-message');
+
+  // Populate properties
+  if (selectProperty) {
+    selectProperty.innerHTML = state.properties.map(p => 
+      `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${p.name} (${p.address})</option>`
+    ).join('');
+  }
+
+  // Populate individuals (tenants and owners with emails)
+  if (selectIndividual) {
+    let html = '';
+    const tenantsWithEmail = state.tenants.filter(t => t.email && t.email.includes('@'));
+    const ownersWithEmail = state.owners.filter(o => o.email && o.email.includes('@'));
+
+    if (tenantsWithEmail.length > 0) {
+      html += `<optgroup label="Locataires avec E-mail" style="background: #1e2420; color: #fff;">` +
+        tenantsWithEmail.map(t => `<option value="${t.id}" style="background: #1e2420; color: #fff;">👤 Locataire: ${t.name} (${t.email})</option>`).join('') +
+        `</optgroup>`;
+    }
+    if (ownersWithEmail.length > 0) {
+      html += `<optgroup label="Propriétaires avec E-mail" style="background: #1e2420; color: #fff;">` +
+        ownersWithEmail.map(o => `<option value="${o.id}" style="background: #1e2420; color: #fff;">🔑 Propriétaire: ${o.name} (${o.email})</option>`).join('') +
+        `</optgroup>`;
+    }
+    if (!html) {
+      html = `<option value="" style="background: #1e2420; color: #fff;">-- Aucun contact avec adresse e-mail --</option>`;
+    }
+    selectIndividual.innerHTML = html;
+  }
+
+  // Set default target type
+  if (selectTargetType) {
+    selectTargetType.value = defaultTargetType;
+    selectTargetType.onchange = () => {
+      const val = selectTargetType.value;
+      if (groupProperty) groupProperty.style.display = (val === 'property_tenants') ? 'block' : 'none';
+      if (groupIndividual) groupIndividual.style.display = (val === 'individual') ? 'block' : 'none';
+    };
+    selectTargetType.onchange();
+  }
+
+  // Handle templates
+  if (selectTemplate) {
+    selectTemplate.value = '';
+    selectTemplate.onchange = () => {
+      const t = selectTemplate.value;
+      if (t === 'rent_reminder') {
+        if (inputSubject) inputSubject.value = "Rappel amiable de votre loyer — Immovii";
+        if (inputMessage) inputMessage.value = "Bonjour,\n\nNous vous prions de bien vouloir régulariser le paiement de votre loyer pour la période en cours.\n\nMerci de votre compréhension et de votre collaboration,\nL'équipe de gestion.";
+      } else if (t === 'general_info') {
+        if (inputSubject) inputSubject.value = "Information importante de votre agence immobilière";
+        if (inputMessage) inputMessage.value = "Bonjour,\n\nNous vous informons par ce message officiel d'un élément important concernant notre agence et votre bien immobilier.\n\nRestant à votre entière disposition pour tout renseignement complémentaire,\nCordialement.";
+      } else if (t === 'meeting') {
+        if (inputSubject) inputSubject.value = "Convocation / Invitation à une réunion";
+        if (inputMessage) inputMessage.value = "Bonjour,\n\nNous avons le plaisir de vous convier à une rencontre/réunion concernant la gestion de votre bien.\n\nMerci de nous confirmer votre disponibilité,\nCordialement.";
+      } else if (t === 'greetings') {
+        if (inputSubject) inputSubject.value = "Salutations et vœux de l'équipe Immovii";
+        if (inputMessage) inputMessage.value = "Bonjour,\n\nToute l'équipe de notre agence vous présente ses salutations chaleureuses et vous remercie pour notre excellente collaboration.\n\nBien cordialement.";
+      } else {
+        if (inputSubject) inputSubject.value = "";
+        if (inputMessage) inputMessage.value = "";
+      }
+    };
+  }
+
+  if (inputSubject && !selectTemplate?.value) inputSubject.value = '';
+  if (inputMessage && !selectTemplate?.value) inputMessage.value = '';
+
+  modal.classList.add('active');
+}
+
+async function handleEmailCommSubmit(e) {
+  e.preventDefault();
+  const targetType = document.getElementById('select-comm-target-type')?.value || 'all_tenants';
+  let targetId = null;
+  if (targetType === 'property_tenants') {
+    targetId = document.getElementById('select-comm-property')?.value;
+  } else if (targetType === 'individual') {
+    targetId = document.getElementById('select-comm-individual')?.value;
+  }
+  const subject = document.getElementById('input-comm-subject')?.value?.trim();
+  const message = document.getElementById('input-comm-message')?.value?.trim();
+
+  if (!subject || !message) {
+    showToast("Veuillez remplir le sujet et le message de l'e-mail.", "error");
+    return;
+  }
+
+  const payload = {
+    target_type: targetType,
+    target_id: targetId,
+    subject: subject,
+    message: message,
+    agency_id: state.agencySettings?.id || null,
+    agency_name: state.agencySettings?.name || "Agence Immobilière Immovii"
+  };
+
+  try {
+    const btnSubmit = document.getElementById('btn-send-email-comm');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span>Envoi en cours...</span>';
+    }
+
+    const result = await API.sendCommunicationEmail(payload);
+    
+    document.getElementById('modal-email-comm')?.classList.remove('active');
+    showToast(result.message || "E-mail envoyé avec succès !", "success");
+  } catch (err) {
+    showToast(err.message || "Erreur lors de l'envoi de l'e-mail.", "error");
+  } finally {
+    const btnSubmit = document.getElementById('btn-send-email-comm');
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Envoyer l'E-mail`;
+    }
+  }
 }
 
 function getCurrentMonthString() {

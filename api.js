@@ -163,4 +163,7 @@ const API = {
   // Abonnements SaaS & Paiements Moneroo
   createSubscriptionCheckout: (plan = 'premium') => apiFetch(`/subscriptions/checkout?plan=${plan}`, { method: 'POST' }),
   getSubscriptionStatus: () => apiFetch('/subscriptions/status'),
+
+  // Communications par e-mail
+  sendCommunicationEmail: (payload) => apiFetch('/communications/send-email', { method: 'POST', body: JSON.stringify(payload) }),
 };

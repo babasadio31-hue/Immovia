@@ -483,14 +483,20 @@
                 <p class="subtitle">Liste des bailleurs sous mandat de gestion. Cliquez sur un nom pour ouvrir son
                   dossier.</p>
               </div>
-              <button class="btn btn-secondary btn-sm" id="btn-open-owner-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Nouveau Propriétaire</span>
-              </button>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn btn-outline btn-sm" id="btn-open-email-comm-owners" style="border-color: var(--color-green); color: var(--color-green);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  <span>Envoyer un E-mail</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-open-owner-modal">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>Nouveau Propriétaire</span>
+                </button>
+              </div>
             </div>
 
             <div class="toolbar" style="margin-top: 1.5rem;">
@@ -1099,15 +1105,21 @@
                 <h4 class="card-title">Répertoire des Locataires</h4>
                 <p class="subtitle">Liste de tous les locataires actifs occupant les biens sous mandat.</p>
               </div>
-              <button class="btn btn-primary btn-sm" id="btn-open-tenant-modal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round"
-                  style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Ajouter un Locataire</span>
-              </button>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn btn-outline btn-sm" id="btn-open-email-comm-tenants" style="border-color: var(--color-green); color: var(--color-green);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; display: inline-block; vertical-align: middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  <span>Envoyer un E-mail</span>
+                </button>
+                <button class="btn btn-primary btn-sm" id="btn-open-tenant-modal">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>Ajouter un Locataire</span>
+                </button>
+              </div>
             </div>
 
             <div class="toolbar" style="margin-top: 1.5rem;">
@@ -2472,6 +2484,78 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-withdrawal">Annuler</button>
           <button type="submit" class="btn btn-primary" id="btn-save-withdrawal">Valider le Retrait</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Communication E-mail Groupé (4 options de ciblage) -->
+  <div class="modal-overlay" id="modal-email-comm">
+    <div class="modal-card glass animate-slide-up" style="max-width: 550px; width: 95%;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Envoyer un E-mail (Diffusion)
+        </h3>
+        <button class="modal-close" id="btn-close-email-comm-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="form-email-comm">
+        <div class="modal-body" style="padding-top: 1rem;">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="select-comm-target-type" class="form-label" style="font-weight: 600;">Cible / Destinataires</label>
+            <select id="select-comm-target-type" class="form-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-primary); font-size: 0.95rem;">
+              <option value="all_tenants" style="background: #1e2420; color: #fff;">👥 Tous les Locataires de l'Agence</option>
+              <option value="all_owners" style="background: #1e2420; color: #fff;">🔑 Tous les Propriétaires de l'Agence</option>
+              <option value="property_tenants" style="background: #1e2420; color: #fff;">🏢 Tous les Locataires d'un Bien / Immeuble</option>
+              <option value="individual" style="background: #1e2420; color: #fff;">👤 Un Destinataire Individuel</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="group-comm-property-select" style="display: none; margin-bottom: 1.25rem;">
+            <label for="select-comm-property" class="form-label" style="font-weight: 600;">Sélectionner le Bien / Immeuble</label>
+            <select id="select-comm-property" class="form-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-primary); font-size: 0.95rem;">
+            </select>
+          </div>
+
+          <div class="form-group" id="group-comm-individual-select" style="display: none; margin-bottom: 1.25rem;">
+            <label for="select-comm-individual" class="form-label" style="font-weight: 600;">Sélectionner le Destinataire</label>
+            <select id="select-comm-individual" class="form-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-primary); font-size: 0.95rem;">
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="select-comm-template" class="form-label" style="font-weight: 600;">Modèle rapide (Optionnel)</label>
+            <select id="select-comm-template" class="form-select" style="width: 100%; padding: 0.65rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--color-text-primary); font-size: 0.88rem;">
+              <option value="" style="background: #1e2420; color: #fff;">-- Rédiger librement --</option>
+              <option value="rent_reminder" style="background: #1e2420; color: #fff;">Rappel de paiement de loyer</option>
+              <option value="general_info" style="background: #1e2420; color: #fff;">Information importante de l'agence</option>
+              <option value="meeting" style="background: #1e2420; color: #fff;">Convocation / Réunion</option>
+              <option value="greetings" style="background: #1e2420; color: #fff;">Vœux et salutations</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="input-comm-subject" class="form-label" style="font-weight: 600;">Sujet de l'E-mail</label>
+            <input type="text" id="input-comm-subject" class="form-input" placeholder="Ex: Information importante de votre agence" required>
+          </div>
+
+          <div class="form-group">
+            <label for="input-comm-message" class="form-label" style="font-weight: 600;">Message</label>
+            <textarea id="input-comm-message" class="form-input" rows="5" placeholder="Rédigez votre message ici..." required style="resize: vertical; font-family: inherit; line-height: 1.5;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-email-comm">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-send-email-comm" style="display: flex; align-items: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Envoyer l'E-mail
+          </button>
         </div>
       </form>
     </div>
