@@ -201,6 +201,9 @@ async function loadData() {
     }
     renderGlobalPrintHeader();
     applyThemeUI();
+    if (typeof checkSubscriptionExpiration === 'function') {
+      checkSubscriptionExpiration();
+    }
   } catch (e) {
     console.error("Erreur API:", e);
   }
@@ -866,6 +869,9 @@ function applyUserPermissions(user) {
 }
 
 function switchTab(tabName) {
+  if (typeof checkSubscriptionExpiration === 'function' && checkSubscriptionExpiration()) {
+    return;
+  }
   if (state.currentUser) {
     const user = state.currentUser;
     const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
@@ -2315,6 +2321,7 @@ function openPropertyModal() {
 
 function closeAllModals() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    if (overlay.id === 'modal-subscription-expired') return;
     overlay.classList.remove('active');
   });
 }
@@ -3829,6 +3836,22 @@ function showSubscriptionExpiredModal() {
   modal.style.display = 'flex';
   modal.classList.add('active');
 
+  // Bloquer l'accès à toute l'application en arrière-plan
+  document.querySelectorAll('.tab-view').forEach(v => {
+    v.style.pointerEvents = 'none';
+    v.style.opacity = '0.3';
+  });
+  const sidebar = document.querySelector('.sidebar');
+  const header = document.querySelector('.header');
+  if (sidebar) {
+    sidebar.style.pointerEvents = 'none';
+    sidebar.style.opacity = '0.3';
+  }
+  if (header) {
+    header.style.pointerEvents = 'none';
+    header.style.opacity = '0.3';
+  }
+
   modal.addEventListener('click', (e) => {
     e.stopPropagation();
   });
@@ -3879,7 +3902,7 @@ function checkSubscriptionExpiration() {
   const subExpiry = (currentUser && currentUser.subscription_expiry) || (state.agencySettings && state.agencySettings.subscription_expiry);
 
   let isExpired = false;
-  if (subStatus && (subStatus.toLowerCase() === 'expiré' || subStatus === 'Expiré' || subStatus.toLowerCase() === 'expire')) {
+  if (subStatus && (subStatus.toLowerCase() === 'expiré' || subStatus === 'Expiré' || subStatus.toLowerCase() === 'expire' || subStatus.toLowerCase() === 'suspendu' || subStatus === 'Suspendu')) {
     isExpired = true;
   }
   if (!isExpired && subExpiry) {

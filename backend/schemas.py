@@ -15,6 +15,9 @@ class UserBase(BaseModel):
     company: Optional[str] = None
     role: Optional[str] = "Administrateur"
     permissions: Any = ["all"]
+    subscription_plan: Optional[str] = "Essai 3 jours"
+    subscription_status: Optional[str] = "Actif"
+    subscription_expiry: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -131,6 +134,9 @@ class AgencySettingsBase(BaseModel):
     nif: Optional[str] = None
     slogan: Optional[str] = None
     logo_base64: Optional[str] = None
+    subscription_plan: Optional[str] = "Essai 3 jours"
+    subscription_status: Optional[str] = "Actif"
+    subscription_expiry: Optional[str] = None
 
 class AgencySettings(AgencySettingsBase):
     id: int
@@ -144,3 +150,5 @@ class AgencyUpdate(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     subscription_plan: Optional[str] = None
+    subscription_status: Optional[str] = None
+    subscription_expiry: Optional[str] = None

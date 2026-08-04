@@ -74,7 +74,17 @@ def get_all_users(db: Session = Depends(database.get_db), admin: models.User = D
 
 @router.get("/agencies")
 def get_all_agencies(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
-    return db.query(models.Agency).all()
+    agencies = db.query(models.Agency).all()
+    from datetime import date
+    today_str = date.today().strftime("%Y-%m-%d")
+    changed = False
+    for a in agencies:
+        if a.subscription_expiry and today_str > a.subscription_expiry and a.subscription_status not in ["Expiré", "Suspendu"]:
+            a.subscription_status = "Expiré"
+            changed = True
+    if changed:
+        db.commit()
+    return agencies
 
 @router.put("/agencies/{agency_id}")
 def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
@@ -93,6 +103,7 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
         
     if agency.subscription_plan is not None:
         db_agency.subscription_plan = agency.subscription_plan
+        db_agency.subscription_status = "Actif"
         from datetime import datetime, timedelta
         now = datetime.now()
         if agency.subscription_plan == "1 mois":
@@ -103,6 +114,11 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
             db_agency.subscription_expiry = (now + timedelta(days=365)).strftime("%Y-%m-%d")
         elif agency.subscription_plan == "Essai":
             db_agency.subscription_expiry = (now + timedelta(days=3)).strftime("%Y-%m-%d")
+            
+    if agency.subscription_status is not None:
+        db_agency.subscription_status = agency.subscription_status
+    if agency.subscription_expiry is not None and agency.subscription_expiry.strip() != "":
+        db_agency.subscription_expiry = agency.subscription_expiry
             
     db.commit()
     return {"message": "Agence modifiée avec succès"}

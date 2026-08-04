@@ -64,7 +64,18 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=schemas.User)
-def read_users_me(current_user: models.User = Depends(get_current_active_user)):
+def read_users_me(current_user: models.User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    if current_user.agency_id:
+        agency = db.query(models.Agency).filter(models.Agency.id == current_user.agency_id).first()
+        if agency:
+            from datetime import date
+            today_str = date.today().strftime("%Y-%m-%d")
+            if agency.subscription_expiry and today_str > agency.subscription_expiry and agency.subscription_status != "Expiré":
+                agency.subscription_status = "Expiré"
+                db.commit()
+            current_user.subscription_plan = agency.subscription_plan
+            current_user.subscription_status = agency.subscription_status
+            current_user.subscription_expiry = agency.subscription_expiry
     return current_user
 
 @router.post("/register", response_model=schemas.User)

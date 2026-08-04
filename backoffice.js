@@ -153,20 +153,27 @@ async function loadAgencies() {
   try {
     currentAgenciesList = await fetchApi('/agencies');
     const tbody = document.getElementById('tbody-agencies');
-    tbody.innerHTML = currentAgenciesList.map(a => `
+    tbody.innerHTML = currentAgenciesList.map(a => {
+      const statusClass = a.subscription_status === 'Actif' ? 'badge-green' : (a.subscription_status === 'Suspendu' ? 'badge-warning' : 'badge-danger');
+      const statusLabel = a.subscription_status || 'Actif';
+      const expiryLabel = a.subscription_expiry || '-';
+      return `
       <tr>
         <td>#${a.id.substring(0,6)}</td>
         <td><strong>${a.name}</strong></td>
         <td>${a.manager_name || '-'}</td>
         <td>${a.email}</td>
         <td>${a.phone || '-'}</td>
-        <td><span class="badge badge-blue">${a.subscription_plan}</span></td>
+        <td><span class="badge badge-blue">${a.subscription_plan || 'Essai'}</span></td>
+        <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+        <td><span style="color: ${a.subscription_status === 'Expiré' ? '#ef4444' : '#10b981'}; font-weight: 500;">${expiryLabel}</span></td>
         <td>
-          <button class="btn-icon" onclick="openEditAgencyModal('${a.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-icon" onclick="openEditAgencyModal('${a.id}')" title="Modifier ou activer le compte"><i class="fa-solid fa-pen"></i></button>
           <button class="btn-icon danger" title="Supprimer l'agence" onclick="deleteAgency('${a.id}')"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
   } catch(e) {}
 }
 
@@ -179,6 +186,10 @@ function openEditAgencyModal(id) {
     document.getElementById('edit-agency-email').value = agency.email || '';
     document.getElementById('edit-agency-phone').value = agency.phone || '';
     document.getElementById('edit-agency-plan').value = agency.subscription_plan || 'Essai';
+    const statusEl = document.getElementById('edit-agency-status');
+    const expiryEl = document.getElementById('edit-agency-expiry');
+    if (statusEl) statusEl.value = agency.subscription_status || 'Actif';
+    if (expiryEl) expiryEl.value = agency.subscription_expiry || '';
     document.getElementById('edit-agency-modal').style.display = 'flex';
 }
 
@@ -190,7 +201,9 @@ document.getElementById('edit-agency-form')?.addEventListener('submit', async (e
         manager_name: document.getElementById('edit-agency-manager').value,
         email: document.getElementById('edit-agency-email').value,
         phone: document.getElementById('edit-agency-phone').value,
-        subscription_plan: document.getElementById('edit-agency-plan').value
+        subscription_plan: document.getElementById('edit-agency-plan').value,
+        subscription_status: document.getElementById('edit-agency-status')?.value || 'Actif',
+        subscription_expiry: document.getElementById('edit-agency-expiry')?.value || ''
     };
     try {
         await fetchApi(`/agencies/${id}`, { 
