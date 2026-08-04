@@ -193,6 +193,25 @@ function openEditAgencyModal(id) {
     document.getElementById('edit-agency-modal').style.display = 'flex';
 }
 
+function closeEditAgencyModal() {
+    const modal = document.getElementById('edit-agency-modal');
+    if (modal) modal.style.display = 'none';
+}
+window.closeEditAgencyModal = closeEditAgencyModal;
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const editModal = document.getElementById('edit-agency-modal');
+        const confirmModal = document.getElementById('confirm-modal');
+        if (editModal && editModal.style.display === 'flex') {
+            editModal.style.display = 'none';
+        }
+        if (confirmModal && confirmModal.style.display === 'flex') {
+            confirmModal.style.display = 'none';
+        }
+    }
+});
+
 document.getElementById('edit-agency-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('edit-agency-id').value;

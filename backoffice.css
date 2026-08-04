@@ -7,6 +7,12 @@
   --text-muted: #94a3b8;
   --border-color: #334155;
   
+  --color-surface: #1e293b;
+  --color-background: #0f172a;
+  --color-border: #334155;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  
   --color-primary: #3b82f6;
   --color-primary-hover: #2563eb;
   --color-success: #10b981;
@@ -21,6 +27,21 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+select, option, input[type="text"], input[type="email"], input[type="date"], input[type="password"], input[type="number"] {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
+option {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  padding: 10px !important;
+}
+select:focus, input:focus {
+  border-color: var(--color-primary) !important;
+  outline: none !important;
 }
 
 body {
