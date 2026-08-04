@@ -806,7 +806,7 @@ function setupEventListeners() {
   // Fermeture en cliquant en dehors de la boîte modale
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeAllModals();
+      if (e.target === overlay && overlay.id !== 'modal-subscription-expired') closeAllModals();
     });
   });
 }
@@ -3829,9 +3829,19 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- Affichage et Vérification de l'Expiration de l'Abonnement ---
-function showSubscriptionExpiredModal() {
+function showSubscriptionExpiredModal(reason = 'Expiré') {
   const modal = document.getElementById('modal-subscription-expired');
   if (!modal) return;
+
+  const titleEl = document.getElementById('modal-sub-expired-title');
+  const textEl = document.getElementById('modal-sub-expired-text');
+  if (reason === 'Suspendu' || reason.toLowerCase() === 'suspendu') {
+    if (titleEl) titleEl.innerText = "Compte Suspendu";
+    if (textEl) textEl.innerText = "Votre compte agence a été suspendu par l'administrateur. Pour toute information ou pour réactiver votre accès, veuillez contacter le support via WhatsApp.";
+  } else {
+    if (titleEl) titleEl.innerText = "Abonnement expiré";
+    if (textEl) textEl.innerText = "Votre abonnement a expiré. Vos données sont conservées en toute sécurité. Renouvelez pour retrouver l'accès complet.";
+  }
 
   modal.style.display = 'flex';
   modal.classList.add('active');
@@ -3902,18 +3912,24 @@ function checkSubscriptionExpiration() {
   const subExpiry = (currentUser && currentUser.subscription_expiry) || (state.agencySettings && state.agencySettings.subscription_expiry);
 
   let isExpired = false;
-  if (subStatus && (subStatus.toLowerCase() === 'expiré' || subStatus === 'Expiré' || subStatus.toLowerCase() === 'expire' || subStatus.toLowerCase() === 'suspendu' || subStatus === 'Suspendu')) {
+  let reason = 'Expiré';
+  if (subStatus && (subStatus.toLowerCase() === 'expiré' || subStatus === 'Expiré' || subStatus.toLowerCase() === 'expire')) {
     isExpired = true;
+    reason = 'Expiré';
+  } else if (subStatus && (subStatus.toLowerCase() === 'suspendu' || subStatus === 'Suspendu')) {
+    isExpired = true;
+    reason = 'Suspendu';
   }
   if (!isExpired && subExpiry) {
     const todayStr = getTodayDateString();
     if (todayStr > subExpiry) {
       isExpired = true;
+      reason = 'Expiré';
     }
   }
 
   if (isExpired) {
-    showSubscriptionExpiredModal();
+    showSubscriptionExpiredModal(reason);
     return true;
   }
   return false;

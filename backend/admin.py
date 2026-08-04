@@ -64,7 +64,7 @@ def get_all_users(db: Session = Depends(database.get_db), admin: models.User = D
             "email": user.email,
             "phone": user.phone,
             "role": user.role,
-            "status": user.status,
+            "status": agency.subscription_status if (agency and agency.subscription_status and agency.subscription_status != "Actif") else user.status,
             "date_added": user.date_added,
             "agency": agency.name if agency else "Aucune",
             "subscription_plan": agency.subscription_plan if agency else "Essai",
@@ -79,6 +79,9 @@ def get_all_agencies(db: Session = Depends(database.get_db), admin: models.User 
     today_str = date.today().strftime("%Y-%m-%d")
     changed = False
     for a in agencies:
+        if not a.subscription_status:
+            a.subscription_status = "Actif"
+            changed = True
         if a.subscription_expiry and today_str > a.subscription_expiry and a.subscription_status not in ["Expiré", "Suspendu"]:
             a.subscription_status = "Expiré"
             changed = True
@@ -103,7 +106,8 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
         
     if agency.subscription_plan is not None:
         db_agency.subscription_plan = agency.subscription_plan
-        db_agency.subscription_status = "Actif"
+        if agency.subscription_status is None:
+            db_agency.subscription_status = "Actif"
         from datetime import datetime, timedelta
         now = datetime.now()
         if agency.subscription_plan == "1 mois":
@@ -119,6 +123,9 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
         db_agency.subscription_status = agency.subscription_status
     if agency.subscription_expiry is not None and agency.subscription_expiry.strip() != "":
         db_agency.subscription_expiry = agency.subscription_expiry
+        
+    for u in db_agency.users:
+        u.status = db_agency.subscription_status
             
     db.commit()
     return {"message": "Agence modifiée avec succès"}
