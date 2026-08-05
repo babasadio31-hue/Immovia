@@ -4301,30 +4301,6 @@ function deleteStaff(id) {
 }
 
 // --- Rendu & Actions pour la page Paramètres (Settings) ---
-function renderSettingsView() {
-  const settings = state.agencySettings || {};
-  
-  const nameInput = document.getElementById('input-settings-name');
-  const addressInput = document.getElementById('input-settings-address');
-  const phoneInput = document.getElementById('input-settings-phone');
-  const emailInput = document.getElementById('input-settings-email');
-  const currencyInput = document.getElementById('input-settings-currency');
-  const commissionInput = document.getElementById('input-settings-commission');
-  const nifInput = document.getElementById('input-settings-nif');
-  const sloganInput = document.getElementById('input-settings-slogan');
-    
-
-  if (nameInput) nameInput.value = settings.name || '';
-  if (addressInput) addressInput.value = settings.address || '';
-  if (phoneInput) phoneInput.value = settings.phone || '';
-  if (emailInput) emailInput.value = settings.email || '';
-  if (currencyInput) currencyInput.value = settings.currency || 'FCFA';
-  if (commissionInput) commissionInput.value = settings.commissionRate || 10;
-  if (nifInput) nifInput.value = settings.nif || '';
-  if (sloganInput) sloganInput.value = settings.slogan || '';
-    
-}
-
 async function handleSettingsAgencySubmit(e) {
   e.preventDefault();
   

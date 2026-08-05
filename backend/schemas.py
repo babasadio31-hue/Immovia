@@ -137,6 +137,9 @@ class AgencySettingsBase(BaseModel):
     subscription_plan: Optional[str] = "Essai 3 jours"
     subscription_status: Optional[str] = "Actif"
     subscription_expiry: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
 
 class AgencySettings(AgencySettingsBase):
     id: int
