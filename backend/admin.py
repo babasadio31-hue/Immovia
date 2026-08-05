@@ -104,6 +104,15 @@ def update_agency(agency_id: str, agency: schemas.AgencyUpdate, db: Session = De
     if agency.phone is not None:
         db_agency.phone = agency.phone
         
+    db_settings = db.query(models.AgencySettings).filter(models.AgencySettings.agency_id == agency_id).first()
+    if db_settings:
+        if agency.name is not None:
+            db_settings.name = agency.name
+        if agency.email is not None:
+            db_settings.email = agency.email
+        if agency.phone is not None:
+            db_settings.phone = agency.phone
+        
     if agency.subscription_plan is not None:
         db_agency.subscription_plan = agency.subscription_plan
         if agency.subscription_status is None:

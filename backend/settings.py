@@ -20,10 +20,10 @@ def get_settings(db: Session = Depends(auth.get_db), current_user: models.User =
 
     if not settings:
         return schemas.AgencySettingsBase(
-            name="Immovii S.A.R.L",
-            address="Rue du Golf, Immeuble Horizon, Bamako, Mali",
-            phone="+223 20 22 44 66",
-            email="contact@immovii.ml",
+            name=agency.name if agency and agency.name else "Immovii S.A.R.L",
+            address="Adresse non renseignée",
+            phone=agency.phone if agency and agency.phone else "+223 20 22 44 66",
+            email=agency.email if agency and agency.email else "contact@immovii.ml",
             currency="FCFA",
             commission_rate=10.0,
             subscription_plan=sub_plan,
@@ -43,17 +43,25 @@ def update_settings(settings_in: schemas.AgencySettingsBase, db: Session = Depen
         db_settings = models.AgencySettings(agency_id=current_user.agency_id)
         db.add(db_settings)
     
+    agency = db.query(models.Agency).filter(models.Agency.id == current_user.agency_id).first()
+    
     data = settings_in.model_dump(exclude_unset=True)
     for key, value in data.items():
         if key not in ['agency_id', 'subscription_plan', 'subscription_status', 'subscription_expiry']:
             setattr(db_settings, key, value)
+            if agency and key == 'name':
+                agency.name = value
+            elif agency and key == 'email':
+                agency.email = value
+            elif agency and key == 'phone':
+                agency.phone = value
         
     db.commit()
     db.refresh(db_settings)
-    agency = db.query(models.Agency).filter(models.Agency.id == current_user.agency_id).first()
+    
     res = schemas.AgencySettingsBase.model_validate(db_settings)
     if agency:
-        res.subscription_plan = agency.subscription_plan
-        res.subscription_status = agency.subscription_status
+        res.subscription_plan = agency.subscription_plan if agency.subscription_plan else "Essai 3 jours"
+        res.subscription_status = agency.subscription_status if agency.subscription_status else "Actif"
         res.subscription_expiry = agency.subscription_expiry
     return res
