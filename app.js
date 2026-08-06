@@ -1749,6 +1749,11 @@ function getOwnerFinancialBalance(ownerId) {
   };
 }
 
+window.refreshCurrentOwnerDossier = function() {
+  if (state.activeOwnerId) openOwnerDossier(state.activeOwnerId);
+};
+
+
 function openOwnerDossier(ownerId) {
   const owner = state.owners.find(o => o.id === ownerId);
   if (!owner) return;

@@ -868,11 +868,11 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                   <h4 class="card-title" style="margin-bottom: 0;">État de la Balance Financière</h4>
                   <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <select id="owner-balance-filter-type" class="form-select btn-sm" style="width: auto;" onchange="if(window.state && window.state.activeOwnerId) openOwnerDossier(window.state.activeOwnerId)">
+                    <select id="owner-balance-filter-type" class="form-select btn-sm" style="width: auto;" onchange="if(window.refreshCurrentOwnerDossier) window.refreshCurrentOwnerDossier()">
                       <option value="all">Tout l'historique</option>
                       <option value="month" selected>Par mois</option>
                     </select>
-                    <input type="month" id="owner-balance-filter-month" class="form-input btn-sm" style="width: auto;" onchange="if(window.state && window.state.activeOwnerId) openOwnerDossier(window.state.activeOwnerId)">
+                    <input type="month" id="owner-balance-filter-month" class="form-input btn-sm" style="width: auto;" onchange="if(window.refreshCurrentOwnerDossier) window.refreshCurrentOwnerDossier()">
                   </div>
                 </div>
                 <div
