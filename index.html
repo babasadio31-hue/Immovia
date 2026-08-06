@@ -2762,6 +2762,38 @@
     </div>
   </div>
 
+  <!-- Modal: Changement de Mot de Passe -->
+  <div class="modal-overlay" id="modal-change-password" style="z-index: 10000; display: none;">
+    <div class="modal-card glass animate-slide-up" style="max-width: 400px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="modal-title">Changer le mot de passe</h3>
+        <button type="button" class="modal-close" onclick="closePasswordModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <form id="form-change-password" onsubmit="handlePasswordChange(event)">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="input-new-password" class="form-label">Nouveau mot de passe</label>
+            <input type="password" id="input-new-password" class="form-input" required placeholder="••••••••">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="input-confirm-password" class="form-label">Confirmer le mot de passe</label>
+            <input type="password" id="input-confirm-password" class="form-input" required placeholder="••••••••">
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem; padding: 1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Confirmation Personnalisée -->
   <div class="modal-overlay" id="modal-confirm-dialog" style="z-index: 10000;">
     <div class="modal-card glass animate-slide-up" style="max-width: 400px; width: 90%; text-align: center;">

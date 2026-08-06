@@ -95,8 +95,58 @@ function showAccountEmail() {
 }
 
 function showAccountPassword() {
-  showToast("Fonctionnalité de changement de mot de passe en cours de développement...", "warning");
+  const modal = document.getElementById('modal-change-password');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
 }
+
+window.closePasswordModal = function() {
+  const modal = document.getElementById('modal-change-password');
+  if (modal) {
+    modal.style.display = 'none';
+    document.getElementById('form-change-password').reset();
+  }
+};
+
+window.handlePasswordChange = async function(e) {
+  e.preventDefault();
+  const newPass = document.getElementById('input-new-password').value;
+  const confirmPass = document.getElementById('input-confirm-password').value;
+  
+  if (newPass !== confirmPass) {
+    showToast('Les mots de passe ne correspondent pas.', 'error');
+    return;
+  }
+  
+  if (newPass.length < 6) {
+    showToast('Le mot de passe doit contenir au moins 6 caractères.', 'error');
+    return;
+  }
+  
+  try {
+    const sessionId = sessionStorage.getItem('immovii_session');
+    let userIdx = -1;
+    if (window.state && window.state.staff && sessionId) {
+      userIdx = window.state.staff.findIndex(s => s.id === sessionId || s.id == sessionId);
+    }
+    
+    if (userIdx !== -1) {
+      window.state.staff[userIdx].password = newPass;
+      if (window.API && window.API.updateUser) {
+        // Try to update via API if possible, ignore if it fails locally
+        await window.API.updateUser(sessionId, window.state.staff[userIdx]).catch(e => console.warn(e));
+      }
+      showToast('Mot de passe modifié avec succès.', 'success');
+      closePasswordModal();
+    } else {
+      showToast('Utilisateur introuvable, impossible de modifier le mot de passe.', 'error');
+    }
+  } catch (error) {
+    showToast('Erreur lors du changement de mot de passe.', 'error');
+    console.error(error);
+  }
+};
 
 function applyUserSession(userId) {
   const user = state.staff.find(s => s.id === userId);
