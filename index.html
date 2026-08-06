@@ -865,8 +865,16 @@
             <!-- Panel 5: Fonds -->
             <div class="owner-panel" id="panel-owner-fonds">
               <div class="card glass">
-                <h4 class="card-title" style="margin-bottom: 1.5rem;">État de la Balance Financière</h4>
-
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                  <h4 class="card-title" style="margin-bottom: 0;">État de la Balance Financière</h4>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select id="owner-balance-filter-type" class="form-select btn-sm" style="width: auto;" onchange="if(window.state && window.state.activeOwnerId) openOwnerDossier(window.state.activeOwnerId)">
+                      <option value="all">Tout l'historique</option>
+                      <option value="month" selected>Par mois</option>
+                    </select>
+                    <input type="month" id="owner-balance-filter-month" class="form-input btn-sm" style="width: auto;" onchange="if(window.state && window.state.activeOwnerId) openOwnerDossier(window.state.activeOwnerId)">
+                  </div>
+                </div>
                 <div
                   style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                   <div class="kpi-card glass"

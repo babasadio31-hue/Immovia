@@ -1674,13 +1674,31 @@ function getOwnerFinancialBalance(ownerId) {
     };
   }
 
+  const filterTypeEl = document.getElementById('owner-balance-filter-type');
+  const filterMonthEl = document.getElementById('owner-balance-filter-month');
+  
+  let filterType = 'all'; // Default to all if element not present or explicitly set
+  let filterMonthStr = '';
+  
+  if (filterTypeEl) filterType = filterTypeEl.value;
+  if (filterMonthEl) filterMonthStr = filterMonthEl.value;
+  
+  if (filterType === 'month' && !filterMonthStr) {
+     const now = new Date();
+     const m = (now.getMonth() + 1).toString().padStart(2, '0');
+     filterMonthStr = `${now.getFullYear()}-${m}`;
+  }
+
   const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);
   const ownerPropIds = ownerProperties.map(p => p.id);
   
   const ownerIncomes = state.transactions.filter(t => t.type === 'income' && ownerPropIds.includes(t.propertyId));
   const recentIncomes = ownerIncomes.filter(t => {
-    const daysDiff = (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24);
-    return daysDiff <= 9;
+    if (filterType === 'all') return true;
+    if (filterType === 'month' && filterMonthStr) {
+      return t.date.startsWith(filterMonthStr);
+    }
+    return true;
   });
   const pendingBrut = recentIncomes.reduce((sum, t) => sum + t.amount, 0);
   const pendingCom = recentIncomes.reduce((sum, t) => {
@@ -1694,7 +1712,7 @@ function getOwnerFinancialBalance(ownerId) {
       t.type === 'expense' && 
       ownerPropIds.includes(t.propertyId) && 
       !isCautionWithdrawal(t) &&
-      (new Date() - new Date(t.date)) / (1000 * 60 * 60 * 24) <= 9
+      (filterType === 'all' || (filterType === 'month' && t.date.startsWith(filterMonthStr)))
   );
   const sumRecentWithdrawalsLoyers = recentWithdrawalsLoyers.reduce((sum, w) => sum + w.amount, 0);
   const pendingNetLoyers = Math.max(0, (pendingBrut - pendingCom) - sumRecentWithdrawalsLoyers);
