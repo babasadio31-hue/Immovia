@@ -83,9 +83,20 @@ function toggleAccountDropdown(e) {
 }
 
 function showAccountEmail() {
-  const currentUser = window.state && window.state.currentUser 
-    ? window.state.currentUser 
-    : JSON.parse(localStorage.getItem('immovii_local_user') || 'null');
+  const sessionId = sessionStorage.getItem('immovii_session');
+  let currentUser = null;
+  
+  if (window.state && window.state.staff && sessionId) {
+    currentUser = window.state.staff.find(s => s.id === sessionId || s.id == sessionId);
+  }
+  
+  if (!currentUser && window.state && window.state.currentUser) {
+    currentUser = window.state.currentUser;
+  }
+  
+  if (!currentUser) {
+    currentUser = JSON.parse(localStorage.getItem('immovii_local_user') || 'null');
+  }
     
   if (currentUser && currentUser.email) {
     showToast(`Votre adresse email : ${currentUser.email}`, 'success');
@@ -97,14 +108,14 @@ function showAccountEmail() {
 function showAccountPassword() {
   const modal = document.getElementById('modal-change-password');
   if (modal) {
-    modal.style.display = 'flex';
+    modal.classList.add('active');
   }
 }
 
 window.closePasswordModal = function() {
   const modal = document.getElementById('modal-change-password');
   if (modal) {
-    modal.style.display = 'none';
+    modal.classList.remove('active');
     document.getElementById('form-change-password').reset();
   }
 };
