@@ -86,12 +86,12 @@ function showAccountEmail() {
   const sessionId = sessionStorage.getItem('immovii_session');
   let currentUser = null;
   
-  if (window.state && window.state.staff && sessionId) {
-    currentUser = window.state.staff.find(s => s.id === sessionId || s.id == sessionId);
+  if (typeof state !== 'undefined' && state.staff && sessionId) {
+    currentUser = state.staff.find(s => s.id === sessionId || s.id == sessionId);
   }
   
-  if (!currentUser && window.state && window.state.currentUser) {
-    currentUser = window.state.currentUser;
+  if (!currentUser && typeof state !== 'undefined' && state.currentUser) {
+    currentUser = state.currentUser;
   }
   
   if (!currentUser) {
@@ -101,7 +101,8 @@ function showAccountEmail() {
   if (currentUser && currentUser.email) {
     showToast(`Votre adresse email : ${currentUser.email}`, 'success');
   } else {
-    showToast("Votre adresse email : admin@immovii.ml", 'warning');
+    // Fallback if completely unavailable
+    showToast("Email introuvable", 'error');
   }
 }
 
@@ -138,15 +139,26 @@ window.handlePasswordChange = async function(e) {
   try {
     const sessionId = sessionStorage.getItem('immovii_session');
     let userIdx = -1;
-    if (window.state && window.state.staff && sessionId) {
-      userIdx = window.state.staff.findIndex(s => s.id === sessionId || s.id == sessionId);
+    if (typeof state !== 'undefined' && state.staff && sessionId) {
+      userIdx = state.staff.findIndex(s => s.id === sessionId || s.id == sessionId);
+    }
+    
+    // Si c'est un compte backend
+    if (userIdx === -1 && typeof state !== 'undefined' && state.currentUser) {
+      if (typeof API !== 'undefined' && API.updateUser && state.currentUser.id) {
+         state.currentUser.password = newPass;
+         await API.updateUser(state.currentUser.id, state.currentUser).catch(e => console.warn(e));
+         showToast('Mot de passe modifié avec succès.', 'success');
+         closePasswordModal();
+         return;
+      }
     }
     
     if (userIdx !== -1) {
-      window.state.staff[userIdx].password = newPass;
-      if (window.API && window.API.updateUser) {
+      state.staff[userIdx].password = newPass;
+      if (typeof window.API !== 'undefined' && window.API.updateUser) {
         // Try to update via API if possible, ignore if it fails locally
-        await window.API.updateUser(sessionId, window.state.staff[userIdx]).catch(e => console.warn(e));
+        await window.API.updateUser(sessionId, state.staff[userIdx]).catch(e => console.warn(e));
       }
       showToast('Mot de passe modifié avec succès.', 'success');
       closePasswordModal();
