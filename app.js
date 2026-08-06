@@ -1823,11 +1823,10 @@ function openOwnerDossier(ownerId) {
   }
 
   // ================= TAB 4: RETRAITS DE LOYERS (REÇU INTERACTIF) =================
-  document.getElementById('receipt-owner-title-name').textContent = owner.name;
   
   const countBiens = ownerProperties.length;
   const countLoues = ownerProperties.filter(p => p.status === 'Loué').length;
-  const buildingDescText = `Propriétaire bailleur : ${owner.name} (${countBiens} bien${countBiens > 1 ? 's' : ''} en gestion, ${countLoues} loué${countLoues > 1 ? 's' : ''})`;
+  const buildingDescText = `Bailleur : ${owner.name} (${countBiens} bien${countBiens > 1 ? 's' : ''} en gestion, ${countLoues} loué${countLoues > 1 ? 's' : ''})`;
   document.getElementById('receipt-building-desc').textContent = buildingDescText;
   
   const estimatedRent = ownerProperties.filter(p => p.transaction_type === 'Location').reduce((sum, p) => sum + p.rent, 0);
