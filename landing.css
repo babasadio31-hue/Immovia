@@ -78,6 +78,43 @@ h1, h2, h3, h4, .font-heading {
   font-size: 0.95rem;
 }
 
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+.btn-text:hover {
+  color: var(--color-primary);
+}
+
+.btn-3d-green {
+  background-color: #c5e486;
+  color: #2c4214;
+  border: 1px solid #638531;
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 3px 0 #638531;
+  transition: all 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-3d-green:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #638531;
+}
+
 .logo-container {
   display: flex;
   align-items: center;
