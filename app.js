@@ -1135,22 +1135,64 @@ function renderDashboardOwnersPreview() {
     return;
   }
 
-  state.owners.slice(0, 4).forEach(owner => {
-    // Calculer le nombre de biens
+  if (charts.dashboardOwners) {
+    charts.dashboardOwners.destroy();
+  }
+
+  const topOwners = state.owners.slice(0, 4).map(owner => {
     const ownerPropertiesCount = state.properties.filter(p => p.ownerId === owner.id).length;
     const totalRentValue = state.properties
       .filter(p => p.ownerId === owner.id && p.status === 'Loué')
       .reduce((sum, p) => sum + p.rent, 0);
+    return { ...owner, count: ownerPropertiesCount, value: totalRentValue };
+  });
 
+  const chartCtx = document.getElementById('chart-dashboard-owners');
+  if (chartCtx && topOwners.length > 0) {
+    charts.dashboardOwners = new Chart(chartCtx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: topOwners.map(o => o.name),
+        datasets: [{
+          data: topOwners.map(o => o.count),
+          backgroundColor: ['#2E5BFF', '#10B981', '#8B5CF6', '#F59E0B'],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111622',
+            titleFont: { family: 'Outfit', size: 12 },
+            bodyFont: { family: 'Outfit', size: 13, weight: 'bold' },
+            padding: 10,
+            displayColors: true,
+            callbacks: {
+              label: function(context) {
+                return ' ' + context.parsed + ' Biens';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  topOwners.forEach(owner => {
     container.innerHTML += `
       <div class="recent-item" style="padding: 0.6rem 0.85rem;">
         <div style="display: flex; flex-direction: column;">
           <span style="font-weight: 600; font-size: 0.9rem;">
             <a class="owner-click-link" onclick="openOwnerDossier('${owner.id}')">${owner.name}</a>
           </span>
-          <span style="font-size: 0.72rem; color: var(--color-text-muted);">${ownerPropertiesCount} biens sous mandat</span>
+          <span style="font-size: 0.72rem; color: var(--color-text-muted);">${owner.count} biens sous mandat</span>
         </div>
-        <span style="font-size: 0.85rem; font-weight: 500; color: var(--color-green);">${formatCurrency(totalRentValue)}/mois</span>
+        <span style="font-size: 0.85rem; font-weight: 500; color: var(--color-green);">${formatCurrency(owner.value)}/mois</span>
       </div>
     `;
   });
@@ -1163,6 +1205,50 @@ function renderDashboardPropertiesPreview() {
   if (state.properties.length === 0) {
     container.innerHTML = '<div class="empty-state">Aucun bien enregistré.</div>';
     return;
+  }
+
+  if (charts.dashboardProperties) {
+    charts.dashboardProperties.destroy();
+  }
+
+  const availableCount = state.properties.filter(p => p.status === 'Disponible').length;
+  const rentedCount = state.properties.filter(p => p.status === 'Loué').length;
+  const maintenanceCount = state.properties.filter(p => p.status === 'Maintenance').length;
+
+  const chartCtx = document.getElementById('chart-dashboard-properties');
+  if (chartCtx && (availableCount > 0 || rentedCount > 0 || maintenanceCount > 0)) {
+    charts.dashboardProperties = new Chart(chartCtx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Disponible', 'Loué', 'Maintenance'],
+        datasets: [{
+          data: [availableCount, rentedCount, maintenanceCount],
+          backgroundColor: ['#8B5CF6', '#10B981', '#F43F5E'],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111622',
+            titleFont: { family: 'Outfit', size: 12 },
+            bodyFont: { family: 'Outfit', size: 13, weight: 'bold' },
+            padding: 10,
+            displayColors: true,
+            callbacks: {
+              label: function(context) {
+                return ' ' + context.parsed + ' Biens';
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   state.properties.slice(0, 3).forEach(prop => {
