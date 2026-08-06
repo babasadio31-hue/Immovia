@@ -83,16 +83,19 @@ function toggleAccountDropdown(e) {
 }
 
 function showAccountEmail() {
-  const currentUser = localStorage.getItem('immovii_user_id') ? state.staff.find(s => s.id === localStorage.getItem('immovii_user_id')) : null;
-  if (currentUser) {
-    alert(`Votre adresse email : ${currentUser.email}`);
+  const currentUser = window.state && window.state.currentUser 
+    ? window.state.currentUser 
+    : JSON.parse(localStorage.getItem('immovii_local_user') || 'null');
+    
+  if (currentUser && currentUser.email) {
+    showToast(`Votre adresse email : ${currentUser.email}`, 'success');
   } else {
-    alert("Votre adresse email : admin@immovii.ml");
+    showToast("Votre adresse email : admin@immovii.ml", 'warning');
   }
 }
 
 function showAccountPassword() {
-  alert("Fonctionnalité de changement de mot de passe en cours de développement...");
+  showToast("Fonctionnalité de changement de mot de passe en cours de développement...", "warning");
 }
 
 function applyUserSession(userId) {
