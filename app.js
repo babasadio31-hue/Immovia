@@ -4508,10 +4508,7 @@ function renderGlobalPrintHeader() {
   const greetingTitle = document.getElementById('greeting-title');
   if (greetingTitle) {
     const rawName = (settings.name && settings.name.trim()) ? settings.name.trim() : 'Immovii S.A.R.L';
-    const displayTitle = rawName.toLowerCase().includes('gestion')
-      ? rawName
-      : `Gestion d'Agence ${rawName}`;
-    greetingTitle.textContent = displayTitle;
+    greetingTitle.textContent = rawName;
   }
   
   const logoHtml = settings.logoBase64
