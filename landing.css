@@ -43,11 +43,39 @@ h1, h2, h3, h4, .font-heading {
 }
 
 /* Header */
-header {
+#main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: var(--color-bg);
+  transition: all 0.3s ease;
+}
+
+#main-header.scrolled {
+  background-color: rgba(253, 245, 242, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 0;
+  transition: padding 0.3s ease;
+}
+
+#main-header.scrolled .header-container {
+  padding: 0.75rem 2rem;
+}
+
+.btn-sm {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
 }
 
 .logo-container {
@@ -120,7 +148,7 @@ header {
 
 /* Hero Section */
 .hero {
-  padding: 6rem 0 4rem;
+  padding: 10rem 0 4rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
@@ -858,8 +886,8 @@ html {
   .container {
     padding: 0 1rem;
   }
-  header {
-    padding: 0.75rem 0;
+  .header-container {
+    padding: 0.75rem 1rem !important;
     gap: 0.5rem;
   }
   .logo-container img {
@@ -979,3 +1007,10 @@ html {
 .module-number { color: var(--color-primary); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; }
 .module-title { color: var(--color-text); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
 .module-desc { color: var(--color-text-light); font-size: 0.9rem; line-height: 1.5; }
+
+@media (max-width: 480px) {
+  .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
