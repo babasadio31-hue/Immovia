@@ -61,24 +61,24 @@ function initApp() {
   
   // Vérification expiration de l'abonnement
   checkSubscriptionExpiration();
-  
-  // Setup dropdown listeners
-  setupAccountDropdown();
 }
 
-function setupAccountDropdown() {
-  const btn = document.getElementById('btn-account-menu');
+// Setup global click listener to close dropdown when clicking outside
+document.addEventListener('click', (e) => {
   const dropdown = document.getElementById('account-dropdown');
-  if(btn && dropdown) {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    });
-    document.addEventListener('click', (e) => {
-      if(!dropdown.contains(e.target) && !btn.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
+  const btn = document.getElementById('btn-account-menu');
+  if (dropdown && btn) {
+    if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
+  }
+});
+
+function toggleAccountDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('account-dropdown');
+  if (dropdown) {
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
   }
 }
 
