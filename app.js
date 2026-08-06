@@ -61,6 +61,38 @@ function initApp() {
   
   // Vérification expiration de l'abonnement
   checkSubscriptionExpiration();
+  
+  // Setup dropdown listeners
+  setupAccountDropdown();
+}
+
+function setupAccountDropdown() {
+  const btn = document.getElementById('btn-account-menu');
+  const dropdown = document.getElementById('account-dropdown');
+  if(btn && dropdown) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    });
+    document.addEventListener('click', (e) => {
+      if(!dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+  }
+}
+
+function showAccountEmail() {
+  const currentUser = localStorage.getItem('immovii_user_id') ? state.staff.find(s => s.id === localStorage.getItem('immovii_user_id')) : null;
+  if (currentUser) {
+    alert(`Votre adresse email : ${currentUser.email}`);
+  } else {
+    alert("Votre adresse email : admin@immovii.ml");
+  }
+}
+
+function showAccountPassword() {
+  alert("Fonctionnalité de changement de mot de passe en cours de développement...");
 }
 
 function applyUserSession(userId) {
