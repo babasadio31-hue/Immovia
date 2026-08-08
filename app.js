@@ -321,6 +321,21 @@ async function loadData() {
 
 
 // ==========================================================================
+// Helpers pour l'affichage de la hiérarchie des biens
+// ==========================================================================
+
+function getPropertyDisplayName(prop) {
+  if (!prop) return '';
+  if (prop.parentId) {
+    const parent = state.properties.find(p => p.id === prop.parentId);
+    if (parent) {
+      return `${parent.name} - ${prop.name}`;
+    }
+  }
+  return prop.name;
+}
+
+// ==========================================================================
 // Remplissage des Listes Déroulantes des Modales
 // ==========================================================================
 
@@ -339,7 +354,8 @@ function populateDropdowns() {
   if (propSelect) {
     propSelect.innerHTML = '<option value="">Aucun (Dépense Agence)</option>';
     state.properties.forEach(prop => {
-      propSelect.innerHTML += `<option value="${prop.id}">${prop.name} (${prop.address})</option>`;
+      const displayName = getPropertyDisplayName(prop);
+      propSelect.innerHTML += `<option value="${prop.id}">${displayName} (${prop.address})</option>`;
     });
   }
 
@@ -359,7 +375,8 @@ function populateCategorySelects() {
   if (filterCatSelect) {
     filterCatSelect.innerHTML = '<option value="all">Toutes les catégories</option>';
     state.properties.forEach(prop => {
-      filterCatSelect.innerHTML += `<option value="${prop.id}">${prop.name}</option>`;
+      const displayName = getPropertyDisplayName(prop);
+      filterCatSelect.innerHTML += `<option value="${prop.id}">${displayName}</option>`;
     });
   }
 }
@@ -762,6 +779,21 @@ function setupEventListeners() {
     const container = document.getElementById('tenant-fields-container');
     if (container) {
       container.style.display = e.target.value === 'Loué' ? 'block' : 'none';
+    }
+  });
+
+  // Hiérarchie des biens : Parent-Enfant
+  document.getElementById('select-property-owner').addEventListener('change', function(e) {
+    populateParentPropertyDropdown(e.target.value);
+  });
+  
+  document.getElementById('checkbox-is-sub-property').addEventListener('change', function(e) {
+    const group = document.getElementById('group-property-parent');
+    if (e.target.checked) {
+      group.style.display = 'block';
+    } else {
+      group.style.display = 'none';
+      document.getElementById('select-property-parent').value = '';
     }
   });
 
@@ -2218,7 +2250,7 @@ function renderPropertiesGrid() {
           IM
         </div>
         <div class="goal-details-wrap">
-          <h5 style="font-size: 0.95rem; font-weight: 600;">${prop.name}</h5>
+          <h5 style="font-size: 0.95rem; font-weight: 600;">${getPropertyDisplayName(prop)}</h5>
           <span class="goal-deadline-badge">${prop.address}</span>
         </div>
       </div>
@@ -2592,7 +2624,28 @@ function openPropertyModal() {
   if (tenantNameInput) tenantNameInput.value = '';
   if (tenantPhoneInput) tenantPhoneInput.value = '';
 
+  // Réinitialiser la hiérarchie
+  document.getElementById('checkbox-is-sub-property').checked = false;
+  document.getElementById('group-property-parent').style.display = 'none';
+  document.getElementById('select-property-parent').innerHTML = '<option value="">Aucun</option>';
+
   modal.classList.add('active');
+}
+
+function populateParentPropertyDropdown(ownerId, selectedParentId = null) {
+  const parentSelect = document.getElementById('select-property-parent');
+  if (!parentSelect) return;
+  parentSelect.innerHTML = '<option value="">Aucun</option>';
+  if (!ownerId) return;
+  
+  const potentialParents = state.properties.filter(p => p.ownerId === ownerId && !p.parentId);
+  potentialParents.forEach(p => {
+    const option = document.createElement('option');
+    option.value = p.id;
+    option.textContent = p.name;
+    if (p.id === selectedParentId) option.selected = true;
+    parentSelect.appendChild(option);
+  });
 }
 
 function closeAllModals() {
@@ -2796,6 +2849,9 @@ async function handlePropertySubmit(e) {
 
   const editId = document.getElementById('input-property-id').value;
 
+  const isSubProperty = document.getElementById('checkbox-is-sub-property').checked;
+  const parentId = isSubProperty ? document.getElementById('select-property-parent').value : null;
+
   const newProp = {
     id: editId || ('prop-' + Date.now()),
     name,
@@ -2803,6 +2859,7 @@ async function handlePropertySubmit(e) {
     type,
     transaction_type: transactionType,
     owner_id: ownerId,
+    parentId: parentId || null,
     caution_amount: caution,
     rent_amount: rent,
     price: transactionType === 'Location' ? rent : price,
@@ -2907,8 +2964,21 @@ function openEditPropertyModal(id) {
     document.getElementById('input-property-rent').value = prop.rent_amount || '';
     document.getElementById('select-property-status').value = prop.status || 'Libre';
   }
+  document.getElementById('input-property-commission').value = prop.commissionRate || prop.commission_rate || '';
   
-  document.getElementById('input-property-commission').value = prop.commissionRate || '';
+  // Hiérarchie
+  const checkbox = document.getElementById('checkbox-is-sub-property');
+  const groupParent = document.getElementById('group-property-parent');
+  if (prop.parentId) {
+    checkbox.checked = true;
+    groupParent.style.display = 'block';
+    populateParentPropertyDropdown(prop.ownerId || prop.owner_id, prop.parentId);
+  } else {
+    checkbox.checked = false;
+    groupParent.style.display = 'none';
+    populateParentPropertyDropdown(prop.ownerId || prop.owner_id);
+  }
+  
   document.getElementById('modal-property').classList.add('active');
 }
 
@@ -3654,9 +3724,10 @@ function openEmailCommModal(defaultTargetType = 'all_tenants') {
 
   // Populate properties
   if (selectProperty) {
-    selectProperty.innerHTML = state.properties.map(p => 
-      `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${p.name} (${p.address})</option>`
-    ).join('');
+    selectProperty.innerHTML = state.properties.map(p => {
+      const displayName = getPropertyDisplayName(p);
+      return `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${displayName} (${p.address})</option>`;
+    }).join('');
   }
 
   // Populate individuals (tenants and owners with emails)
@@ -3725,12 +3796,6 @@ function openEmailCommModal(defaultTargetType = 'all_tenants') {
 async function handleEmailCommSubmit(e) {
   e.preventDefault();
   const targetType = document.getElementById('select-comm-target-type')?.value || 'all_tenants';
-  let targetId = null;
-  if (targetType === 'property_tenants') {
-    targetId = document.getElementById('select-comm-property')?.value;
-  } else if (targetType === 'individual') {
-    targetId = document.getElementById('select-comm-individual')?.value;
-  }
   const subject = document.getElementById('input-comm-subject')?.value?.trim();
   const message = document.getElementById('input-comm-message')?.value?.trim();
 
@@ -3739,14 +3804,40 @@ async function handleEmailCommSubmit(e) {
     return;
   }
 
-  const payload = {
-    target_type: targetType,
-    target_id: targetId,
+  // Préparation des requêtes
+  const payloads = [];
+  const basePayload = {
     subject: subject,
     message: message,
     agency_id: state.agencySettings?.id || null,
     agency_name: state.agencySettings?.name || "Agence Immobilière Immovii"
   };
+
+  if (targetType === 'property_tenants') {
+    const selectedPropId = document.getElementById('select-comm-property')?.value;
+    const subProps = state.properties.filter(p => p.parentId === selectedPropId);
+    
+    if (subProps.length > 0) {
+      // C'est un immeuble, on envoie à tous les locataires de l'immeuble et des sous-biens
+      const propsToEmail = [selectedPropId, ...subProps.map(p => p.id)];
+      const tenantIds = state.tenants.filter(t => propsToEmail.includes(t.propertyId)).map(t => t.id);
+      
+      if (tenantIds.length === 0) {
+        showToast("Aucun locataire trouvé pour cet immeuble et ses sous-biens.", "error");
+        return;
+      }
+      
+      tenantIds.forEach(tid => {
+        payloads.push({ ...basePayload, target_type: 'individual', target_id: tid });
+      });
+    } else {
+      payloads.push({ ...basePayload, target_type: targetType, target_id: selectedPropId });
+    }
+  } else if (targetType === 'individual') {
+    payloads.push({ ...basePayload, target_type: targetType, target_id: document.getElementById('select-comm-individual')?.value });
+  } else {
+    payloads.push({ ...basePayload, target_type: targetType, target_id: null });
+  }
 
   try {
     const btnSubmit = document.getElementById('btn-send-email-comm');
@@ -3755,7 +3846,11 @@ async function handleEmailCommSubmit(e) {
       btnSubmit.innerHTML = '<span>Envoi en cours...</span>';
     }
 
-    const result = await API.sendCommunicationEmail(payload);
+    let results = [];
+    for (const p of payloads) {
+      const result = await API.sendCommunicationEmail(p);
+      results.push(result);
+    }
     
     document.getElementById('modal-email-comm')?.classList.remove('active');
     showToast(result.message || "E-mail envoyé avec succès !", "success");

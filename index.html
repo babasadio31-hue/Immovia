@@ -2159,6 +2159,21 @@
                 <!-- Dynamically populated -->
               </select>
             </div>
+            
+            <!-- We will put the parent select inside the grid to match the layout -->
+            <div class="form-group" style="grid-column: span 2;">
+              <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 0.5rem;">
+                <input type="checkbox" id="checkbox-is-sub-property"> Ce bien fait-il partie d'un complexe / immeuble existant ?
+              </label>
+            </div>
+            
+            <div class="form-group" id="group-property-parent" style="display: none; grid-column: span 2;">
+              <label for="select-property-parent" class="form-label">Sélectionner l'immeuble principal</label>
+              <select id="select-property-parent" class="form-select">
+                <option value="">Aucun</option>
+                <!-- Populated dynamically based on selected owner -->
+              </select>
+            </div>
             <div class="form-group">
               <label for="input-property-commission" class="form-label">Commission sur ce bien (%)</label>
               <input type="number" id="input-property-commission" class="form-input" min="0" max="100"
