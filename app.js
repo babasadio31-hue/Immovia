@@ -2505,7 +2505,7 @@ function openOwnerModal() {
   // Rétablir les champs de bien facultatifs
   document.getElementById('input-owner-prop-name').value = '';
   document.getElementById('input-owner-prop-address').value = '';
-  document.getElementById('select-owner-prop-type').value = 'Appartement';
+  document.getElementById('input-owner-prop-desc').value = '';
   document.getElementById('input-owner-prop-caution').value = '';
   document.getElementById('input-owner-prop-rent').value = '';
   document.getElementById('select-owner-prop-status').value = 'Libre';
@@ -2518,7 +2518,7 @@ function openPropertyModal() {
   document.getElementById('input-property-id').value = '';
   document.getElementById('input-property-name').value = '';
   document.getElementById('input-property-address').value = '';
-  document.getElementById('select-property-type').value = 'Appartement';
+  document.getElementById('input-property-desc').value = '';
   document.getElementById('input-property-caution').value = '';
   document.getElementById('input-property-rent').value = '';
   document.getElementById('input-property-commission').value = '';
@@ -2662,7 +2662,7 @@ async function handleOwnerSubmit(e) {
     // Vérifier et ajouter le bien immobilier initial s'il a été rempli
     const propName = document.getElementById('input-owner-prop-name').value.trim();
     const propAddress = document.getElementById('input-owner-prop-address').value.trim();
-    const propType = document.getElementById('select-owner-prop-type').value;
+    const propType = document.getElementById('input-owner-prop-desc').value;
     const propTransactionType = document.querySelector('input[name="owner_prop_transaction"]:checked').value;
     const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
     const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
@@ -2710,7 +2710,7 @@ async function handlePropertySubmit(e) {
   const name = document.getElementById('input-property-name').value.trim();
   const address = document.getElementById('input-property-address').value.trim();
   const ownerId = document.getElementById('select-property-owner').value;
-  const type = document.getElementById('select-property-type').value;
+  const type = document.getElementById('input-property-desc').value;
   const transactionType = document.querySelector('input[name="property_transaction"]:checked').value;
   const caution = parseInt(document.getElementById('input-property-caution').value) || 0;
   const rent = parseInt(document.getElementById('input-property-rent').value) || 0;
@@ -2825,7 +2825,7 @@ function openEditPropertyModal(id) {
   document.getElementById('input-property-name').value = prop.name || '';
   document.getElementById('input-property-address').value = prop.address || '';
   document.getElementById('select-property-owner').value = prop.ownerId || '';
-  document.getElementById('select-property-type').value = prop.type || '';
+  document.getElementById('input-property-desc').value = prop.type || '';
   
   const radioLocation = document.querySelector('input[name="property_transaction"][value="Location"]');
   const radioVente = document.querySelector('input[name="property_transaction"][value="Vente"]');
