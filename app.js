@@ -2024,7 +2024,32 @@ function openOwnerDossier(ownerId) {
         return sum + (t.amount * rate) / 100;
       }, 0);
       const sumWithdrawn = filteredWithdrawals.reduce((sum, w) => sum + w.amount, 0);
-      const sumBalance = (sumGross - sumCom) - sumWithdrawn;
+      
+      // Calcul des cautions (synchronisé avec getOwnerFinancialBalance)
+      const sumCautions = ownerProperties.reduce((sum, p) => {
+        if (p.status !== 'Loué') return sum;
+        const realTenant = state.tenants.find(t => (t.propertyId === p.id || t.property_id === p.id));
+        
+        let entryDate = '';
+        if (realTenant) {
+           entryDate = realTenant.entry_date || realTenant.leaseStart || '';
+        } else {
+           const tInfo = getTenantForProperty(p.id);
+           entryDate = tInfo.leaseStart || '';
+        }
+        
+        if (entryDate && !matchesDateFilter(entryDate, 'statement-filter-type', 'statement-filter-day', 'statement-filter-month', 'statement-filter-year')) {
+            return sum;
+        }
+
+        if (realTenant && (realTenant.caution_amount !== undefined || realTenant.caution !== undefined)) {
+          return sum + (Number(realTenant.caution_amount || realTenant.caution) || 0);
+        }
+        const tInfo = getTenantForProperty(p.id);
+        return sum + (Number(tInfo.caution) || 0);
+      }, 0);
+
+      const sumBalance = (sumGross - sumCom) + sumCautions - sumWithdrawn;
       
       document.getElementById('statement-val-gross').textContent = formatCurrency(sumGross);
       document.getElementById('statement-val-com').textContent = formatCurrency(sumCom);
