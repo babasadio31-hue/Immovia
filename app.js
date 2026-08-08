@@ -1721,6 +1721,22 @@ function getOwnerFinancialBalance(ownerId) {
   const sumCautions = ownerProperties.reduce((sum, p) => {
     if (p.status !== 'Loué') return sum;
     const realTenant = state.tenants.find(t => (t.propertyId === p.id || t.property_id === p.id));
+    
+    // Filtrage par mois basé sur la date d'entrée
+    let entryDate = '';
+    if (realTenant) {
+       entryDate = realTenant.entry_date || realTenant.leaseStart || '';
+    } else {
+       const tInfo = getTenantForProperty(p.id);
+       entryDate = tInfo.leaseStart || '';
+    }
+    
+    if (filterType === 'month' && filterMonthStr && entryDate) {
+       if (!entryDate.startsWith(filterMonthStr)) {
+          return sum; // Pas ce mois-ci
+       }
+    }
+
     if (realTenant && (realTenant.caution_amount !== undefined || realTenant.caution !== undefined)) {
       return sum + (Number(realTenant.caution_amount || realTenant.caution) || 0);
     }
@@ -1731,7 +1747,8 @@ function getOwnerFinancialBalance(ownerId) {
   const cautionWithdrawals = state.transactions.filter(t =>
     t.type === 'expense' &&
     ownerPropIds.includes(t.propertyId) &&
-    isCautionWithdrawal(t)
+    isCautionWithdrawal(t) &&
+    (filterType === 'all' || (filterType === 'month' && t.date.startsWith(filterMonthStr)))
   );
   const sumRecentWithdrawalsCautions = cautionWithdrawals.reduce((sum, w) => sum + w.amount, 0);
   const pendingNetCautions = Math.max(0, sumCautions - sumRecentWithdrawalsCautions);
@@ -1758,11 +1775,29 @@ function openOwnerDossier(ownerId) {
   const owner = state.owners.find(o => o.id === ownerId);
   if (!owner) return;
 
-  // Réinitialiser les sous-onglets (Informations actif par défaut)
+  // Stocker l'onglet actif si on rafraîchit le même bailleur
+  let activeTab = 'info';
+  if (state.activeOwnerId === owner.id) {
+    const currentActiveBtn = document.querySelector('.owner-sub-btn.active');
+    if (currentActiveBtn) {
+      activeTab = currentActiveBtn.getAttribute('data-subtab');
+    }
+  }
+
+  // Réinitialiser les sous-onglets
   document.querySelectorAll('.owner-sub-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.owner-sub-btn[data-subtab="info"]').classList.add('active');
   document.querySelectorAll('.owner-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-owner-info').classList.add('active');
+  
+  const targetBtn = document.querySelector(`.owner-sub-btn[data-subtab="${activeTab}"]`);
+  const targetPanel = document.getElementById(`panel-owner-${activeTab}`);
+  
+  if (targetBtn && targetPanel) {
+    targetBtn.classList.add('active');
+    targetPanel.classList.add('active');
+  } else {
+    document.querySelector('.owner-sub-btn[data-subtab="info"]').classList.add('active');
+    document.getElementById('panel-owner-info').classList.add('active');
+  }
 
   // Stocker l'owner actif en mémoire
   state.activeOwnerId = owner.id;
