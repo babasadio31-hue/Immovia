@@ -3863,9 +3863,9 @@ async function handleEmailCommSubmit(e) {
     const selectedPropId = document.getElementById('select-comm-property')?.value;
     const selectedProp = state.properties.find(p => p.id === selectedPropId);
     
-    if (selectedProp && (!selectedProp.type || selectedProp.type.trim() === '')) {
-      // C'est un immeuble (pas de type/appartement spécifique), on envoie à tous les locataires des biens ayant le même nom et propriétaire
-      const subProps = state.properties.filter(p => p.ownerId === selectedProp.ownerId && p.name.toLowerCase() === selectedProp.name.toLowerCase());
+    if (selectedProp) {
+      // On envoie à tous les locataires des biens ayant le même nom (grouper les appartements d'un même immeuble)
+      const subProps = state.properties.filter(p => p.name.toLowerCase() === selectedProp.name.toLowerCase());
       const propsToEmail = subProps.map(p => p.id);
       const tenantIds = state.tenants.filter(t => propsToEmail.includes(t.propertyId)).map(t => t.id);
       
@@ -3877,8 +3877,6 @@ async function handleEmailCommSubmit(e) {
       tenantIds.forEach(tid => {
         payloads.push({ ...basePayload, target_type: 'individual', target_id: tid });
       });
-    } else {
-      payloads.push({ ...basePayload, target_type: targetType, target_id: selectedPropId });
     }
   } else if (targetType === 'individual') {
     payloads.push({ ...basePayload, target_type: targetType, target_id: document.getElementById('select-comm-individual')?.value });
@@ -3895,12 +3893,13 @@ async function handleEmailCommSubmit(e) {
 
     let results = [];
     for (const p of payloads) {
-      const result = await API.sendCommunicationEmail(p);
-      results.push(result);
+      const res = await API.sendCommunicationEmail(p);
+      results.push(res);
     }
     
     document.getElementById('modal-email-comm')?.classList.remove('active');
-    showToast(result.message || "E-mail envoyé avec succès !", "success");
+    const successMsg = results.length > 0 && results[0].message ? results[0].message : "E-mail envoyé avec succès !";
+    showToast(successMsg, "success");
   } catch (err) {
     showToast(err.message || "Erreur lors de l'envoi de l'e-mail.", "error");
   } finally {
