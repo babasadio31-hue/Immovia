@@ -1603,8 +1603,7 @@
           <div class="section-header" style="margin-bottom: 2rem;">
             <div class="header-content">
               <h3 class="page-title" style="margin-bottom: 0.5rem;">Support Technique</h3>
-              <p class="page-subtitle" style="color: var(--color-text-muted);">Gérez vos demandes d'assistance et
-                signalez des problèmes</p>
+              <p class="page-subtitle" style="color: var(--color-text-muted);">Contactez directement l'équipe technique d'Immovii pour toute assistance ou suggestion d'amélioration.</p>
             </div>
             <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
               <div style="position: relative;">
@@ -1614,7 +1613,7 @@
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input type="text" id="search-support" placeholder="Rechercher un ticket..." class="form-input"
+                <input type="text" id="search-support" placeholder="Rechercher une demande..." class="form-input"
                   style="padding-left: 2.5rem; height: 38px;">
               </div>
               <button class="btn btn-primary" id="btn-add-ticket">
@@ -1623,7 +1622,7 @@
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                Nouveau Ticket
+                Nouvelle demande
               </button>
             </div>
           </div>
@@ -1633,7 +1632,7 @@
               <table class="data-table" id="table-support">
                 <thead>
                   <tr>
-                    <th>Ticket ID</th>
+                    <th>N° Demande</th>
                     <th>Sujet</th>
                     <th>Catégorie</th>
                     <th>Priorité</th>
@@ -1657,9 +1656,9 @@
                   </path>
                 </svg>
               </div>
-              <h3>Aucun ticket</h3>
+              <h3>Aucune demande</h3>
               <p>Vous n'avez aucune demande d'assistance en cours.</p>
-              <button class="btn btn-primary mt-4" id="btn-empty-add-ticket">Créer un ticket</button>
+              <button class="btn btn-primary mt-4" id="btn-empty-add-ticket">Créer une demande</button>
             </div>
           </div>
         </section>
@@ -1931,7 +1930,7 @@
   <div class="modal-overlay" id="modal-ticket">
     <div class="modal-card glass animate-slide-up" style="max-width: 600px;">
       <div class="modal-header">
-        <h3>Nouveau Ticket de Support</h3>
+        <h3>Nouvelle Demande de Support</h3>
         <button class="btn-icon" id="btn-close-ticket">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1975,7 +1974,7 @@
           </div>
           <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
             <button type="button" class="btn btn-outline" id="btn-cancel-ticket">Annuler</button>
-            <button type="submit" class="btn btn-primary" id="btn-save-ticket">Envoyer le ticket</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-ticket">Envoyer la demande</button>
           </div>
         </form>
       </div>
