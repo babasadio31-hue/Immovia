@@ -3006,7 +3006,9 @@ function openEditTenantModal(id) {
       if (prop) {
         const option = document.createElement('option');
         option.value = prop.id;
-        option.textContent = `${prop.name} - ${prop.rent_amount || prop.price} FCFA / mois`;
+        let typeName = '';
+        if (prop.type) typeName = ' - ' + prop.type.split(' - ')[0];
+        option.textContent = `${prop.name}${typeName} | ${formatCurrency(prop.rent || prop.rent_amount || prop.price)}`;
         elProp.appendChild(option);
       }
     }
@@ -4052,9 +4054,11 @@ function openTenantModal() {
       document.getElementById('input-tenant-caution').value = 0;
     } else {
       availableProps.forEach(p => {
-        const owner = state.owners.find(o => o.id === p.ownerId);
-        const ownerName = owner ? owner.name : 'Inconnu';
-        select.innerHTML += `<option value="${p.id}">${p.name} (Bailleur: ${ownerName} | Loyer: ${formatCurrency(p.rent)})</option>`;
+        let typeName = '';
+        if (p.type) {
+            typeName = ' - ' + p.type.split(' - ')[0];
+        }
+        select.innerHTML += `<option value="${p.id}">${p.name}${typeName} | ${formatCurrency(p.rent)}</option>`;
       });
     }
   }
