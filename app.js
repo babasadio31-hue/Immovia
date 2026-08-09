@@ -784,16 +784,6 @@ function setupEventListeners() {
     populateParentPropertyDropdown(e.target.value);
   });
   
-  document.getElementById('checkbox-is-sub-property').addEventListener('change', function(e) {
-    const group = document.getElementById('group-property-parent');
-    if (e.target.checked) {
-      group.style.display = 'block';
-    } else {
-      group.style.display = 'none';
-      document.getElementById('select-property-parent').value = '';
-    }
-  });
-
   // Toggle Location/Vente fields for modal-owner
   document.querySelectorAll('input[name="owner_prop_transaction"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
@@ -2621,11 +2611,6 @@ function openPropertyModal() {
   if (tenantNameInput) tenantNameInput.value = '';
   if (tenantPhoneInput) tenantPhoneInput.value = '';
 
-  // Réinitialiser la hiérarchie
-  document.getElementById('checkbox-is-sub-property').checked = false;
-  document.getElementById('group-property-parent').style.display = 'none';
-  document.getElementById('select-property-parent').innerHTML = '<option value="">Aucun</option>';
-
   modal.classList.add('active');
 }
 
@@ -2955,7 +2940,16 @@ function openEditPropertyModal(id) {
   document.getElementById('input-property-name').value = prop.name || '';
   document.getElementById('input-property-address').value = prop.address || '';
   document.getElementById('select-property-owner').value = prop.ownerId || '';
-  document.getElementById('input-property-desc').value = prop.type || '';
+  
+  // Try to split type back into type and description if it has a dash
+  if (prop.type && prop.type.includes(' - ')) {
+    const parts = prop.type.split(' - ');
+    document.getElementById('input-property-type').value = parts[0];
+    document.getElementById('input-property-desc').value = parts.slice(1).join(' - ');
+  } else {
+    document.getElementById('input-property-type').value = prop.type || '';
+    document.getElementById('input-property-desc').value = '';
+  }
   
   const radioLocation = document.querySelector('input[name="property_transaction"][value="Location"]');
   const radioVente = document.querySelector('input[name="property_transaction"][value="Vente"]');
@@ -2979,18 +2973,7 @@ function openEditPropertyModal(id) {
   }
   document.getElementById('input-property-commission').value = prop.commissionRate || prop.commission_rate || '';
   
-  // Hiérarchie
-  const checkbox = document.getElementById('checkbox-is-sub-property');
-  const groupParent = document.getElementById('group-property-parent');
-  if (prop.parentId) {
-    checkbox.checked = true;
-    groupParent.style.display = 'block';
-    populateParentPropertyDropdown(prop.ownerId || prop.owner_id, prop.parentId);
-  } else {
-    checkbox.checked = false;
-    groupParent.style.display = 'none';
-    populateParentPropertyDropdown(prop.ownerId || prop.owner_id);
-  }
+  populateParentPropertyDropdown(prop.ownerId || prop.owner_id);
   
   document.getElementById('modal-property').classList.add('active');
 }
