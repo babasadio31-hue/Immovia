@@ -930,6 +930,201 @@ html {
   }
   .header-container {
     padding: 0.75rem 1rem !important;
+.pricing-card p {
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+.pricing-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 2.5rem;
+}
+
+.pricing-features li {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pricing-features i {
+  color: #10B981;
+}
+
+.faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-item h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+  color: var(--color-text-muted);
+}
+
+.footer {
+  background: #111827;
+  color: white;
+  padding: 4rem 0 2rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rem;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-brand p {
+  color: #9CA3AF;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.footer-links h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-links a {
+  display: block;
+  color: #9CA3AF;
+  text-decoration: none;
+  margin-bottom: 0.8rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: #9CA3AF;
+  font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-close:hover {
+  color: #111827;
+}
+
+/* Mobile Menu Styles */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-main);
+  font-size: 1.5rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  header {
+    position: relative;
+  }
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .nav-links.active {
+    display: flex !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 20px 20px;
+    z-index: 1000;
+    gap: 1.25rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  .header-container {
+    padding: 0.75rem 1rem !important;
     gap: 0.5rem;
   }
   .logo-container img {
@@ -939,18 +1134,28 @@ html {
     gap: 0.4rem;
     margin-left: auto;
   }
+  .header-actions .btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
   .btn-icon {
     width: 40px;
     height: 40px;
     font-size: 1.1rem;
   }
   .hero {
-    padding: 2rem 0;
+    padding: 6rem 0 2rem 0;
     gap: 2rem;
   }
   .hero-title {
-    font-size: 2.1rem;
-    line-height: 1.25;
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+  .hero-visual {
+    height: 420px;
+    transform: scale(0.85);
+    transform-origin: center top;
+    margin-bottom: -50px;
   }
   .hero-description {
     font-size: 1rem;
@@ -1054,5 +1259,11 @@ html {
   .btn-sm {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
+  }
+  .hero-visual {
+    height: 380px;
+    transform: scale(0.65);
+    transform-origin: center top;
+    margin-bottom: -100px;
   }
 }
