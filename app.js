@@ -332,6 +332,19 @@ function getPropertyDisplayName(prop) {
   return prop.name;
 }
 
+function getPropertyDisplayNameHTML(prop) {
+  if (!prop) return '';
+  if (prop.type && prop.type.includes(' - ')) {
+    const parts = prop.type.split(' - ');
+    const propNameAndAppt = `${prop.name} - ${parts[0]}`;
+    const desc = parts.slice(1).join(' - ');
+    return `${propNameAndAppt} <br> <span class="goal-deadline-badge" style="font-size: 0.8rem; font-weight: normal; margin-top: 2px; display: inline-block;">${desc}</span>`;
+  } else if (prop.type) {
+    return `${prop.name} - ${prop.type}`;
+  }
+  return prop.name;
+}
+
 // ==========================================================================
 // Remplissage des Listes Déroulantes des Modales
 // ==========================================================================
@@ -2237,7 +2250,7 @@ function renderPropertiesGrid() {
           IM
         </div>
         <div class="goal-details-wrap">
-          <h5 style="font-size: 0.95rem; font-weight: 600;">${getPropertyDisplayName(prop)}</h5>
+          <h5 style="font-size: 0.95rem; font-weight: 600; line-height: 1.3;">${getPropertyDisplayNameHTML(prop)}</h5>
           <span class="goal-deadline-badge">${prop.address}</span>
         </div>
       </div>
