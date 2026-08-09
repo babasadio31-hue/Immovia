@@ -416,28 +416,34 @@ h1, h2, h3, h4, .font-heading {
   font-weight: 500;
 }
 
-/* Widget 3: Small Card (e.g. Property) */
-.widget-small {
-  top: 40px;
-  right: 0px;
+/* Widget Email */
+.widget-email {
+  width: 260px;
+  top: 10px;
+  right: -20px;
   z-index: 1;
-  animation-delay: 2s;
-  padding: 1rem;
+  animation-delay: 1.5s;
+  padding: 1.2rem;
 }
 
-.rating-badge {
+.email-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  box-shadow: var(--shadow-sm);
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
-.rating-badge i {
-  color: #FFB020;
+
+.email-header i {
+  font-size: 1.2rem;
+}
+
+.email-text {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
 
 /* Floating connections */
