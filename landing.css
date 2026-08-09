@@ -419,8 +419,8 @@ h1, h2, h3, h4, .font-heading {
 /* Widget Email */
 .widget-email {
   width: 260px;
-  top: 10px;
-  right: -20px;
+  top: 40px;
+  right: 0px;
   z-index: 1;
   animation-delay: 1.5s;
   padding: 1.2rem;
