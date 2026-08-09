@@ -326,11 +326,8 @@ async function loadData() {
 
 function getPropertyDisplayName(prop) {
   if (!prop) return '';
-  if (prop.parentId) {
-    const parent = state.properties.find(p => p.id === prop.parentId);
-    if (parent) {
-      return `${parent.name} - ${prop.name}`;
-    }
+  if (prop.type) {
+    return `${prop.name} - ${prop.type}`;
   }
   return prop.name;
 }
@@ -2632,19 +2629,20 @@ function openPropertyModal() {
   modal.classList.add('active');
 }
 
-function populateParentPropertyDropdown(ownerId, selectedParentId = null) {
-  const parentSelect = document.getElementById('select-property-parent');
-  if (!parentSelect) return;
-  parentSelect.innerHTML = '<option value="">Aucun</option>';
+function populateParentPropertyDropdown(ownerId) {
+  const dataList = document.getElementById('property-names-list');
+  if (!dataList) return;
+  dataList.innerHTML = '';
   if (!ownerId) return;
   
-  const potentialParents = state.properties.filter(p => p.ownerId === ownerId && !p.parentId);
-  potentialParents.forEach(p => {
-    const option = document.createElement('option');
-    option.value = p.id;
-    option.textContent = p.name;
-    if (p.id === selectedParentId) option.selected = true;
-    parentSelect.appendChild(option);
+  const propertiesForOwner = state.properties.filter(p => p.ownerId === ownerId);
+  const uniqueNames = [...new Set(propertiesForOwner.map(p => p.name))];
+  uniqueNames.forEach(name => {
+    if(name) {
+      const option = document.createElement('option');
+      option.value = name;
+      dataList.appendChild(option);
+    }
   });
 }
 
@@ -2774,8 +2772,16 @@ async function handleOwnerSubmit(e) {
 
     // Vérifier et ajouter le bien immobilier initial s'il a été rempli
     const propName = document.getElementById('input-owner-prop-name').value.trim();
+    const propTypeInput = document.getElementById('input-owner-prop-type').value.trim();
+    const propDesc = document.getElementById('input-owner-prop-desc').value.trim();
     const propAddress = document.getElementById('input-owner-prop-address').value.trim();
-    const propType = document.getElementById('input-owner-prop-desc').value;
+    
+    // Concaténer Type et Description pour les stocker dans 'type'
+    let finalType = propTypeInput;
+    if (propDesc) {
+      finalType = finalType ? `${finalType} - ${propDesc}` : propDesc;
+    }
+
     const propTransactionType = document.querySelector('input[name="owner_prop_transaction"]:checked').value;
     const propCaution = parseInt(document.getElementById('input-owner-prop-caution').value, 10) || 0;
     const propRent = parseInt(document.getElementById('input-owner-prop-rent').value, 10) || 0;
@@ -2788,7 +2794,7 @@ async function handleOwnerSubmit(e) {
         id: 'prop-' + Date.now(),
         name: propName,
         address: propAddress || 'Non spécifiée',
-        type: propType,
+        type: finalType,
         transaction_type: propTransactionType,
         caution_amount: propCaution,
         owner_id: createdOwner.id,
@@ -2823,7 +2829,14 @@ async function handlePropertySubmit(e) {
   const name = document.getElementById('input-property-name').value.trim();
   const address = document.getElementById('input-property-address').value.trim();
   const ownerId = document.getElementById('select-property-owner').value;
-  const type = document.getElementById('input-property-desc').value;
+  
+  const propTypeInput = document.getElementById('input-property-type').value.trim();
+  const propDesc = document.getElementById('input-property-desc').value.trim();
+  
+  let finalType = propTypeInput;
+  if (propDesc) {
+    finalType = finalType ? `${finalType} - ${propDesc}` : propDesc;
+  }
   const transactionType = document.querySelector('input[name="property_transaction"]:checked').value;
   const caution = parseInt(document.getElementById('input-property-caution').value) || 0;
   const rent = parseInt(document.getElementById('input-property-rent').value) || 0;
@@ -2849,17 +2862,14 @@ async function handlePropertySubmit(e) {
 
   const editId = document.getElementById('input-property-id').value;
 
-  const isSubProperty = document.getElementById('checkbox-is-sub-property').checked;
-  const parentId = isSubProperty ? document.getElementById('select-property-parent').value : null;
-
   const newProp = {
     id: editId || ('prop-' + Date.now()),
     name,
     address: address || 'Non spécifiée',
-    type,
+    type: finalType,
     transaction_type: transactionType,
     owner_id: ownerId,
-    parentId: parentId || null,
+    parentId: null,
     caution_amount: caution,
     rent_amount: rent,
     price: transactionType === 'Location' ? rent : price,
@@ -2919,7 +2929,7 @@ async function handlePropertySubmit(e) {
 // ==========================================================================
 
 function openEditOwnerModal(id) {
-  const owner = state.owners.find(o => o.id === id);
+  const owner = state.owners.find(o => String(o.id) === String(id));
   if (!owner) return;
   document.getElementById('input-owner-id').value = owner.id;
   document.getElementById('input-owner-name').value = owner.name || '';
@@ -2927,6 +2937,9 @@ function openEditOwnerModal(id) {
   document.getElementById('input-owner-email').value = owner.email || '';
   document.getElementById('input-owner-address').value = owner.address || '';
   document.getElementById('input-owner-commission').value = owner.commissionRate || '';
+  
+  document.getElementById('input-owner-mandate-start').value = owner.mandate_start || '';
+  document.getElementById('input-owner-mandate-end').value = owner.mandate_end || '';
   
   // Masquer l'ajout rapide de bien
   const quickProp = document.getElementById('owner-quick-property');
@@ -3815,11 +3828,12 @@ async function handleEmailCommSubmit(e) {
 
   if (targetType === 'property_tenants') {
     const selectedPropId = document.getElementById('select-comm-property')?.value;
-    const subProps = state.properties.filter(p => p.parentId === selectedPropId);
+    const selectedProp = state.properties.find(p => p.id === selectedPropId);
     
-    if (subProps.length > 0) {
-      // C'est un immeuble, on envoie à tous les locataires de l'immeuble et des sous-biens
-      const propsToEmail = [selectedPropId, ...subProps.map(p => p.id)];
+    if (selectedProp && (!selectedProp.type || selectedProp.type.trim() === '')) {
+      // C'est un immeuble (pas de type/appartement spécifique), on envoie à tous les locataires des biens ayant le même nom et propriétaire
+      const subProps = state.properties.filter(p => p.ownerId === selectedProp.ownerId && p.name.toLowerCase() === selectedProp.name.toLowerCase());
+      const propsToEmail = subProps.map(p => p.id);
       const tenantIds = state.tenants.filter(t => propsToEmail.includes(t.propertyId)).map(t => t.id);
       
       if (tenantIds.length === 0) {

@@ -2050,8 +2050,12 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="input-owner-prop-name" class="form-label">Nom du Bien (Libellé)</label>
-              <input type="text" id="input-owner-prop-name" class="form-input" placeholder="ex. Appartement F3 GOLF">
+              <label for="input-owner-prop-name" class="form-label">Nom du Bien (ex: Immeuble)</label>
+              <input type="text" id="input-owner-prop-name" class="form-input" placeholder="ex. Immeuble Fann">
+            </div>
+            <div class="form-group">
+              <label for="input-owner-prop-type" class="form-label">Type de Bien (ex: Appartement 1)</label>
+              <input type="text" id="input-owner-prop-type" class="form-input" placeholder="ex. Appartement 1">
             </div>
             <div class="form-group">
               <label for="input-owner-prop-address" class="form-label">Adresse / Quartier</label>
@@ -2059,8 +2063,9 @@
                 placeholder="ex. Badalabougou, Bamako">
             </div>
             <div class="form-group" style="margin-bottom: 1.25rem;">
-              <label for="input-owner-prop-desc" class="form-label">Description du bien</label>
-              <textarea id="input-owner-prop-desc" class="form-input" rows="2" placeholder="ex. Appartement de 2 chambres, ou Terrain de 300m²"></textarea>
+              <label for="input-owner-prop-desc" class="form-label">Description du Bien</label>
+              <textarea id="input-owner-prop-desc" class="form-input" rows="2"
+                placeholder="ex. 2 chambres, 1 salon, cuisine"></textarea>
             </div>
 
             <!-- Champs pour la LOCATION -->
@@ -2143,9 +2148,15 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="input-property-name" class="form-label">Nom du Bien (Libellé)</label>
-            <input type="text" id="input-property-name" class="form-input" placeholder="ex. Villa Moderne Fann"
-              required>
+            <label for="input-property-name" class="form-label">Nom du Bien (ex: Immeuble Fann)</label>
+            <input type="text" id="input-property-name" class="form-input" list="property-names-list" placeholder="Sélectionnez ou tapez un nom" required>
+            <datalist id="property-names-list">
+              <!-- Populated dynamically based on selected owner -->
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label for="input-property-type" class="form-label">Type de Bien (ex: Appartement 1)</label>
+            <input type="text" id="input-property-type" class="form-input" placeholder="ex. Appartement 1">
           </div>
           <div class="form-group">
             <label for="input-property-address" class="form-label">Adresse / Quartier</label>
@@ -2160,20 +2171,7 @@
               </select>
             </div>
             
-            <!-- We will put the parent select inside the grid to match the layout -->
-            <div class="form-group" style="grid-column: span 2;">
-              <label style="color: var(--color-text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 0.5rem;">
-                <input type="checkbox" id="checkbox-is-sub-property"> Ce bien fait-il partie d'un complexe / immeuble existant ?
-              </label>
-            </div>
-            
-            <div class="form-group" id="group-property-parent" style="display: none; grid-column: span 2;">
-              <label for="select-property-parent" class="form-label">Sélectionner l'immeuble principal</label>
-              <select id="select-property-parent" class="form-select">
-                <option value="">Aucun</option>
-                <!-- Populated dynamically based on selected owner -->
-              </select>
-            </div>
+
             <div class="form-group">
               <label for="input-property-commission" class="form-label">Commission sur ce bien (%)</label>
               <input type="number" id="input-property-commission" class="form-input" min="0" max="100"
@@ -2181,8 +2179,8 @@
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 1.25rem;">
-            <label for="input-property-desc" class="form-label">Description du bien</label>
-            <textarea id="input-property-desc" class="form-input" rows="2" placeholder="ex. Appartement de 2 chambres, ou Terrain de 300m²"></textarea>
+            <label for="input-property-desc" class="form-label">Description du Bien</label>
+            <textarea id="input-property-desc" class="form-input" rows="2" placeholder="ex. 2 chambres, 1 salon, cuisine"></textarea>
           </div>
 
           <!-- Champs pour la LOCATION -->
