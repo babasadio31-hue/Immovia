@@ -3761,9 +3761,18 @@ function openEmailCommModal(defaultTargetType = 'all_tenants') {
 
   // Populate properties
   if (selectProperty) {
-    selectProperty.innerHTML = state.properties.map(p => {
-      const displayName = getPropertyDisplayName(p);
-      return `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${displayName} (${p.address})</option>`;
+    const uniqueProps = [];
+    const seenNames = new Set();
+    for (const p of state.properties) {
+      const nameKey = (p.name || '').trim().toLowerCase();
+      if (!seenNames.has(nameKey)) {
+        seenNames.add(nameKey);
+        uniqueProps.push(p);
+      }
+    }
+
+    selectProperty.innerHTML = uniqueProps.map(p => {
+      return `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${p.name}</option>`;
     }).join('');
   }
 
