@@ -1243,19 +1243,23 @@ function renderDashboardPropertiesPreview() {
     charts.dashboardProperties.destroy();
   }
 
-  const availableCount = state.properties.filter(p => p.status === 'Disponible').length;
-  const rentedCount = state.properties.filter(p => p.status === 'Loué').length;
-  const maintenanceCount = state.properties.filter(p => p.status === 'Maintenance').length;
+  const availableProps = state.properties.filter(p => p.status === 'Disponible' || p.status === 'Libre');
+  const rentedProps = state.properties.filter(p => p.status === 'Loué');
+  const maintenanceProps = state.properties.filter(p => p.status === 'Maintenance');
+  
+  const availableCount = availableProps.length;
+  const rentedCount = rentedProps.length;
+  const maintenanceCount = maintenanceProps.length;
 
   const chartCtx = document.getElementById('chart-dashboard-properties');
   if (chartCtx && (availableCount > 0 || rentedCount > 0 || maintenanceCount > 0)) {
     charts.dashboardProperties = new Chart(chartCtx.getContext('2d'), {
       type: 'doughnut',
       data: {
-        labels: ['Disponible', 'Loué', 'Maintenance'],
+        labels: ['Libre', 'Loué', 'Maintenance'],
         datasets: [{
           data: [availableCount, rentedCount, maintenanceCount],
-          backgroundColor: ['#8B5CF6', '#10B981', '#F43F5E'],
+          backgroundColor: ['#10B981', '#8B5CF6', '#F43F5E'], // Libre=Green, Loué=Purple
           borderWidth: 0,
           hoverOffset: 4
         }]
@@ -1283,10 +1287,32 @@ function renderDashboardPropertiesPreview() {
     });
   }
 
-  state.properties.slice(0, 3).forEach(prop => {
-    let statusClass = 'badge-purple';
-    if (prop.status === 'Loué') statusClass = 'badge-green';
-    if (prop.status === 'Maintenance') statusClass = 'badge-rose';
+  // Preview up to 2 available and up to 2 rented properties
+  let previewList = [];
+  if (availableProps.length > 0) previewList = previewList.concat(availableProps.slice(0, 2));
+  if (rentedProps.length > 0) previewList = previewList.concat(rentedProps.slice(0, 2));
+  if (previewList.length === 0 && maintenanceProps.length > 0) previewList = maintenanceProps.slice(0, 3);
+  
+  // Pad with more properties if we have less than 3
+  if (previewList.length < 3) {
+      const existingIds = previewList.map(p => p.id);
+      const moreProps = state.properties.filter(p => !existingIds.includes(p.id)).slice(0, 3 - previewList.length);
+      previewList = previewList.concat(moreProps);
+  }
+
+  previewList.forEach(prop => {
+    let statusClass = 'badge-green'; // Default for Libre
+    let statusText = 'Libre';
+    
+    if (prop.status === 'Loué') {
+      statusClass = 'badge-purple';
+      statusText = 'Loué';
+    } else if (prop.status === 'Maintenance') {
+      statusClass = 'badge-rose';
+      statusText = 'Maintenance';
+    } else if (prop.status) {
+      statusText = prop.status.toUpperCase();
+    }
 
     container.innerHTML += `
       <div class="recent-item" style="padding: 0.6rem 0.85rem;">
@@ -1294,7 +1320,7 @@ function renderDashboardPropertiesPreview() {
           <span style="font-weight: 600; font-size: 0.9rem;">${prop.name}</span>
           <span style="font-size: 0.72rem; color: var(--color-text-muted);">${prop.address}</span>
         </div>
-        <span class="badge ${statusClass}">${prop.status}</span>
+        <span class="badge ${statusClass}">${statusText}</span>
       </div>
     `;
   });
