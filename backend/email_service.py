@@ -6,7 +6,7 @@ API_URL = "https://api.brevo.com/v3/smtp/email"
 DEFAULT_SENDER_EMAIL = "bbcongo99@gmail.com"
 DEFAULT_SENDER_NAME = "Baba Tech Immovii"
 
-def send_email(to_email: str, subject: str, html_content: str):
+def send_email(to_email: str, subject: str, html_content: str, sender_name: str = None):
     headers = {
         "accept": "application/json",
         "api-key": BREVO_API_KEY,
@@ -14,7 +14,7 @@ def send_email(to_email: str, subject: str, html_content: str):
     }
     
     payload = {
-        "sender": {"name": DEFAULT_SENDER_NAME, "email": DEFAULT_SENDER_EMAIL},
+        "sender": {"name": sender_name or DEFAULT_SENDER_NAME, "email": DEFAULT_SENDER_EMAIL},
         "to": [{"email": to_email}],
         "subject": subject,
         "htmlContent": html_content
@@ -31,7 +31,7 @@ def send_email(to_email: str, subject: str, html_content: str):
         print(f"Erreur d'envoi d'e-mail à {to_email}: {e}")
         return False
 
-def send_mass_email(to_emails: list, subject: str, html_content: str):
+def send_mass_email(to_emails: list, subject: str, html_content: str, sender_name: str = None):
     if not to_emails:
         return True
         
@@ -44,7 +44,7 @@ def send_mass_email(to_emails: list, subject: str, html_content: str):
     success = True
     for email in to_emails:
         payload = {
-            "sender": {"name": DEFAULT_SENDER_NAME, "email": DEFAULT_SENDER_EMAIL},
+            "sender": {"name": sender_name or DEFAULT_SENDER_NAME, "email": DEFAULT_SENDER_EMAIL},
             "to": [{"email": email}],
             "subject": subject,
             "htmlContent": html_content

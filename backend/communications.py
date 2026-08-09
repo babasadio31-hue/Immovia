@@ -29,8 +29,8 @@ def format_communication_html(subject: str, message: str, agency_name: str = "Ag
             </div>
         </div>
         <div style="background: #f8fafc; padding: 20px 32px; text-align: center; color: #64748b; font-size: 13px; border-top: 1px solid #e2e8f0;">
-            <p style="margin: 0;">Cet e-mail a été envoyé par <strong>{agency_name}</strong> via le logiciel de gestion immobilière Immovia.</p>
-            <p style="margin: 4px 0 0 0;">© 2026 Immovia - Tous droits réservés.</p>
+            <p style="margin: 0;">Cet e-mail a été envoyé par <strong>{agency_name}</strong>.</p>
+            <p style="margin: 4px 0 0 0;">© 2026 Immovii - Tous droits réservés.</p>
         </div>
     </div>
     """
@@ -88,7 +88,7 @@ def send_communication_email(req: EmailSendRequest, db: Session = Depends(databa
 
     html_content = format_communication_html(req.subject, req.message, req.agency_name or "Agence Immobilière")
     
-    success = email_service.send_mass_email(emails, req.subject, html_content)
+    success = email_service.send_mass_email(emails, req.subject, html_content, sender_name=(req.agency_name or "Agence Immobilière"))
     
     try:
         models.log_activity(db, "Communication", f"E-mail groupé ({req.target_type}) envoyé : {req.subject} ({len(emails)} dest.)", agency_id=req.agency_id)
