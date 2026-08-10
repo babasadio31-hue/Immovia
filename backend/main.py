@@ -221,6 +221,10 @@ def receive_contact_message(contact: ContactRequest, db: Session = Depends(datab
     db.refresh(msg)
     return {"message": "Success"}
 
+@app.get("/api/tutorials", response_model=list[schemas.Tutorial])
+def get_tutorials(db: Session = Depends(database.get_db)):
+    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.desc()).all()
+
 # Servir le frontend pour Railway
 import os
 frontend_path = os.path.join(os.path.dirname(__file__), "..")

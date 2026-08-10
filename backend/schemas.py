@@ -155,3 +155,18 @@ class AgencyUpdate(BaseModel):
     subscription_plan: Optional[str] = None
     subscription_status: Optional[str] = None
     subscription_expiry: Optional[str] = None
+
+class TutorialBase(BaseModel):
+    title: str
+    description: str
+    video_url: Optional[str] = None
+
+class TutorialCreate(TutorialBase):
+    pass
+
+class Tutorial(TutorialBase):
+    id: str
+    date_added: str
+
+    class Config:
+        from_attributes = True

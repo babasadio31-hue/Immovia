@@ -352,3 +352,49 @@ def send_newsletter(req: NewsletterRequest, db: Session = Depends(database.get_d
         return {"message": f"Newsletter envoyée avec succès à {count} destinataires !"}
     else:
         raise HTTPException(status_code=500, detail="Erreur lors de l'envoi de la newsletter. Vérifiez les paramètres SMTP.")
+
+# ==================== TUTORIALS ====================
+
+@router.get("/tutorials", response_model=List[schemas.Tutorial])
+def get_all_tutorials(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.desc()).all()
+
+@router.post("/tutorials", response_model=schemas.Tutorial)
+def create_tutorial(tut: schemas.TutorialCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    import uuid
+    from datetime import datetime
+    new_tut = models.Tutorial(
+        id=f"tut-{str(uuid.uuid4())[:8]}",
+        title=tut.title,
+        description=tut.description,
+        video_url=tut.video_url,
+        date_added=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    db.add(new_tut)
+    db.commit()
+    db.refresh(new_tut)
+    return new_tut
+
+@router.put("/tutorials/{tut_id}", response_model=schemas.Tutorial)
+def update_tutorial(tut_id: str, tut: schemas.TutorialCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_tut = db.query(models.Tutorial).filter(models.Tutorial.id == tut_id).first()
+    if not db_tut:
+        raise HTTPException(status_code=404, detail="Tutoriel introuvable")
+    
+    db_tut.title = tut.title
+    db_tut.description = tut.description
+    db_tut.video_url = tut.video_url
+    
+    db.commit()
+    db.refresh(db_tut)
+    return db_tut
+
+@router.delete("/tutorials/{tut_id}")
+def delete_tutorial(tut_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_tut = db.query(models.Tutorial).filter(models.Tutorial.id == tut_id).first()
+    if not db_tut:
+        raise HTTPException(status_code=404, detail="Tutoriel introuvable")
+    
+    db.delete(db_tut)
+    db.commit()
+    return {"message": "Tutoriel supprimé avec succès"}

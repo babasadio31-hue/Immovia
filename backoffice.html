@@ -84,6 +84,9 @@
         <button class="nav-pill" data-target="view-settings">
           <i class="fa-solid fa-gear"></i> Paramètres
         </button>
+        <button class="nav-pill" data-target="view-tutorials">
+          <i class="fa-solid fa-video"></i> Tutoriels
+        </button>
       </nav>
 
       <div class="content-area">
@@ -397,6 +400,36 @@
           </div>
         </section>
 
+        <!-- VIEW: TUTORIELS -->
+        <section id="view-tutorials" class="admin-view">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+              <h2 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 0.5rem;">Gestion des Tutoriels</h2>
+              <p style="color: var(--color-text-secondary); font-size: 0.95rem;">Gérez les modules de formation vidéos affichés dans l'application cliente.</p>
+            </div>
+            <button class="btn-primary" onclick="openAdminTutorialModal()">
+              <i class="fa-solid fa-plus"></i> Ajouter un tutoriel
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Description</th>
+                  <th>Lien Vidéo</th>
+                  <th>Date d'ajout</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-admin-tutorials">
+                <!-- Data will be injected here -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
         <!-- OTHERS... -->
 
       </div>
@@ -457,6 +490,37 @@
         </div>
         <div style="display:flex; justify-content:flex-end; gap:1rem;">
           <button type="button" onclick="document.getElementById('edit-agency-modal').style.display='none'" style="background:#334155; border:1px solid #475569; color:#ffffff; padding:0.6rem 1.2rem; border-radius:8px; cursor:pointer; font-weight:500;">Annuler</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.5rem; border:none; border-radius:8px; cursor:pointer; font-weight:600; background:#3b82f6; color:#ffffff;">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Admin Tutorial -->
+  <div id="admin-tutorial-modal" onclick="if(event.target === this) document.getElementById('admin-tutorial-modal').style.display='none';" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#1e293b; border:1px solid #334155; border-radius:16px; padding:2rem; width:90%; max-width:600px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75); position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #334155; padding-bottom:1rem;">
+        <h3 id="admin-tutorial-modal-title" style="color:#ffffff; margin:0; font-size:1.25rem; font-weight:700;">Ajouter un Tutoriel</h3>
+        <button type="button" onclick="document.getElementById('admin-tutorial-modal').style.display='none'" style="background:transparent; color:#94a3b8; border:none; font-size:1.3rem; cursor:pointer; padding:0.25rem 0.5rem;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="admin-tutorial-form">
+        <input type="hidden" id="admin-tutorial-id">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label style="display:block; margin-bottom:0.5rem; color:#94a3b8; font-weight:500;">Titre du tutoriel</label>
+          <input type="text" id="admin-tutorial-title" class="form-control" style="width:100%; padding:0.8rem; background:#0f172a; border:1px solid #334155; color:#ffffff; border-radius:8px;" required>
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label style="display:block; margin-bottom:0.5rem; color:#94a3b8; font-weight:500;">Description courte</label>
+          <textarea id="admin-tutorial-desc" class="form-control" style="width:100%; padding:0.8rem; background:#0f172a; border:1px solid #334155; color:#ffffff; border-radius:8px; min-height: 80px;" required></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label style="display:block; margin-bottom:0.5rem; color:#94a3b8; font-weight:500;">Lien vidéo (ex: URL Embed YouTube)</label>
+          <input type="url" id="admin-tutorial-url" class="form-control" style="width:100%; padding:0.8rem; background:#0f172a; border:1px solid #334155; color:#ffffff; border-radius:8px;" placeholder="https://www.youtube.com/embed/...">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:1rem;">
+          <button type="button" onclick="document.getElementById('admin-tutorial-modal').style.display='none'" style="background:#334155; border:1px solid #475569; color:#ffffff; padding:0.6rem 1.2rem; border-radius:8px; cursor:pointer; font-weight:500;">Annuler</button>
           <button type="submit" class="btn-primary" style="padding:0.6rem 1.5rem; border:none; border-radius:8px; cursor:pointer; font-weight:600; background:#3b82f6; color:#ffffff;">Enregistrer</button>
         </div>
       </form>

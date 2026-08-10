@@ -682,3 +682,128 @@ async function updateMessageBadges() {
     console.error("Error updating badges", e);
   }
 }
+
+// ================= TUTORIALS (ADMIN) =================
+
+async function loadAdminTutorials() {
+  try {
+    const res = await fetch(`${API_URL}/admin/tutorials`, {
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    const tutorials = await res.json();
+    const tbody = document.getElementById('tbody-admin-tutorials');
+    
+    if (tutorials.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun tutoriel.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = tutorials.map(tut => `
+      <tr>
+        <td><strong>${tut.title}</strong></td>
+        <td>${tut.description.substring(0, 50)}${tut.description.length > 50 ? '...' : ''}</td>
+        <td>${tut.video_url ? `<a href="${tut.video_url}" target="_blank" style="color:var(--color-primary);">Lien</a>` : '-'}</td>
+        <td>${tut.date_added.substring(0,10)}</td>
+        <td>
+          <button class="btn-icon" title="Modifier" onclick="editAdminTutorial('${tut.id}', '${tut.title.replace(/'/g, "\\'")}', '${tut.description.replace(/'/g, "\\'").replace(/\n/g, '\\n')}', '${(tut.video_url || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-icon" title="Supprimer" onclick="deleteAdminTutorial('${tut.id}')"><i class="fa-solid fa-trash" style="color:var(--color-danger);"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error("Error loading tutorials", err);
+  }
+}
+
+function openAdminTutorialModal() {
+  document.getElementById('admin-tutorial-id').value = '';
+  document.getElementById('admin-tutorial-title').value = '';
+  document.getElementById('admin-tutorial-desc').value = '';
+  document.getElementById('admin-tutorial-url').value = '';
+  document.getElementById('admin-tutorial-modal-title').innerText = 'Ajouter un Tutoriel';
+  document.getElementById('admin-tutorial-modal').style.display = 'flex';
+}
+
+function editAdminTutorial(id, title, desc, url) {
+  document.getElementById('admin-tutorial-id').value = id;
+  document.getElementById('admin-tutorial-title').value = title;
+  document.getElementById('admin-tutorial-desc').value = desc;
+  document.getElementById('admin-tutorial-url').value = url;
+  document.getElementById('admin-tutorial-modal-title').innerText = 'Modifier le Tutoriel';
+  document.getElementById('admin-tutorial-modal').style.display = 'flex';
+}
+
+async function deleteAdminTutorial(id) {
+  if (confirm("Êtes-vous sûr de vouloir supprimer ce tutoriel ?")) {
+    try {
+      const res = await fetch(`${API_URL}/admin/tutorials/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (res.ok) {
+        showToast("Tutoriel supprimé", "success");
+        loadAdminTutorials();
+      } else {
+        showToast("Erreur lors de la suppression", "error");
+      }
+    } catch (err) {
+      showToast("Erreur réseau", "error");
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tutForm = document.getElementById('admin-tutorial-form');
+  if (tutForm) {
+    tutForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('admin-tutorial-id').value;
+      const payload = {
+        title: document.getElementById('admin-tutorial-title').value,
+        description: document.getElementById('admin-tutorial-desc').value,
+        video_url: document.getElementById('admin-tutorial-url').value
+      };
+      
+      showLoading();
+      try {
+        let url = `${API_URL}/admin/tutorials`;
+        let method = 'POST';
+        if (id) {
+          url += `/${id}`;
+          method = 'PUT';
+        }
+        
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+          showToast(id ? "Tutoriel mis à jour" : "Tutoriel ajouté", "success");
+          document.getElementById('admin-tutorial-modal').style.display = 'none';
+          loadAdminTutorials();
+        } else {
+          showToast("Erreur lors de l'enregistrement", "error");
+        }
+      } catch (err) {
+        showToast("Erreur réseau", "error");
+      } finally {
+        hideLoading();
+      }
+    });
+  }
+  
+  // Hook up loadAdminTutorials to the view showing
+  const navPillsLocal = document.querySelectorAll('.nav-pill');
+  navPillsLocal.forEach(pill => {
+    pill.addEventListener('click', () => {
+      if (pill.dataset.target === 'view-tutorials') {
+        loadAdminTutorials();
+      }
+    });
+  });
+});

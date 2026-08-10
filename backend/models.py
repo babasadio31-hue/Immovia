@@ -211,6 +211,16 @@ class NewsletterCampaign(Base):
     date = Column(String)
 
 
+class Tutorial(Base):
+    __tablename__ = "tutorials"
+    
+    id = Column(String, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    video_url = Column(String, nullable=True)
+    date_added = Column(String)
+
+
 def log_activity(db, action: str, details: str, user_id: str = None, agency_id: str = None):
     try:
         from datetime import datetime

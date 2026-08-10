@@ -1060,6 +1060,8 @@ function switchTab(tabName) {
     renderSupportTickets();
   } else if (tabName === 'settings') {
     renderSettingsView();
+  } else if (tabName === 'tutorials') {
+    loadTutorials();
   }
   setTimeout(adjustWrappedText, 50);
 }
@@ -5468,3 +5470,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Fetch and render tutorials dynamically
+async function loadTutorials() {
+  const container = document.getElementById('tutorials-grid');
+  if (!container) return;
+  
+  try {
+    const res = await fetch(`${API_URL}/tutorials`);
+    if (!res.ok) throw new Error('Erreur lors du chargement des tutoriels');
+    const tutorials = await res.json();
+    
+    if (tutorials.length === 0) {
+      container.innerHTML = `<p style="color:var(--color-text-muted); width:100%; text-align:center;">Aucun tutoriel n'est disponible pour le moment.</p>`;
+      return;
+    }
+    
+    container.innerHTML = tutorials.map(tut => `
+      <div class="card glass tutorial-card" style="padding: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" 
+           onclick="openTutorialModal('${tut.title.replace(/'/g, "\\'")}', '${tut.description.replace(/'/g, "\\'").replace(/\n/g, '\\n')}', '${(tut.video_url || '').replace(/'/g, "\\'")}')">
+        <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #1f2937; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2);">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+        </div>
+        <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">${tut.title}</h4>
+        <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">${tut.description.substring(0, 100)}${tut.description.length > 100 ? '...' : ''}</p>
+      </div>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = `<p style="color:var(--color-danger); width:100%; text-align:center;">Impossible de charger les tutoriels.</p>`;
+  }
+}
