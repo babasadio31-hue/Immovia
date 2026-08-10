@@ -1610,6 +1610,16 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
     }
   });
   
+  const monthInput = tr.querySelector('.receipt-month-input');
+  if (monthInput) {
+    monthInput.addEventListener('input', () => {
+      // Remove manual flag to allow auto-recalculation when month changes
+      reliquatInput.removeAttribute('data-manual');
+      updateRowReliquatsAndStatus(tr);
+      recalculateReceiptSummary();
+    });
+  }
+  
   paidInput.addEventListener('input', () => {
     updateRowReliquatsAndStatus(tr);
     recalculateReceiptSummary();
@@ -1653,31 +1663,63 @@ function updateRowReliquatsAndStatus(row) {
   const rent = parseInt(rentInput.getAttribute('data-value')) || 0;
   const paid = parseInt(paidInput.value) || 0;
   
+  const tenantSelect = row.querySelector('.receipt-tenant-select');
+  const monthInput = row.querySelector('.receipt-month-input');
+  const selectedPropId = tenantSelect.value;
+  const currentMonthStr = monthInput ? monthInput.value : '';
+  
+  let balanceObj = { balance: paid - rent };
+  
+  if (selectedPropId && currentMonthStr) {
+      const tenant = getTenantForProperty(selectedPropId);
+      const prop = state.properties.find(p => p.id === selectedPropId);
+      
+      if (tenant && prop) {
+          const monthsRange = generateMonthsRange(tenant.leaseStart);
+          let cumulativePaid = 0;
+          let cumulativeDue = 0;
+          
+          for (const m of monthsRange) {
+              const isTargetMonth = m.name.toLowerCase() === currentMonthStr.toLowerCase();
+              
+              const monthPayments = state.transactions.filter(t => 
+                t.propertyId === selectedPropId &&
+                t.type === 'income' &&
+                (t.description.toLowerCase().includes(m.name.toLowerCase()) || 
+                 t.description.toLowerCase().includes(m.name.replace('-', ' ').toLowerCase()))
+              );
+              
+              if (isTargetMonth) {
+                  cumulativePaid += paid; // Utilise la valeur tapée dans le tableau
+              } else {
+                  cumulativePaid += monthPayments.reduce((sum, t) => sum + t.amount, 0);
+              }
+              
+              cumulativeDue += prop.rent;
+              
+              if (isTargetMonth) break;
+          }
+          balanceObj.balance = cumulativePaid - cumulativeDue;
+      }
+  }
+  
   let reliquat = parseInt(reliquatInput.value) || 0;
   
   // Auto-calculer uniquement si l'utilisateur n'a pas tapé manuellement ou si c'est la première sélection
   if (!reliquatInput.hasAttribute('data-manual')) {
-    reliquat = Math.max(0, rent - paid);
+    reliquat = balanceObj.balance < 0 ? Math.abs(balanceObj.balance) : 0;
     reliquatInput.value = reliquat;
   }
   reliquatInput.setAttribute('data-value', reliquat);
   
-  const tenantSelect = row.querySelector('.receipt-tenant-select');
-  const selectedPropId = tenantSelect.value;
-
   if (reliquat === 0) {
-    if (selectedPropId === 'prop-5') {
+    if (balanceObj.balance > 0) {
       statusSelect.value = 'En avance';
     } else {
       statusSelect.value = 'À jour';
     }
   } else {
-    // Si reliquat > 0
-    if (selectedPropId === 'prop-7' && reliquat === 25000) {
-      statusSelect.value = 'À jour';
-    } else {
-      statusSelect.value = 'En retard';
-    }
+    statusSelect.value = 'En retard';
   }
   styleStatusSelect(statusSelect);
 }
