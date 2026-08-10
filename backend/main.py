@@ -11,7 +11,7 @@ from sqlalchemy import text
 # Load environment variables
 load_dotenv()
 
-from . import models, database, auth, owners, properties, tenants, transactions, security
+from . import models, database, auth, owners, properties, tenants, transactions, security, schemas
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
