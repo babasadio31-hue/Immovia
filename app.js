@@ -1596,6 +1596,7 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
   const tenantSelect = tr.querySelector('.receipt-tenant-select');
   const rentInput = tr.querySelector('.receipt-rent-input');
   const paidInput = tr.querySelector('.receipt-paid-input');
+  const reliquatInput = tr.querySelector('.receipt-reliquat-input');
   const statusSelect = tr.querySelector('.receipt-status-select');
   const deleteBtn = tr.querySelector('.btn-delete-receipt-row');
   
