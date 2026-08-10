@@ -1557,6 +1557,19 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
     selectOptionsHtml += `<option value="${p.id}" ${propertyId === p.id ? 'selected' : ''}>${tenant.name} (${p.name})</option>`;
   });
   
+  // Récupérer le brouillon s'il existe
+  let monthVal = getCurrentMonthString();
+  let reliquatVal = "0";
+  let isManual = false;
+  
+  if (state.activeOwnerId && propertyId && state.receiptDrafts && state.receiptDrafts[state.activeOwnerId] && state.receiptDrafts[state.activeOwnerId][propertyId]) {
+      const draft = state.receiptDrafts[state.activeOwnerId][propertyId];
+      if (draft.paid !== undefined) paidAmount = draft.paid;
+      if (draft.month !== undefined) monthVal = draft.month;
+      if (draft.reliquat !== undefined) reliquatVal = draft.reliquat;
+      if (draft.isManualReliquat !== undefined) isManual = draft.isManualReliquat;
+  }
+  
   tr.innerHTML = `
     <td>
       <select class="form-select receipt-tenant-select" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);">
@@ -1567,13 +1580,13 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
       <input type="text" class="form-input receipt-rent-input text-right" style="width: 100%; border: none; background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-muted);" readonly value="0 FCFA">
     </td>
     <td>
-      <input type="text" class="form-input receipt-month-input text-center" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="${getCurrentMonthString()}">
+      <input type="text" class="form-input receipt-month-input text-center" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="${monthVal}">
     </td>
     <td>
       <input type="number" class="form-input receipt-paid-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" min="0" value="${paidAmount !== null ? paidAmount : 0}">
     </td>
     <td>
-      <input type="number" class="form-input receipt-reliquat-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="0">
+      <input type="number" class="form-input receipt-reliquat-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="${reliquatVal}" ${isManual ? 'data-manual="true"' : ''}>
     </td>
     <td class="text-center" style="vertical-align: middle;">
       <select class="form-select receipt-status-select" style="width: 100%;">
@@ -1723,6 +1736,18 @@ function updateRowReliquatsAndStatus(row) {
     statusSelect.value = 'En retard';
   }
   styleStatusSelect(statusSelect);
+  
+  // Sauvegarder le brouillon de la ligne dans le state
+  if (state.activeOwnerId && selectedPropId) {
+      state.receiptDrafts = state.receiptDrafts || {};
+      state.receiptDrafts[state.activeOwnerId] = state.receiptDrafts[state.activeOwnerId] || {};
+      state.receiptDrafts[state.activeOwnerId][selectedPropId] = {
+          paid: paid,
+          month: currentMonthStr,
+          reliquat: reliquat,
+          isManualReliquat: reliquatInput.hasAttribute('data-manual')
+      };
+  }
 }
 
 // Calculer le résumé global du reçu
@@ -3695,6 +3720,11 @@ async function handleSaveReceipt() {
         await API.createTransaction(newTx);
         totalCommissionsAdded += commission;
         savedCount++;
+        
+        // Supprimer le brouillon une fois enregistré
+        if (state.activeOwnerId && state.receiptDrafts && state.receiptDrafts[state.activeOwnerId]) {
+            delete state.receiptDrafts[state.activeOwnerId][propertyId];
+        }
       }
     }
   }
