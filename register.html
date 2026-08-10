@@ -377,7 +377,7 @@
 
                 <div class="login-header">
                     <h2>Inscription</h2>
-                    <p>Essai gratuit de <span style="color: var(--color-primary); font-weight: 600;">3 jours</span> — Aucune carte requise</p>
+                    <p>Essai gratuit de <span style="color: var(--color-primary); font-weight: 600;">7 jours</span> — Aucune carte requise</p>
                 </div>
                 
                 <div id="login-error"></div>
@@ -416,7 +416,7 @@
                         <input type="text" id="company" class="form-control" placeholder="Nom de votre agence" style="border-color: var(--color-primary);" required>
                     </div>
                     
-                    <button type="submit" class="btn-submit" id="btn-submit" style="background: var(--color-primary);">S'inscrire — Essai gratuit 3 jours</button>
+                    <button type="submit" class="btn-submit" id="btn-submit" style="background: var(--color-primary);">S'inscrire — Essai gratuit 7 jours</button>
                 </form>
             </div>
         </div>
@@ -435,7 +435,7 @@
                 let planText = 'Plan Mensuel (10.000 FCFA/mois)';
                 if (selectedPlan === 'trimestriel') planText = 'Plan Trimestriel (25.000 FCFA/3 mois)';
                 else if (selectedPlan === 'annuel') planText = 'Plan Annuel (100.000 FCFA/an)';
-                badge.innerHTML = `✨ <strong>${planText}</strong> — 3 jours d\'essai gratuit inclus.`;
+                badge.innerHTML = `✨ <strong>${planText}</strong> — 7 jours d\'essai gratuit inclus.`;
                 headerDiv.appendChild(badge);
             }
         }

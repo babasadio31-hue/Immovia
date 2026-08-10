@@ -4391,7 +4391,7 @@ function setupSubscriptionModal() {
     const subStatus = (currentUser && currentUser.subscription_status) || (state.agencySettings && state.agencySettings.subscription_status);
     const subExpiry = (currentUser && currentUser.subscription_expiry) || (state.agencySettings && state.agencySettings.subscription_expiry);
     const isExpired = (subStatus === 'Expiré' || (subExpiry && getTodayDateString() > subExpiry));
-    const isTrial = !currentUser || !currentUser.subscription_plan || currentUser.subscription_plan.toLowerCase().includes('essai') || currentUser.subscription_plan === 'Essai 3 jours';
+    const isTrial = !currentUser || !currentUser.subscription_plan || currentUser.subscription_plan.toLowerCase().includes('essai') || currentUser.subscription_plan === 'Essai 7 jours';
     if (badge) {
       if (isExpired) {
         badge.textContent = 'Abonnement expiré';
@@ -4399,15 +4399,15 @@ function setupSubscriptionModal() {
         badge.style.color = '#f43f5e';
         badge.style.borderColor = 'rgba(244, 63, 94, 0.4)';
       } else {
-        badge.textContent = isTrial ? 'Essai Gratuit — 3 jours' : 'Plan Premium — Actif';
+        badge.textContent = isTrial ? 'Essai Gratuit — 7 jours' : 'Plan Premium — Actif';
         badge.style.background = isTrial ? 'rgba(59, 130, 246, 0.15)' : 'rgba(139, 92, 246, 0.2)';
         badge.style.color = isTrial ? '#60a5fa' : '#a78bfa';
         badge.style.borderColor = isTrial ? 'rgba(59, 130, 246, 0.3)' : 'rgba(139, 92, 246, 0.4)';
       }
     }
-    if (planEl) planEl.textContent = isExpired ? 'Abonnement Expiré (Renouvellement requis)' : (isTrial ? 'Formule Standard (Essai 3 jours gratuit)' : 'Premium (10 000 FCFA / mois)');
-    if (trialEl) trialEl.textContent = isExpired ? 'Essai terminé — Veuillez renouveler' : (isTrial ? 'Essai en cours (3 jours gratuits)' : 'Aucun (Paiement effectué)');
-    if (dateEl) dateEl.textContent = subExpiry ? subExpiry : 'Dans 3 jours (10 000 FCFA / mois)';
+    if (planEl) planEl.textContent = isExpired ? 'Abonnement Expiré (Renouvellement requis)' : (isTrial ? 'Formule Standard (Essai 7 jours gratuit)' : 'Premium (10 000 FCFA / mois)');
+    if (trialEl) trialEl.textContent = isExpired ? 'Essai terminé — Veuillez renouveler' : (isTrial ? 'Essai en cours (7 jours gratuits)' : 'Aucun (Paiement effectué)');
+    if (dateEl) dateEl.textContent = subExpiry ? subExpiry : 'Dans 7 jours (10 000 FCFA / mois)';
     if (btnOpenCancel) btnOpenCancel.style.display = 'flex';
   }
 
