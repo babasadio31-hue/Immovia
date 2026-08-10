@@ -5416,13 +5416,28 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ================= TUTORIALS =================
-window.openTutorialModal = function(title, desc) {
+window.openTutorialModal = function(title, desc, videoUrl = '') {
   const modal = document.getElementById('modal-tutorial');
   const titleEl = document.getElementById('tutorial-modal-title');
   const descEl = document.getElementById('tutorial-modal-desc');
+  const videoContainer = document.getElementById('tutorial-video-container');
   
   if (titleEl) titleEl.innerText = title;
   if (descEl) descEl.innerText = desc;
+  
+  if (videoContainer) {
+    if (videoUrl && videoUrl.trim() !== '') {
+      videoContainer.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>`;
+    } else {
+      videoContainer.innerHTML = `
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2); margin-bottom: 1rem;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="10 8 16 12 10 16 10 8"></polygon>
+        </svg>
+        <p style="color: var(--color-text-muted); max-width: 80%;">La vidéo de ce tutoriel sera bientôt disponible.</p>
+      `;
+    }
+  }
   
   if (modal) modal.classList.add('active');
 };
@@ -5433,7 +5448,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (btnCloseTutorial) {
     btnCloseTutorial.addEventListener('click', () => {
-      if (modalTutorial) modalTutorial.classList.remove('active');
+      if (modalTutorial) {
+        modalTutorial.classList.remove('active');
+        // Stop video playback when closing
+        const videoContainer = document.getElementById('tutorial-video-container');
+        if (videoContainer) videoContainer.innerHTML = '';
+      }
     });
   }
   
@@ -5441,6 +5461,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTutorial.addEventListener('click', (e) => {
       if (e.target === modalTutorial) {
         modalTutorial.classList.remove('active');
+        // Stop video playback when closing
+        const videoContainer = document.getElementById('tutorial-video-container');
+        if (videoContainer) videoContainer.innerHTML = '';
       }
     });
   }
