@@ -1573,7 +1573,7 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
       <input type="number" class="form-input receipt-paid-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" min="0" value="${paidAmount !== null ? paidAmount : 0}">
     </td>
     <td>
-      <input type="text" class="form-input receipt-reliquat-input text-right" style="width: 100%; border: none; background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-muted);" readonly value="0 FCFA">
+      <input type="number" class="form-input receipt-reliquat-input text-right" style="width: 100%; border: 1px solid var(--glass-border); background: transparent; padding: 0.35rem 0.5rem; color: var(--color-text-primary);" value="0">
     </td>
     <td class="text-center" style="vertical-align: middle;">
       <select class="form-select receipt-status-select" style="width: 100%;">
@@ -1615,6 +1615,13 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
     recalculateReceiptSummary();
   });
 
+  reliquatInput.addEventListener('input', () => {
+    reliquatInput.setAttribute('data-manual', 'true');
+    reliquatInput.setAttribute('data-value', parseInt(reliquatInput.value) || 0);
+    updateRowReliquatsAndStatus(tr);
+    recalculateReceiptSummary();
+  });
+
   statusSelect.addEventListener('change', () => {
     styleStatusSelect(statusSelect);
   });
@@ -1646,8 +1653,13 @@ function updateRowReliquatsAndStatus(row) {
   const rent = parseInt(rentInput.getAttribute('data-value')) || 0;
   const paid = parseInt(paidInput.value) || 0;
   
-  const reliquat = Math.max(0, rent - paid);
-  reliquatInput.value = formatCurrency(reliquat);
+  let reliquat = parseInt(reliquatInput.value) || 0;
+  
+  // Auto-calculer uniquement si l'utilisateur n'a pas tapé manuellement ou si c'est la première sélection
+  if (!reliquatInput.hasAttribute('data-manual')) {
+    reliquat = Math.max(0, rent - paid);
+    reliquatInput.value = reliquat;
+  }
   reliquatInput.setAttribute('data-value', reliquat);
   
   const tenantSelect = row.querySelector('.receipt-tenant-select');
