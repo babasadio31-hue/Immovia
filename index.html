@@ -290,6 +290,13 @@
           </svg>
           <span>Personnel</span>
         </button>
+        <button class="menu-btn" id="btn-nav-tutorials" data-tab="tutorials">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          <span>Tutoriels</span>
+        </button>
         <button class="menu-btn" id="btn-nav-support" data-tab="support">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1920,11 +1927,97 @@
           </div>
         </section>
 
+        <!-- Tutoriels View -->
+        <section id="view-tutorials" class="tab-view">
+          <header class="section-header">
+            <div>
+              <h2 class="section-title">Formation & Tutoriels</h2>
+              <p class="section-subtitle">Apprenez à utiliser Immovia étape par étape grâce à nos guides vidéos.</p>
+            </div>
+          </header>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+            
+            <!-- Video Card 1 -->
+            <div class="card glass tutorial-card" style="padding: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onclick="openTutorialModal('Tutoriel : Créer un propriétaire et un bien', 'Apprenez la base de la configuration en créant votre premier mandat de gestion immobilière avec un propriétaire et son immeuble associé.')">
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #1f2937; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2);">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+              </div>
+              <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">Comment ajouter un propriétaire et un bien ?</h4>
+              <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">Apprenez la base de la configuration en créant votre premier mandat de gestion immobilière.</p>
+            </div>
+
+            <!-- Video Card 2 -->
+            <div class="card glass tutorial-card" style="padding: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onclick="openTutorialModal('Tutoriel : Gestion des encaissements et loyers', 'Découvrez comment enregistrer les paiements des locataires et gérer automatiquement les reliquats en cas d\'avances de paiement.')">
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #1f2937; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2);">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+              </div>
+              <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">Gestion des encaissements et loyers</h4>
+              <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">Découvrez comment enregistrer les paiements des locataires et gérer les reliquats d'avances.</p>
+            </div>
+            
+            <!-- Video Card 3 -->
+            <div class="card glass tutorial-card" style="padding: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onclick="openTutorialModal('Tutoriel : Générer et imprimer un rapport bailleur', 'Un guide complet sur l\'édition du rapport de gestion locative, permettant de déduire vos frais d\'agence et de communiquer un compte-rendu clair au propriétaire.')">
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #1f2937; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2);">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+              </div>
+              <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">Générer et imprimer un rapport bailleur</h4>
+              <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">Tutoriel sur l'édition du rapport de gestion locative mensuel avec calcul automatique des commissions.</p>
+            </div>
+
+            <!-- Video Card 4 -->
+            <div class="card glass tutorial-card" style="padding: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onclick="openTutorialModal('Tutoriel : La comptabilité d\'agence', 'Suivez le parcours complet de vos flux financiers : encaissements, dépenses d\'entretien, reversements et chiffres d\'affaires de votre agence.')">
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #1f2937; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2);">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+              </div>
+              <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">La comptabilité d'agence</h4>
+              <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">Suivez vos dépenses, reversements et chiffres d'affaires depuis le module de comptabilité centralisée.</p>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
   </div>
 
   <!-- ================= MODALS SECTION ================= -->
+
+  <!-- Modal: Tutorial Video -->
+  <div class="modal-overlay" id="modal-tutorial">
+    <div class="modal-card glass animate-slide-up" style="max-width: 800px; width: 95%;">
+      <div class="modal-header">
+        <h3 id="tutorial-modal-title">Tutoriel</h3>
+        <button class="btn-icon" id="btn-close-tutorial">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div style="width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2); margin-bottom: 1rem;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          <p style="color: var(--color-text-muted); max-width: 80%;">La vidéo de ce tutoriel sera bientôt disponible.</p>
+        </div>
+        <p id="tutorial-modal-desc" style="margin-top: 1.5rem; color: var(--color-text-primary); font-size: 0.95rem; line-height: 1.5;"></p>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Add Ticket Support -->
   <div class="modal-overlay" id="modal-ticket">

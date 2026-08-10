@@ -519,6 +519,7 @@ function setupEventListeners() {
   document.getElementById('btn-see-all-transactions')?.addEventListener('click', () => switchTab('transactions'));
   document.getElementById('btn-nav-to-owners')?.addEventListener('click', () => switchTab('owners'));
   document.getElementById('btn-nav-to-properties')?.addEventListener('click', () => switchTab('properties'));
+  document.getElementById('btn-nav-tutorials')?.addEventListener('click', () => switchTab('tutorials'));
 
   // Fermetures des modales
   document.getElementById('btn-close-transaction-modal')?.addEventListener('click', () => closeAllModals());
@@ -1015,7 +1016,7 @@ function switchTab(tabName) {
   if (state.currentUser) {
     const user = state.currentUser;
     const isSuperAdmin = user.role === 'Administrateur' || (user.permissions && (user.permissions.includes('all') || user.permissions.includes('*')));
-    const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'support', 'settings'] : (user.permissions || ['dashboard']);
+    const userPerms = isSuperAdmin ? ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'staff', 'support', 'settings', 'tutorials'] : (user.permissions || ['dashboard']).concat(['tutorials']);
     
     if (!isTabAllowed(tabName, userPerms, isSuperAdmin)) {
       showToast("Accès restreint : Vous n'avez pas l'autorisation d'accéder à cette section.", "error");
@@ -5410,6 +5411,37 @@ document.addEventListener('DOMContentLoaded', () => {
           row.style.display = 'none';
         }
       });
+    });
+  }
+});
+
+// ================= TUTORIALS =================
+window.openTutorialModal = function(title, desc) {
+  const modal = document.getElementById('modal-tutorial');
+  const titleEl = document.getElementById('tutorial-modal-title');
+  const descEl = document.getElementById('tutorial-modal-desc');
+  
+  if (titleEl) titleEl.innerText = title;
+  if (descEl) descEl.innerText = desc;
+  
+  if (modal) modal.classList.add('active');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modalTutorial = document.getElementById('modal-tutorial');
+  const btnCloseTutorial = document.getElementById('btn-close-tutorial');
+  
+  if (btnCloseTutorial) {
+    btnCloseTutorial.addEventListener('click', () => {
+      if (modalTutorial) modalTutorial.classList.remove('active');
+    });
+  }
+  
+  if (modalTutorial) {
+    modalTutorial.addEventListener('click', (e) => {
+      if (e.target === modalTutorial) {
+        modalTutorial.classList.remove('active');
+      }
     });
   }
 });
