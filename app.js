@@ -5477,7 +5477,7 @@ async function loadTutorials() {
   if (!container) return;
   
   try {
-    const res = await fetch(`${API_URL}/tutorials`);
+    const res = await fetch(`${API_BASE_URL}/tutorials`);
     if (!res.ok) throw new Error('Erreur lors du chargement des tutoriels');
     const tutorials = await res.json();
     
