@@ -5429,7 +5429,19 @@ window.openTutorialModal = function(title, desc, videoUrl = '') {
   
   if (videoContainer) {
     if (videoUrl && videoUrl.trim() !== '') {
-      videoContainer.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>`;
+      let finalUrl = videoUrl;
+      try {
+        const urlObj = new URL(videoUrl);
+        if (urlObj.hostname.includes('youtube.com') && urlObj.searchParams.has('v')) {
+          finalUrl = `https://www.youtube.com/embed/${urlObj.searchParams.get('v')}`;
+        } else if (urlObj.hostname.includes('youtu.be')) {
+          finalUrl = `https://www.youtube.com/embed/${urlObj.pathname.slice(1)}`;
+        }
+      } catch (e) {
+        // Ignorer l'erreur si l'URL est invalide
+      }
+      
+      videoContainer.innerHTML = `<iframe width="100%" height="100%" src="${finalUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>`;
     } else {
       videoContainer.innerHTML = `
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="fill: rgba(89, 115, 93, 0.2); margin-bottom: 1rem;">
