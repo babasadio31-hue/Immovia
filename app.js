@@ -928,15 +928,6 @@ function setupEventListeners() {
     btnSettingsResetLogo.addEventListener('click', resetLogo);
   }
   
-  const btnSettingsExport = document.getElementById('btn-settings-export-json');
-  if (btnSettingsExport) btnSettingsExport.addEventListener('click', exportAppSaveJSON);
-  
-  const btnSettingsImport = document.getElementById('btn-settings-import-json');
-  if (btnSettingsImport) btnSettingsImport.addEventListener('click', handleImportJSONTrigger);
-  
-  const inputSettingsImportFile = document.getElementById('input-settings-import-file');
-  if (inputSettingsImportFile) inputSettingsImportFile.addEventListener('change', handleImportJSONFile);
-  
   const btnSettingsResetData = document.getElementById('btn-settings-reset-data');
   if (btnSettingsResetData) {
     btnSettingsResetData.addEventListener('click', () => {
@@ -4966,58 +4957,6 @@ function renderGlobalPrintHeader() {
   }
 }
 
-// Exporter les données de l'application au format JSON
-function exportAppSaveJSON() {
-  const dataStr = JSON.stringify(state, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `immovii_backup_${new Date().toISOString().split('T')[0]}.json`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  showToast('Sauvegarde exportée avec succès.', 'success');
-}
-
-// Importer les données de l'application depuis un fichier JSON
-function handleImportJSONTrigger() {
-  document.getElementById('input-settings-import-file').click();
-}
-
-function handleImportJSONFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    try {
-      const importedState = JSON.parse(evt.target.result);
-      if (importedState.owners && importedState.properties && importedState.transactions) {
-        state = {
-          owners: importedState.owners || [],
-          properties: importedState.properties || [],
-          transactions: importedState.transactions || [],
-          staff: importedState.staff || [],
-          agencySettings: importedState.agencySettings || {}
-        };
-        populateDropdowns();
-        renderGlobalPrintHeader();
-        switchTab('dashboard');
-        showToast('Sauvegarde restaurée avec succès. L\'application a été mise à jour.', 'success');
-      } else {
-        showToast('Fichier invalide : structure Immovii manquante.', 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      showToast('Erreur lors de la lecture du fichier JSON.', 'error');
-    }
-  };
-  reader.readAsText(file);
-}
 
 // Exposer globalement
 window.openOwnerDossier = openOwnerDossier;
