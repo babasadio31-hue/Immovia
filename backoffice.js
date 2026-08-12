@@ -74,7 +74,7 @@ navPills.forEach(pill => {
     // load data based on view
     if (targetId === 'view-users') loadUsers();
     else if (targetId === 'view-agencies') loadAgencies();
-    else if (targetId === 'view-properties') loadProperties();
+
     else if (targetId === 'view-stats') loadDashboard();
     else if (targetId === 'view-journal') loadJournal();
   });
@@ -261,22 +261,7 @@ async function deleteAgency(agencyId) {
   });
 }
 
-async function loadProperties() {
-  try {
-    const properties = await fetchApi('/properties');
-    const tbody = document.getElementById('tbody-properties');
-    tbody.innerHTML = properties.map(p => `
-      <tr>
-        <td>#${p.id.substring(0,6)}</td>
-        <td><strong>${p.name}</strong></td>
-        <td>${p.type}</td>
-        <td><span class="badge badge-gray">${p.status}</span></td>
-        <td>${p.agency}</td>
-        <td>${p.owner}</td>
-      </tr>
-    `).join('');
-  } catch(e) {}
-}
+
 
 async function loadJournal() {
   try {
