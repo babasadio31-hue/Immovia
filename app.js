@@ -5286,15 +5286,36 @@ async function viewTicketChat(ticketId, subject) {
   document.getElementById('chat-ticket-subject').innerText = subject;
   document.getElementById('modal-ticket-chat').classList.add('active');
   await loadTicketChatMessages();
+  
+  if (chatPollingInterval) clearInterval(chatPollingInterval);
+  chatPollingInterval = setInterval(() => {
+    if (currentChatTicketId && document.getElementById('modal-ticket-chat').classList.contains('active')) {
+      loadTicketChatMessages(true);
+    } else {
+      clearInterval(chatPollingInterval);
+    }
+  }, 3000);
 }
 
-async function loadTicketChatMessages() {
+let chatPollingInterval = null;
+let currentChatMessageCount = 0;
+
+async function loadTicketChatMessages(silent = false) {
   if (!currentChatTicketId) return;
   const container = document.getElementById('ticket-chat-messages');
-  container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted);">Chargement des messages...</div>';
+  if (!silent) {
+    container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted);">Chargement des messages...</div>';
+  }
   
   try {
     const messages = await apiFetch(`/tickets/${currentChatTicketId}/messages`);
+    
+    // Only re-render if the number of messages has changed
+    if (silent && messages && messages.length === currentChatMessageCount) {
+      return;
+    }
+    
+    currentChatMessageCount = messages ? messages.length : 0;
     container.innerHTML = '';
     
     if (!messages || messages.length === 0) {
@@ -5327,13 +5348,16 @@ async function loadTicketChatMessages() {
     // Scroll to bottom
     container.parentElement.scrollTop = container.parentElement.scrollHeight;
   } catch (error) {
-    container.innerHTML = '<div style="text-align: center; color: var(--color-rose);">Erreur lors du chargement des messages.</div>';
+    if (!silent) {
+      container.innerHTML = '<div style="text-align: center; color: var(--color-rose);">Erreur lors du chargement des messages.</div>';
+    }
   }
 }
 
 document.getElementById('btn-close-ticket-chat')?.addEventListener('click', () => {
   document.getElementById('modal-ticket-chat').classList.remove('active');
   currentChatTicketId = null;
+  if (chatPollingInterval) clearInterval(chatPollingInterval);
 });
 
 document.getElementById('form-ticket-reply')?.addEventListener('submit', async (e) => {

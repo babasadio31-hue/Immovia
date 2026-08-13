@@ -571,10 +571,15 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
   `;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-  const loadMessages = async () => {
+  let msgCount = 0;
+  const loadMessages = async (silent = false) => {
     try {
       const messagesContainer = document.getElementById(`${modalId}-messages`);
       const msgs = await fetchApi(`/admin/tickets/${id}/messages`);
+      
+      if (silent && msgs && msgs.length === msgCount) return;
+      msgCount = msgs ? msgs.length : 0;
+      
       messagesContainer.innerHTML = '';
       if (!msgs || msgs.length === 0) {
         messagesContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-muted); font-style:italic;">Aucune réponse pour le moment.</div>';
@@ -606,6 +611,14 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
   };
 
   await loadMessages();
+  
+  let pollInterval = setInterval(() => {
+    if (!document.getElementById(modalId)) {
+      clearInterval(pollInterval);
+      return;
+    }
+    loadMessages(true);
+  }, 3000);
 
   document.getElementById(`${modalId}-form`).addEventListener('submit', async (e) => {
     e.preventDefault();
