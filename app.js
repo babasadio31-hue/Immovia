@@ -5349,24 +5349,18 @@ document.getElementById('form-ticket-reply')?.addEventListener('submit', async (
   btn.innerText = 'Envoi...';
   
   try {
-    const res = await fetch(`${API_BASE_URL}/tickets/${currentChatTicketId}/messages`, {
+    const res = await apiFetch(`/tickets/${currentChatTicketId}/messages`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
       body: JSON.stringify({ message })
     });
     
-    if (res.ok) {
+    if (res) {
       textarea.value = '';
       await loadTicketChatMessages();
       renderSupportTickets(); // Refresh status
-    } else {
-      showToast("Erreur lors de l'envoi du message", "error");
     }
   } catch (error) {
-    showToast("Erreur de connexion", "error");
+    showToast(error.message || "Erreur lors de l'envoi du message", "error");
   } finally {
     btn.disabled = false;
     btn.innerText = 'Envoyer';
@@ -5407,29 +5401,21 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${API_BASE_URL}/tickets/`, {
+        const res = await apiFetch(`/tickets/`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
           body: JSON.stringify(newTicket)
         });
         
-        if (res.ok) {
+        if (res) {
           formTicket.reset();
           modalTicket.classList.remove('active');
           if (typeof loadSupportTickets === 'function') {
             loadSupportTickets(); // Reload tickets if function exists
           }
           showToast("Votre demande a été envoyée au support", "success");
-        } else {
-          const data = await res.json();
-          showToast(data.detail || "Erreur lors de l'envoi de la demande", "error");
         }
       } catch (error) {
-        showToast("Erreur de connexion", "error");
+        showToast(error.message || "Erreur lors de l'envoi de la demande", "error");
       }
     });
   }
