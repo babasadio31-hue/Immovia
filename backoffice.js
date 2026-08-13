@@ -583,19 +583,19 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
       msgs.forEach(msg => {
         const isAdmin = msg.sender_role === 'Admin';
         const msgDiv = document.createElement('div');
-        msgDiv.style.cssText = \`
+        msgDiv.style.cssText = `
           max-width: 85%; padding: 10px 15px; border-radius: 8px;
-          align-self: \${isAdmin ? 'flex-end' : 'flex-start'};
-          background: \${isAdmin ? 'var(--color-primary)' : 'var(--color-surface)'};
-          color: \${isAdmin ? 'white' : 'var(--color-text)'};
-          border: 1px solid \${isAdmin ? 'transparent' : 'var(--color-border)'};
-        \`;
-        msgDiv.innerHTML = \`
+          align-self: ${isAdmin ? 'flex-end' : 'flex-start'};
+          background: ${isAdmin ? 'var(--color-primary)' : 'var(--color-surface)'};
+          color: ${isAdmin ? 'white' : 'var(--color-text)'};
+          border: 1px solid ${isAdmin ? 'transparent' : 'var(--color-border)'};
+        `;
+        msgDiv.innerHTML = `
           <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 5px;">
-            \${isAdmin ? 'Vous (Admin)' : 'Agence'} - \${new Date(msg.date).toLocaleString('fr-FR')}
+            ${isAdmin ? 'Vous (Admin)' : 'Agence'} - ${new Date(msg.date).toLocaleString('fr-FR')}
           </div>
-          <div>\${msg.message.replace(/\\n/g, '<br>')}</div>
-        \`;
+          <div>${msg.message.replace(/\n/g, '<br>')}</div>
+        `;
         messagesContainer.appendChild(msgDiv);
       });
       const bodyEl = document.getElementById(`${modalId}-body`);

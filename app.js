@@ -5221,7 +5221,6 @@ async function renderSupportTickets() {
   const table = document.getElementById('table-support') ? document.getElementById('table-support').parentElement : null;
   
   try {
-  try {
     const res = await fetchApi('/api/tickets/');
     if (res) {
       const tickets = res;
@@ -5306,22 +5305,22 @@ async function loadTicketChatMessages() {
     messages.forEach(msg => {
       const isAgency = msg.sender_role === 'Agence';
       const msgDiv = document.createElement('div');
-      msgDiv.style.cssText = \`
+      msgDiv.style.cssText = `
         max-width: 80%;
         padding: 1rem;
         border-radius: 8px;
-        align-self: \${isAgency ? 'flex-end' : 'flex-start'};
-        background: \${isAgency ? 'var(--color-primary)' : 'var(--color-surface)'};
-        color: \${isAgency ? 'white' : 'var(--color-text)'};
-        border: 1px solid \${isAgency ? 'transparent' : 'var(--color-border)'};
-      \`;
+        align-self: ${isAgency ? 'flex-end' : 'flex-start'};
+        background: ${isAgency ? 'var(--color-primary)' : 'var(--color-surface)'};
+        color: ${isAgency ? 'white' : 'var(--color-text)'};
+        border: 1px solid ${isAgency ? 'transparent' : 'var(--color-border)'};
+      `;
       
-      msgDiv.innerHTML = \`
+      msgDiv.innerHTML = `
         <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.3rem;">
-          \${isAgency ? 'Vous' : 'Support Technique'} - \${new Date(msg.date).toLocaleString('fr-FR')}
+          ${isAgency ? 'Vous' : 'Support Technique'} - ${new Date(msg.date).toLocaleString('fr-FR')}
         </div>
-        <div>\${msg.message.replace(/\\n/g, '<br>')}</div>
-      \`;
+        <div>${msg.message.replace(/\n/g, '<br>')}</div>
+      `;
       container.appendChild(msgDiv);
     });
     
