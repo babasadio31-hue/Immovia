@@ -43,6 +43,7 @@ class TicketResponse(BaseModel):
     class Config:
         from_attributes = True
 
+@router.post("", response_model=TicketResponse)
 @router.post("/", response_model=TicketResponse)
 def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     new_ticket = models.SupportTicket(
@@ -63,6 +64,7 @@ def create_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_u
     
     return new_ticket
 
+@router.get("", response_model=List[TicketResponse])
 @router.get("/", response_model=List[TicketResponse])
 def get_tickets(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     tickets = db.query(models.SupportTicket).filter(models.SupportTicket.agency_id == current_user.agency_id).order_by(models.SupportTicket.date.desc()).all()
