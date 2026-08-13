@@ -5315,7 +5315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/tickets/', {
+        const res = await fetch(`${API_BASE_URL}/api/tickets/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
