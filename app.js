@@ -5349,11 +5349,11 @@ document.getElementById('form-ticket-reply')?.addEventListener('submit', async (
   btn.innerText = 'Envoi...';
   
   try {
-    const res = await fetch(\`\${API_BASE_URL}/api/tickets/\${currentChatTicketId}/messages\`, {
+    const res = await fetch(`${API_BASE_URL}/api/tickets/${currentChatTicketId}/messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': \`Bearer \${localStorage.getItem('token')}\`
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({ message })
     });
