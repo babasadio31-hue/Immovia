@@ -163,6 +163,16 @@ class SupportTicket(Base):
     status = Column(String, default="Ouvert")
     date = Column(String)
 
+class TicketMessage(Base):
+    __tablename__ = "ticket_messages"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    ticket_id = Column(String, ForeignKey("support_tickets.id", ondelete="CASCADE"))
+    sender_id = Column(String)
+    sender_role = Column(String) # 'Agence' or 'Admin'
+    message = Column(String)
+    date = Column(String)
+
 class ActivityLog(Base):
     __tablename__ = "activity_logs"
     

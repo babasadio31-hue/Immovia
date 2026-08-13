@@ -206,6 +206,41 @@ def get_all_tickets(db: Session = Depends(database.get_db), admin: models.User =
         })
     return results
 
+class TicketMessageCreate(BaseModel):
+    message: str
+
+@router.get("/tickets/{ticket_id}/messages")
+def get_admin_ticket_messages(ticket_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    ticket = db.query(models.SupportTicket).filter(models.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    messages = db.query(models.TicketMessage).filter(models.TicketMessage.ticket_id == ticket_id).order_by(models.TicketMessage.date.asc()).all()
+    return messages
+
+@router.post("/tickets/{ticket_id}/messages")
+def add_admin_ticket_message(ticket_id: str, msg: TicketMessageCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    import datetime
+    ticket = db.query(models.SupportTicket).filter(models.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    new_msg = models.TicketMessage(
+        ticket_id=ticket_id,
+        sender_id=admin.id,
+        sender_role="Admin",
+        message=msg.message,
+        date=datetime.datetime.utcnow().isoformat() + "Z"
+    )
+    db.add(new_msg)
+    
+    # Update ticket status
+    ticket.status = "Répondu"
+    
+    db.commit()
+    db.refresh(new_msg)
+    return new_msg
+
 @router.get("/activity")
 def get_activity_logs(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     return db.query(models.ActivityLog).order_by(models.ActivityLog.id.desc()).limit(100).all()

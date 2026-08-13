@@ -531,16 +531,18 @@ async function loadSupportTickets() {
   }
 }
 
-function viewTicketDetails(id, subject, author, agency, email, message) {
+async function viewTicketDetails(id, subject, author, agency, email, message) {
+  // First, show the modal with a loading state for messages
+  const modalId = `ticket-modal-${id}`;
   const modalHTML = `
-    <div id="ticket-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div id="${modalId}" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
       <div style="background:var(--color-surface); width:600px; max-width:95%; max-height:90vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
         <div style="padding:20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">
           <h3 style="margin:0;">Ticket: ${subject}</h3>
-          <button onclick="document.getElementById('ticket-modal').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
+          <button onclick="document.getElementById('${modalId}').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
         </div>
-        <div style="padding:20px; overflow-y:auto; flex:1;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:15px; background:var(--color-background); border-radius:8px;">
+        <div style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap: 15px;" id="${modalId}-body">
+          <div style="display:flex; justify-content:space-between; padding:15px; background:var(--color-background); border-radius:8px;">
             <div>
                 <p style="margin:0 0 5px 0;"><strong>Auteur:</strong> ${author}</p>
                 <p style="margin:0 0 5px 0;"><strong>Email:</strong> ${email}</p>
@@ -549,16 +551,95 @@ function viewTicketDetails(id, subject, author, agency, email, message) {
                 <p style="margin:0;"><strong>Agence:</strong> ${agency}</p>
             </div>
           </div>
-          <h4 style="margin-top:0;">Description du problème :</h4>
-          <p style="white-space:pre-wrap; line-height:1.6; padding:15px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-background); color:var(--color-text);">${message}</p>
+          <div style="padding:15px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-background); color:var(--color-text);">
+            <strong style="display:block; margin-bottom:5px;">Description initiale :</strong>
+            <span style="white-space:pre-wrap; line-height:1.6;">${message}</span>
+          </div>
+          <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 5px 0;">
+          <div id="${modalId}-messages" style="display:flex; flex-direction:column; gap:10px;">
+            <div style="text-align:center; color:var(--color-text-muted);">Chargement des messages...</div>
+          </div>
         </div>
-        <div style="padding:15px 20px; background:var(--color-background); text-align:right;">
-          <button onclick="document.getElementById('ticket-modal').remove()" class="btn-primary">Fermer</button>
+        <div style="padding:15px 20px; border-top:1px solid var(--color-border); background:var(--color-background);">
+          <form id="${modalId}-form" style="display:flex; gap:10px;">
+            <textarea id="${modalId}-textarea" required rows="2" style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); resize:none;" placeholder="Tapez votre réponse..."></textarea>
+            <button type="submit" class="btn-primary" style="align-self:flex-end;">Envoyer</button>
+          </form>
         </div>
       </div>
     </div>
   `;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  const loadMessages = async () => {
+    try {
+      const messagesContainer = document.getElementById(`${modalId}-messages`);
+      const msgs = await fetchApi(`/admin/tickets/${id}/messages`);
+      messagesContainer.innerHTML = '';
+      if (!msgs || msgs.length === 0) {
+        messagesContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-muted); font-style:italic;">Aucune réponse pour le moment.</div>';
+        return;
+      }
+      msgs.forEach(msg => {
+        const isAdmin = msg.sender_role === 'Admin';
+        const msgDiv = document.createElement('div');
+        msgDiv.style.cssText = \`
+          max-width: 85%; padding: 10px 15px; border-radius: 8px;
+          align-self: \${isAdmin ? 'flex-end' : 'flex-start'};
+          background: \${isAdmin ? 'var(--color-primary)' : 'var(--color-surface)'};
+          color: \${isAdmin ? 'white' : 'var(--color-text)'};
+          border: 1px solid \${isAdmin ? 'transparent' : 'var(--color-border)'};
+        \`;
+        msgDiv.innerHTML = \`
+          <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 5px;">
+            \${isAdmin ? 'Vous (Admin)' : 'Agence'} - \${new Date(msg.date).toLocaleString('fr-FR')}
+          </div>
+          <div>\${msg.message.replace(/\\n/g, '<br>')}</div>
+        \`;
+        messagesContainer.appendChild(msgDiv);
+      });
+      const bodyEl = document.getElementById(`${modalId}-body`);
+      bodyEl.scrollTop = bodyEl.scrollHeight;
+    } catch (e) {
+      document.getElementById(`${modalId}-messages`).innerHTML = '<div style="color:var(--color-rose); text-align:center;">Erreur lors du chargement des messages.</div>';
+    }
+  };
+
+  await loadMessages();
+
+  document.getElementById(`${modalId}-form`).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const txt = document.getElementById(`${modalId}-textarea`);
+    const val = txt.value.trim();
+    if (!val) return;
+    
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.innerText = 'Envoi...';
+    
+    try {
+      const res = await fetch(`${API_URL}/admin/tickets/${id}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ message: val })
+      });
+      if (res.ok) {
+        txt.value = '';
+        await loadMessages();
+        loadSupportTickets(); // Refresh background list
+      } else {
+        showToast("Erreur lors de l'envoi", "error");
+      }
+    } catch (err) {
+      showToast("Erreur de connexion", "error");
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Envoyer';
+    }
+  });
 }
 
 

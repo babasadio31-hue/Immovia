@@ -5221,13 +5221,10 @@ async function renderSupportTickets() {
   const table = document.getElementById('table-support') ? document.getElementById('table-support').parentElement : null;
   
   try {
-    const token = localStorage.getItem('token');
-    const res = await fetch('/api/tickets/', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (res.ok) {
-      const tickets = await res.json();
+  try {
+    const res = await fetchApi('/api/tickets/');
+    if (res) {
+      const tickets = res;
       
       if (!tickets || tickets.length === 0) {
         if(emptyState) emptyState.style.display = 'block';
@@ -5265,6 +5262,9 @@ async function renderSupportTickets() {
             <td>${new Date(ticket.date).toLocaleDateString('fr-FR')}</td>
             <td>
               <div class="action-buttons">
+                <button class="btn-icon text-blue" title="Voir les messages" onclick="viewTicketChat('${ticket.id}', '${ticket.subject.replace(/'/g, "\\'")}')">
+                  <i class="fa-regular fa-comments"></i>
+                </button>
                 <button class="btn-icon text-rose" title="Fermer la demande" onclick="closeSupportTicket('${ticket.id}')" ${ticket.status === 'Fermé' ? 'disabled style="opacity: 0.5;"' : ''}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
                 </button>
@@ -5279,6 +5279,100 @@ async function renderSupportTickets() {
     console.error("Erreur chargement tickets:", e);
   }
 }
+
+let currentChatTicketId = null;
+
+async function viewTicketChat(ticketId, subject) {
+  currentChatTicketId = ticketId;
+  document.getElementById('chat-ticket-subject').innerText = subject;
+  document.getElementById('modal-ticket-chat').classList.add('active');
+  await loadTicketChatMessages();
+}
+
+async function loadTicketChatMessages() {
+  if (!currentChatTicketId) return;
+  const container = document.getElementById('ticket-chat-messages');
+  container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted);">Chargement des messages...</div>';
+  
+  try {
+    const messages = await fetchApi(`/api/tickets/${currentChatTicketId}/messages`);
+    container.innerHTML = '';
+    
+    if (!messages || messages.length === 0) {
+      container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted);">Aucun message pour le moment.</div>';
+      return;
+    }
+    
+    messages.forEach(msg => {
+      const isAgency = msg.sender_role === 'Agence';
+      const msgDiv = document.createElement('div');
+      msgDiv.style.cssText = \`
+        max-width: 80%;
+        padding: 1rem;
+        border-radius: 8px;
+        align-self: \${isAgency ? 'flex-end' : 'flex-start'};
+        background: \${isAgency ? 'var(--color-primary)' : 'var(--color-surface)'};
+        color: \${isAgency ? 'white' : 'var(--color-text)'};
+        border: 1px solid \${isAgency ? 'transparent' : 'var(--color-border)'};
+      \`;
+      
+      msgDiv.innerHTML = \`
+        <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.3rem;">
+          \${isAgency ? 'Vous' : 'Support Technique'} - \${new Date(msg.date).toLocaleString('fr-FR')}
+        </div>
+        <div>\${msg.message.replace(/\\n/g, '<br>')}</div>
+      \`;
+      container.appendChild(msgDiv);
+    });
+    
+    // Scroll to bottom
+    container.parentElement.scrollTop = container.parentElement.scrollHeight;
+  } catch (error) {
+    container.innerHTML = '<div style="text-align: center; color: var(--color-rose);">Erreur lors du chargement des messages.</div>';
+  }
+}
+
+document.getElementById('btn-close-ticket-chat')?.addEventListener('click', () => {
+  document.getElementById('modal-ticket-chat').classList.remove('active');
+  currentChatTicketId = null;
+});
+
+document.getElementById('form-ticket-reply')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!currentChatTicketId) return;
+  
+  const textarea = document.getElementById('ticket-reply-message');
+  const message = textarea.value.trim();
+  if (!message) return;
+  
+  const btn = document.getElementById('btn-send-ticket-reply');
+  btn.disabled = true;
+  btn.innerText = 'Envoi...';
+  
+  try {
+    const res = await fetch(\`\${API_BASE_URL}/api/tickets/\${currentChatTicketId}/messages\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \`Bearer \${localStorage.getItem('token')}\`
+      },
+      body: JSON.stringify({ message })
+    });
+    
+    if (res.ok) {
+      textarea.value = '';
+      await loadTicketChatMessages();
+      renderSupportTickets(); // Refresh status
+    } else {
+      showToast("Erreur lors de l'envoi du message", "error");
+    }
+  } catch (error) {
+    showToast("Erreur de connexion", "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerText = 'Envoyer';
+  }
+});
 
 async function closeSupportTicket(id) {
   if (confirm("Êtes-vous sûr de vouloir fermer cette demande ?")) {
