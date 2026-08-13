@@ -5308,7 +5308,8 @@ async function loadTicketChatMessages(silent = false) {
   }
   
   try {
-    const messages = await apiFetch(`/tickets/${currentChatTicketId}/messages`);
+    const ts = new Date().getTime();
+    const messages = await apiFetch(`/tickets/${currentChatTicketId}/messages?t=${ts}`);
     
     // Only re-render if the number of messages has changed
     if (silent && messages && messages.length === currentChatMessageCount) {

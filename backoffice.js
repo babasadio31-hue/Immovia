@@ -575,7 +575,8 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
   const loadMessages = async (silent = false) => {
     try {
       const messagesContainer = document.getElementById(`${modalId}-messages`);
-      const msgs = await fetchApi(`/admin/tickets/${id}/messages`);
+      const ts = new Date().getTime();
+      const msgs = await fetchApi(`/admin/tickets/${id}/messages?t=${ts}`);
       
       if (silent && msgs && msgs.length === msgCount) return;
       msgCount = msgs ? msgs.length : 0;
