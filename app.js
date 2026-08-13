@@ -5221,7 +5221,7 @@ async function renderSupportTickets() {
   const table = document.getElementById('table-support') ? document.getElementById('table-support').parentElement : null;
   
   try {
-    const res = await fetchApi('/api/tickets/');
+    const res = await apiFetch('/tickets/');
     if (res) {
       const tickets = res;
       
@@ -5294,7 +5294,7 @@ async function loadTicketChatMessages() {
   container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted);">Chargement des messages...</div>';
   
   try {
-    const messages = await fetchApi(`/api/tickets/${currentChatTicketId}/messages`);
+    const messages = await apiFetch(`/tickets/${currentChatTicketId}/messages`);
     container.innerHTML = '';
     
     if (!messages || messages.length === 0) {
@@ -5349,7 +5349,7 @@ document.getElementById('form-ticket-reply')?.addEventListener('submit', async (
   btn.innerText = 'Envoi...';
   
   try {
-    const res = await fetch(`${API_BASE_URL}/api/tickets/${currentChatTicketId}/messages`, {
+    const res = await fetch(`${API_BASE_URL}/tickets/${currentChatTicketId}/messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -5408,7 +5408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_BASE_URL}/api/tickets/`, {
+        const res = await fetch(`${API_BASE_URL}/tickets/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
