@@ -5393,7 +5393,8 @@ document.getElementById('form-ticket-reply')?.addEventListener('submit', async (
 });
 
 async function closeSupportTicket(id) {
-  if (confirm("Êtes-vous sûr de vouloir fermer cette demande ?")) {
+  const confirmed = await showCustomConfirm("Êtes-vous sûr de vouloir fermer cette demande ?", false, "Fermeture de la demande");
+  if (confirmed) {
     // For now we don't have a close API, but we could add one if needed.
     // We just show a toast for now since backend route doesn't exist yet for closing.
     showToast("La fermeture des demandes sera bientôt disponible", "info");
