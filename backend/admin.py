@@ -6,6 +6,7 @@ from sqlalchemy import func
 from typing import List
 
 from . import models, schemas, auth, database
+from .tickets import TicketMessageResponse
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -209,7 +210,7 @@ def get_all_tickets(db: Session = Depends(database.get_db), admin: models.User =
 class TicketMessageCreate(BaseModel):
     message: str
 
-@router.get("/tickets/{ticket_id}/messages")
+@router.get("/tickets/{ticket_id}/messages", response_model=List[TicketMessageResponse])
 def get_admin_ticket_messages(ticket_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     ticket = db.query(models.SupportTicket).filter(models.SupportTicket.id == ticket_id).first()
     if not ticket:
@@ -218,7 +219,7 @@ def get_admin_ticket_messages(ticket_id: str, db: Session = Depends(database.get
     messages = db.query(models.TicketMessage).filter(models.TicketMessage.ticket_id == ticket_id).order_by(models.TicketMessage.date.asc()).all()
     return messages
 
-@router.post("/tickets/{ticket_id}/messages")
+@router.post("/tickets/{ticket_id}/messages", response_model=TicketMessageResponse)
 def add_admin_ticket_message(ticket_id: str, msg: TicketMessageCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
     import datetime
     ticket = db.query(models.SupportTicket).filter(models.SupportTicket.id == ticket_id).first()
