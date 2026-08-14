@@ -521,7 +521,7 @@ async function loadSupportTickets() {
         <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority}</span></td>
         <td><span class="badge badge-purple">${ticket.status}</span></td>
         <td>
-          <button class="btn-icon" title="Voir détails" onclick="viewTicketDetails('${ticket.id}', '${safeSubject}', '${safeAuthor}', '${safeAgency}', '${safeEmail}', '${safeMessage}')"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-icon" title="Voir détails" onclick="viewTicketDetails('${ticket.id}', '${safeSubject}', '${safeAuthor}', '${safeAgency}', '${safeEmail}', '${safeMessage}', '${ticket.status}')"><i class="fa-solid fa-eye"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -531,7 +531,7 @@ async function loadSupportTickets() {
   }
 }
 
-async function viewTicketDetails(id, subject, author, agency, email, message) {
+async function viewTicketDetails(id, subject, author, agency, email, message, status) {
   // First, show the modal with a loading state for messages
   const modalId = `ticket-modal-${id}`;
   const modalHTML = `
@@ -562,8 +562,8 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
         </div>
         <div style="padding:15px 20px; border-top:1px solid var(--color-border); background:var(--color-background);">
           <form id="${modalId}-form" style="display:flex; gap:10px;">
-            <textarea id="${modalId}-textarea" required rows="2" style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); resize:none;" placeholder="Tapez votre réponse..."></textarea>
-            <button type="submit" class="btn-primary" style="align-self:flex-end;">Envoyer</button>
+            <textarea id="${modalId}-textarea" required rows="2" style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); resize:none;" placeholder="${status === 'Fermé' ? 'Cette demande est fermée' : 'Tapez votre réponse...'}" ${status === 'Fermé' ? 'disabled' : ''}></textarea>
+            <button type="submit" class="btn-primary" style="align-self:flex-end;" ${status === 'Fermé' ? 'disabled' : ''}>Envoyer</button>
           </form>
         </div>
       </div>

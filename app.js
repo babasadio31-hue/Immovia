@@ -5261,7 +5261,7 @@ async function renderSupportTickets() {
             <td>${new Date(ticket.date).toLocaleDateString('fr-FR')}</td>
             <td>
               <div class="action-buttons">
-                <button class="btn-icon text-blue" title="Voir les messages" onclick="viewTicketChat('${ticket.id}', '${ticket.subject.replace(/'/g, "\\'")}')">
+                <button class="btn-icon text-blue" title="Voir les messages" onclick="viewTicketChat('${ticket.id}', '${ticket.subject.replace(/'/g, "\\'")}', '${ticket.status}')">
                   <i class="fa-regular fa-comments"></i>
                 </button>
                 <button class="btn-icon text-rose" title="Fermer la demande" onclick="closeSupportTicket('${ticket.id}')" ${ticket.status === 'Fermé' ? 'disabled style="opacity: 0.5;"' : ''}>
@@ -5281,9 +5281,23 @@ async function renderSupportTickets() {
 
 let currentChatTicketId = null;
 
-async function viewTicketChat(ticketId, subject) {
+async function viewTicketChat(ticketId, subject, status) {
   currentChatTicketId = ticketId;
   document.getElementById('chat-ticket-subject').innerText = subject;
+  
+  const replyInput = document.getElementById('ticket-reply-message');
+  const replyBtn = document.getElementById('btn-send-ticket-reply');
+  
+  if (status === 'Fermé') {
+    replyInput.disabled = true;
+    replyBtn.disabled = true;
+    replyInput.placeholder = "Cette demande est fermée, vous ne pouvez plus y répondre.";
+  } else {
+    replyInput.disabled = false;
+    replyBtn.disabled = false;
+    replyInput.placeholder = "Tapez votre réponse ici...";
+  }
+  
   document.getElementById('modal-ticket-chat').classList.add('active');
   await loadTicketChatMessages();
   
