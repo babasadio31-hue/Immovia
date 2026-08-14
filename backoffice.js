@@ -576,7 +576,7 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
     try {
       const messagesContainer = document.getElementById(`${modalId}-messages`);
       const ts = new Date().getTime();
-      const msgs = await fetchApi(`/admin/tickets/${id}/messages?t=${ts}`);
+      const msgs = await fetchApi(`/tickets/${id}/messages?t=${ts}`);
       
       if (silent && msgs && msgs.length === msgCount) return;
       msgCount = msgs ? msgs.length : 0;
@@ -632,15 +632,12 @@ async function viewTicketDetails(id, subject, author, agency, email, message) {
     btn.innerText = 'Envoi...';
     
     try {
-      const res = await fetch(`${API_URL}/admin/tickets/${id}/messages`, {
+      const res = await fetchApi(`/tickets/${id}/messages`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${adminToken}`
-        },
         body: JSON.stringify({ message: val })
       });
-      if (res.ok) {
+      
+      if (res) {
         txt.value = '';
         await loadMessages();
         loadSupportTickets(); // Refresh background list
