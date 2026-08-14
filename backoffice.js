@@ -85,6 +85,7 @@ async function fetchApi(endpoint, options = {}) {
   const response = await fetch(`${API_URL}/admin${endpoint}`, {
     ...options,
     headers: { 
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${adminToken}`,
       ...(options.headers || {})
     }
