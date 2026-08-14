@@ -107,3 +107,17 @@ def add_ticket_message(ticket_id: str, msg: TicketMessageCreate, db: Session = D
     db.commit()
     db.refresh(new_msg)
     return new_msg
+
+@router.put("/{ticket_id}/close", response_model=TicketResponse)
+def close_ticket(ticket_id: str, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    ticket = db.query(models.SupportTicket).filter(
+        models.SupportTicket.id == ticket_id,
+        models.SupportTicket.agency_id == current_user.agency_id
+    ).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    ticket.status = "Fermé"
+    db.commit()
+    db.refresh(ticket)
+    return ticket

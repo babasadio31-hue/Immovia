@@ -5395,9 +5395,13 @@ document.getElementById('form-ticket-reply')?.addEventListener('submit', async (
 async function closeSupportTicket(id) {
   const confirmed = await showCustomConfirm("Êtes-vous sûr de vouloir fermer cette demande ?", false, "Fermeture de la demande");
   if (confirmed) {
-    // For now we don't have a close API, but we could add one if needed.
-    // We just show a toast for now since backend route doesn't exist yet for closing.
-    showToast("La fermeture des demandes sera bientôt disponible", "info");
+    try {
+      await fetchApi(`/tickets/${id}/close`, { method: 'PUT' });
+      showToast("Demande fermée avec succès", "success");
+      loadSupportTickets(); // Reload the tickets list to update the status in the UI
+    } catch (e) {
+      showToast("Erreur lors de la fermeture de la demande", "error");
+    }
   }
 }
 
