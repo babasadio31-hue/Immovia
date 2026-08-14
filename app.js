@@ -5398,7 +5398,7 @@ async function closeSupportTicket(id) {
     try {
       await apiFetch(`/tickets/${id}/close`, { method: 'PUT' });
       showToast("Demande fermée avec succès", "success");
-      loadSupportTickets(); // Reload the tickets list to update the status in the UI
+      renderSupportTickets(); // Reload the tickets list to update the status in the UI
     } catch (e) {
       showToast("Erreur lors de la fermeture de la demande", "error");
     }
@@ -5439,8 +5439,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res) {
           formTicket.reset();
           modalTicket.classList.remove('active');
-          if (typeof loadSupportTickets === 'function') {
-            loadSupportTickets(); // Reload tickets if function exists
+          if (typeof renderSupportTickets === 'function') {
+            renderSupportTickets(); // Reload tickets if function exists
           }
           showToast("Votre demande a été envoyée au support", "success");
         }
