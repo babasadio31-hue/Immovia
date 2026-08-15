@@ -504,27 +504,35 @@ async function loadSupportTickets() {
     tickets.forEach(ticket => {
       const tr = document.createElement('tr');
       
-      const safeSubject = (ticket.subject || '').replace(/'/g, "\'").replace(/"/g, '&quot;');
-      const safeMessage = (ticket.message || '').replace(/'/g, "\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
-      const safeAuthor = (ticket.author || 'Anonyme').replace(/'/g, "\'");
-      const safeEmail = (ticket.email || 'Non spécifié').replace(/'/g, "\'");
-      const safeAgency = (ticket.agency || 'Aucune').replace(/'/g, "\'");
-      
       tr.innerHTML = `
         <td>#${ticket.id.substring(0,6)}</td>
         <td>${ticket.date ? ticket.date.substring(0,10) : ''}</td>
         <td>
-            <div style="font-weight:bold;">${ticket.author}</div>
-            <div style="font-size:0.85em; color:var(--color-text-muted);">${ticket.agency !== 'Aucune' ? ticket.agency : ticket.email}</div>
+            <div style="font-weight:bold;">${ticket.author || 'Anonyme'}</div>
+            <div style="font-size:0.85em; color:var(--color-text-muted);">${(ticket.agency && ticket.agency !== 'Aucune') ? ticket.agency : (ticket.email || 'Non spécifié')}</div>
         </td>
-        <td><strong>${ticket.subject}</strong></td>
-        <td>${ticket.category}</td>
-        <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority}</span></td>
-        <td><span class="badge badge-purple">${ticket.status}</span></td>
-        <td>
-          <button class="btn-icon" title="Voir détails" onclick="viewTicketDetails('${ticket.id}', '${safeSubject}', '${safeAuthor}', '${safeAgency}', '${safeEmail}', '${safeMessage}', '${ticket.status}')"><i class="fa-solid fa-eye"></i></button>
-        </td>
+        <td><strong>${ticket.subject || ''}</strong></td>
+        <td>${ticket.category || ''}</td>
+        <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority || ''}</span></td>
+        <td><span class="badge badge-purple">${ticket.status || ''}</span></td>
+        <td class="action-cell"></td>
       `;
+      
+      const btn = document.createElement('button');
+      btn.className = 'btn-icon';
+      btn.title = 'Voir détails';
+      btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      btn.onclick = () => viewTicketDetails(
+        ticket.id, 
+        ticket.subject || '', 
+        ticket.author || 'Anonyme', 
+        ticket.agency || 'Aucune', 
+        ticket.email || 'Non spécifié', 
+        ticket.message || '', 
+        ticket.status || ''
+      );
+      
+      tr.querySelector('.action-cell').appendChild(btn);
       tbody.appendChild(tr);
     });
   } catch (err) {
