@@ -2,7 +2,7 @@
 
 // TODO: Remplacer par l'URL publique fournie par Railway (ex: https://immovia-production.up.railway.app)
 // Si on est en local ou en ligne, on pointe de force vers l'URL de production
-const API_BASE_URL = 'https://immovia-production.up.railway.app/api';
+const API_BASE_URL = '/api';
 
 // --- GESTION DU TOKEN JWT ---
 function getAuthToken() {
