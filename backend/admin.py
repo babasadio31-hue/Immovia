@@ -393,7 +393,7 @@ def send_newsletter(req: NewsletterRequest, db: Session = Depends(database.get_d
 
 @router.get("/tutorials", response_model=List[schemas.Tutorial])
 def get_all_tutorials(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
-    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.desc()).all()
+    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.asc()).all()
 
 @router.post("/tutorials", response_model=schemas.Tutorial)
 def create_tutorial(tut: schemas.TutorialCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):

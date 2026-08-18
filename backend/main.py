@@ -223,7 +223,7 @@ def receive_contact_message(contact: ContactRequest, db: Session = Depends(datab
 
 @app.get("/api/tutorials", response_model=list[schemas.Tutorial])
 def get_tutorials(db: Session = Depends(database.get_db)):
-    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.desc()).all()
+    return db.query(models.Tutorial).order_by(models.Tutorial.date_added.asc()).all()
 
 # Servir le frontend pour Railway
 import os
