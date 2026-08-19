@@ -434,3 +434,52 @@ def delete_tutorial(tut_id: str, db: Session = Depends(database.get_db), admin: 
     db.delete(db_tut)
     db.commit()
     return {"message": "Tutoriel supprimé avec succès"}
+
+# ==================== ANNOUNCEMENTS ====================
+
+@router.get("/announcements", response_model=List[schemas.Announcement])
+def get_all_announcements(db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    return db.query(models.Announcement).order_by(models.Announcement.date_added.desc()).all()
+
+@router.post("/announcements", response_model=schemas.Announcement)
+def create_announcement(ann: schemas.AnnouncementCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    import uuid
+    from datetime import datetime
+    new_ann = models.Announcement(
+        id=f"ann-{str(uuid.uuid4())[:8]}",
+        title=ann.title,
+        message=ann.message,
+        target_page=ann.target_page,
+        is_active=ann.is_active,
+        date_added=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    db.add(new_ann)
+    db.commit()
+    db.refresh(new_ann)
+    return new_ann
+
+@router.put("/announcements/{ann_id}", response_model=schemas.Announcement)
+def update_announcement(ann_id: str, ann: schemas.AnnouncementCreate, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_ann = db.query(models.Announcement).filter(models.Announcement.id == ann_id).first()
+    if not db_ann:
+        raise HTTPException(status_code=404, detail="Annonce introuvable")
+    
+    db_ann.title = ann.title
+    db_ann.message = ann.message
+    db_ann.target_page = ann.target_page
+    db_ann.is_active = ann.is_active
+    
+    db.commit()
+    db.refresh(db_ann)
+    return db_ann
+
+@router.delete("/announcements/{ann_id}")
+def delete_announcement(ann_id: str, db: Session = Depends(database.get_db), admin: models.User = Depends(get_super_admin)):
+    db_ann = db.query(models.Announcement).filter(models.Announcement.id == ann_id).first()
+    if not db_ann:
+        raise HTTPException(status_code=404, detail="Annonce introuvable")
+    
+    db.delete(db_ann)
+    db.commit()
+    return {"message": "Annonce supprimée avec succès"}
+

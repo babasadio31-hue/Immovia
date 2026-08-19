@@ -1,3 +1,18 @@
+
+function escapeHTML(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/[&<>'"]/g, function(tag) {
+    const charsToReplace = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return charsToReplace[tag] || tag;
+  });
+}
+
 const API_URL = '/api';
 let adminToken = localStorage.getItem('immovii_admin_token');
 
@@ -128,19 +143,19 @@ async function loadUsers() {
           <div class="user-cell">
             <div class="avatar">${u.name.substring(0,2).toUpperCase()}</div>
             <div class="user-info">
-              <span class="user-name">${u.name}</span>
-              <span class="user-email">${u.email}</span>
+              <span class="user-name">${escapeHTML(u.name)}</span>
+              <span class="user-email">${escapeHTML(u.email)}</span>
             </div>
           </div>
         </td>
-        <td>${u.phone || '-'}</td>
+        <td>${escapeHTML(u.phone || '-')}</td>
         <td>${u.agency}</td>
         <td><span class="badge badge-blue">${u.subscription_plan}</span></td>
-        <td><span class="badge ${u.status === 'Actif' ? 'badge-green' : 'badge-orange'}"><i class="fa-solid fa-check"></i> ${u.status}</span></td>
+        <td><span class="badge ${u.status === 'Actif' ? 'badge-green' : 'badge-orange'}"><i class="fa-solid fa-check"></i> ${escapeHTML(u.status)}</span></td>
         <td>${u.subscription_expiry || '-'}</td>
         <td>
           <button class="btn-icon" title="Voir" onclick="viewUserDetails('${u.id}')"><i class="fa-solid fa-eye"></i></button>
-          <button class="btn-icon" title="${u.status === 'Actif' ? 'Suspendre' : 'Activer'}" onclick="toggleUserStatus('${u.id}', '${u.status}')"><i class="fa-solid fa-ban"></i></button>
+          <button class="btn-icon" title="${u.status === 'Actif' ? 'Suspendre' : 'Activer'}" onclick="toggleUserStatus('${u.id}', '${escapeHTML(u.status)}')"><i class="fa-solid fa-ban"></i></button>
           <button class="btn-icon danger" title="Supprimer" onclick="deleteUser('${u.id}')"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>
@@ -161,10 +176,10 @@ async function loadAgencies() {
       return `
       <tr>
         <td>#${a.id.substring(0,6)}</td>
-        <td><strong>${a.name}</strong></td>
+        <td><strong>${escapeHTML(a.name)}</strong></td>
         <td>${a.manager_name || '-'}</td>
-        <td>${a.email}</td>
-        <td>${a.phone || '-'}</td>
+        <td>${escapeHTML(a.email)}</td>
+        <td>${escapeHTML(a.phone || '-')}</td>
         <td><span class="badge badge-blue">${a.subscription_plan || 'Essai'}</span></td>
         <td><span class="badge ${statusClass}">${statusLabel}</span></td>
         <td><span style="color: ${a.subscription_status === 'Expiré' ? '#ef4444' : '#10b981'}; font-weight: 500;">${expiryLabel}</span></td>
@@ -284,7 +299,7 @@ async function loadJournal() {
           <td>#${l.id}</td>
           <td>${l.date}</td>
           <td><span class="badge badge-gray">${l.action}</span></td>
-          <td>${l.details}</td>
+          <td>${escapeHTML(l.details)}</td>
         </tr>
       `).join('');
     }
@@ -306,7 +321,7 @@ function hideLoading() { loadingOverlay.style.display = 'none'; }
 function showToast(msg, type = 'info') {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+  toast.className = `toast toast-${escapeHTML(type)}`;
   toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'}"></i> <span>${msg}</span>`;
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 3500);
@@ -409,7 +424,7 @@ async function viewUserDetails(userId) {
     roleBadge.className = data.role === 'Super Administrateur' ? 'badge badge-purple' : 'badge badge-blue';
     
     const statusBadge = document.getElementById('detail-status');
-    statusBadge.innerHTML = `<i class="fa-solid ${data.status === 'Actif' ? 'fa-check' : 'fa-ban'}"></i> ${data.status}`;
+    statusBadge.innerHTML = `<i class="fa-solid ${data.status === 'Actif' ? 'fa-check' : 'fa-ban'}"></i> ${escapeHTML(data.status)}`;
     statusBadge.className = data.status === 'Actif' ? 'badge badge-green' : 'badge badge-orange';
     
     document.getElementById('detail-agency').innerText = data.agency_name;
@@ -466,10 +481,10 @@ async function loadContactMessages() {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${msg.date}</td>
-        <td><strong>${msg.name}</strong></td>
-        <td>${msg.email}</td>
-        <td>${msg.phone}</td>
-        <td><span class="badge ${msg.status === 'Non lu' ? 'badge-orange' : 'badge-green'}">${msg.status}</span></td>
+        <td><strong>${escapeHTML(msg.name)}</strong></td>
+        <td>${escapeHTML(msg.email)}</td>
+        <td>${escapeHTML(msg.phone)}</td>
+        <td><span class="badge ${msg.status === 'Non lu' ? 'badge-orange' : 'badge-green'}">${escapeHTML(msg.status)}</span></td>
         <td>
           <button class="btn-icon" title="Lire" onclick="viewMessage('${msg.id}', '${msg.name.replace(/'/g, "\'")}', '${msg.email.replace(/'/g, "\'")}', '${msg.phone.replace(/'/g, "\'")}', '${msg.message.replace(/'/g, "\'").replace(/\n/g, "\\n")}')"><i class="fa-solid fa-eye"></i></button>
         </td>
@@ -511,10 +526,10 @@ async function loadSupportTickets() {
             <div style="font-weight:bold;">${ticket.author || 'Anonyme'}</div>
             <div style="font-size:0.85em; color:var(--color-text-muted);">${(ticket.agency && ticket.agency !== 'Aucune') ? ticket.agency : (ticket.email || 'Non spécifié')}</div>
         </td>
-        <td><strong>${ticket.subject || ''}</strong></td>
-        <td>${ticket.category || ''}</td>
+        <td><strong>${escapeHTML(ticket.subject || '')}</strong></td>
+        <td>${escapeHTML(ticket.category || '')}</td>
         <td><span class="badge ${ticket.priority === 'Haute' ? 'badge-orange' : 'badge-blue'}">${ticket.priority || ''}</span></td>
-        <td><span class="badge badge-purple">${ticket.status || ''}</span></td>
+        <td><span class="badge badge-purple">${escapeHTML(ticket.status || '')}</span></td>
         <td class="action-cell"></td>
       `;
       
@@ -547,14 +562,14 @@ async function viewTicketDetails(id, subject, author, agency, email, message, st
     <div id="${modalId}" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
       <div style="background:var(--color-surface); width:600px; max-width:95%; max-height:90vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
         <div style="padding:20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0;">Ticket: ${subject}</h3>
+          <h3 style="margin:0;">Ticket: ${escapeHTML(subject)}</h3>
           <button onclick="document.getElementById('${modalId}').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
         </div>
         <div style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap: 15px;" id="${modalId}-body">
           <div style="display:flex; justify-content:space-between; padding:15px; background:var(--color-background); border-radius:8px;">
             <div>
                 <p style="margin:0 0 5px 0;"><strong>Auteur:</strong> ${author}</p>
-                <p style="margin:0 0 5px 0;"><strong>Email:</strong> ${email}</p>
+                <p style="margin:0 0 5px 0;"><strong>Email:</strong> ${escapeHTML(email)}</p>
             </div>
             <div>
                 <p style="margin:0;"><strong>Agence:</strong> ${agency}</p>
@@ -562,7 +577,7 @@ async function viewTicketDetails(id, subject, author, agency, email, message, st
           </div>
           <div style="padding:15px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-background); color:var(--color-text);">
             <strong style="display:block; margin-bottom:5px;">Description initiale :</strong>
-            <span style="white-space:pre-wrap; line-height:1.6;">${message}</span>
+            <span style="white-space:pre-wrap; line-height:1.6;">${escapeHTML(message)}</span>
           </div>
           <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 5px 0;">
           <div id="${modalId}-messages" style="display:flex; flex-direction:column; gap:10px;">
@@ -705,9 +720,9 @@ async function viewMessage(id, subject, email, phone, text) {
           <button onclick="document.getElementById('msg-modal').remove()" style="background:transparent; border:none; color:var(--color-text-muted); cursor:pointer;"><i class="fa-solid fa-times"></i></button>
         </div>
         <div style="padding:20px;">
-          <p><strong>De:</strong> ${subject}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Téléphone:</strong> ${phone}</p>
+          <p><strong>De:</strong> ${escapeHTML(subject)}</p>
+          <p><strong>Email:</strong> ${escapeHTML(email)}</p>
+          <p><strong>Téléphone:</strong> ${escapeHTML(phone)}</p>
           <hr style="border:0; border-top:1px solid var(--color-border); margin:15px 0;">
           <p style="white-space:pre-wrap; line-height:1.5;">${text}</p>
         </div>
@@ -786,7 +801,7 @@ async function loadAdminTutorials() {
     
     tbody.innerHTML = tutorials.map(tut => `
       <tr>
-        <td><strong>${tut.title}</strong></td>
+        <td><strong>${escapeHTML(tut.title)}</strong></td>
         <td>${tut.description.substring(0, 50)}${tut.description.length > 50 ? '...' : ''}</td>
         <td>${tut.video_url ? `<a href="${tut.video_url}" target="_blank" style="color:var(--color-primary);">Lien</a>` : '-'}</td>
         <td>${tut.date_added.substring(0,10)}</td>
@@ -893,3 +908,132 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// ================= ANNOUNCEMENTS (ADMIN) =================
+
+async function loadAnnouncements() {
+  try {
+    const res = await fetch(`${API_URL}/admin/announcements`, {
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    const announcements = await res.json();
+    const tbody = document.getElementById('tbody-admin-announcements');
+    
+    if (announcements.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Aucune annonce.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = announcements.map(ann => `
+      <tr>
+        <td><strong>${escapeHTML(ann.title || '-')}</strong></td>
+        <td>${escapeHTML(ann.message).substring(0, 50)}${ann.message.length > 50 ? '...' : ''}</td>
+        <td><span class="badge" style="background:#8b5cf6; color:white; padding: 2px 6px; border-radius: 4px;">${escapeHTML(ann.target_page)}</span></td>
+        <td>${ann.is_active ? '<span class="badge" style="background:#22c55e; color:white; padding: 2px 6px; border-radius: 4px;">Actif</span>' : '<span class="badge" style="background:#ef4444; color:white; padding: 2px 6px; border-radius: 4px;">Inactif</span>'}</td>
+        <td>${ann.date_added.substring(0,10)}</td>
+        <td>
+          <button class="btn-icon" title="Modifier" onclick="editAdminAnnouncement('${ann.id}', '${(ann.title || '').replace(/'/g, "\\'")}', '${ann.message.replace(/'/g, "\\'").replace(/\n/g, '\\n')}', '${ann.target_page}', ${ann.is_active})"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-icon" title="Supprimer" onclick="deleteAdminAnnouncement('${ann.id}')"><i class="fa-solid fa-trash" style="color:var(--color-danger);"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error("Error loading announcements", err);
+  }
+}
+
+function openAdminAnnouncementModal() {
+  document.getElementById('admin-announcement-id').value = '';
+  document.getElementById('admin-announcement-title').value = '';
+  document.getElementById('admin-announcement-message').value = '';
+  document.getElementById('admin-announcement-target').value = 'all';
+  document.getElementById('admin-announcement-active').checked = true;
+  document.getElementById('admin-announcement-modal-title').innerText = 'Ajouter une Annonce';
+  document.getElementById('admin-announcement-modal').style.display = 'flex';
+}
+
+function editAdminAnnouncement(id, title, message, target, isActive) {
+  document.getElementById('admin-announcement-id').value = id;
+  document.getElementById('admin-announcement-title').value = title;
+  document.getElementById('admin-announcement-message').value = message;
+  document.getElementById('admin-announcement-target').value = target;
+  document.getElementById('admin-announcement-active').checked = isActive;
+  document.getElementById('admin-announcement-modal-title').innerText = 'Modifier l\\'Annonce';
+  document.getElementById('admin-announcement-modal').style.display = 'flex';
+}
+
+async function deleteAdminAnnouncement(id) {
+  if (confirm("Êtes-vous sûr de vouloir supprimer cette annonce ?")) {
+    try {
+      const res = await fetch(`${API_URL}/admin/announcements/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (res.ok) {
+        showToast("Annonce supprimée", "success");
+        loadAnnouncements();
+      } else {
+        showToast("Erreur lors de la suppression", "error");
+      }
+    } catch (err) {
+      showToast("Erreur réseau", "error");
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const annForm = document.getElementById('admin-announcement-form');
+  if (annForm) {
+    annForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('admin-announcement-id').value;
+      const payload = {
+        title: document.getElementById('admin-announcement-title').value,
+        message: document.getElementById('admin-announcement-message').value,
+        target_page: document.getElementById('admin-announcement-target').value,
+        is_active: document.getElementById('admin-announcement-active').checked
+      };
+      
+      showLoading();
+      try {
+        let url = `${API_URL}/admin/announcements`;
+        let method = 'POST';
+        if (id) {
+          url += `/${id}`;
+          method = 'PUT';
+        }
+        
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+          showToast(id ? "Annonce mise à jour" : "Annonce ajoutée", "success");
+          document.getElementById('admin-announcement-modal').style.display = 'none';
+          loadAnnouncements();
+        } else {
+          showToast("Erreur lors de l'enregistrement", "error");
+        }
+      } catch (err) {
+        showToast("Erreur réseau", "error");
+      } finally {
+        hideLoading();
+      }
+    });
+  }
+
+  const navPillsLocal = document.querySelectorAll('.nav-pill');
+  navPillsLocal.forEach(pill => {
+    pill.addEventListener('click', () => {
+      if (pill.dataset.target === 'view-announcements') {
+        loadAnnouncements();
+      }
+    });
+  });
+});
+

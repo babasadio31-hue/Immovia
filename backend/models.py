@@ -231,6 +231,16 @@ class Tutorial(Base):
     date_added = Column(String)
 
 
+class Announcement(Base):
+    __tablename__ = "announcements"
+    
+    id = Column(String, primary_key=True, index=True)
+    title = Column(String, nullable=True)
+    message = Column(String)
+    target_page = Column(String, default="all")
+    is_active = Column(Boolean, default=True)
+    date_added = Column(String)
+
 def log_activity(db, action: str, details: str, user_id: str = None, agency_id: str = None):
     try:
         from datetime import datetime

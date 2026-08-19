@@ -169,7 +169,7 @@ app = FastAPI(title="Immovii API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace with the frontend URL
+    allow_origins=os.getenv("FRONTEND_URL", "*").split(","),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -224,6 +224,13 @@ def receive_contact_message(contact: ContactRequest, db: Session = Depends(datab
 @app.get("/api/tutorials", response_model=list[schemas.Tutorial])
 def get_tutorials(db: Session = Depends(database.get_db)):
     return db.query(models.Tutorial).order_by(models.Tutorial.date_added.asc()).all()
+
+@app.get("/api/announcements/{target_page}", response_model=list[schemas.Announcement])
+def get_announcements(target_page: str, db: Session = Depends(database.get_db)):
+    return db.query(models.Announcement).filter(
+        models.Announcement.is_active == True,
+        (models.Announcement.target_page == target_page) | (models.Announcement.target_page == "all")
+    ).order_by(models.Announcement.date_added.desc()).all()
 
 # Servir le frontend pour Railway
 import os

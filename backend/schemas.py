@@ -170,3 +170,19 @@ class Tutorial(TutorialBase):
 
     class Config:
         from_attributes = True
+
+class AnnouncementBase(BaseModel):
+    title: Optional[str] = None
+    message: str
+    target_page: str = "all"
+    is_active: bool = True
+
+class AnnouncementCreate(AnnouncementBase):
+    pass
+
+class Announcement(AnnouncementBase):
+    id: str
+    date_added: str
+
+    class Config:
+        from_attributes = True

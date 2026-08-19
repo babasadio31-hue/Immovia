@@ -1,3 +1,18 @@
+
+function escapeHTML(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/[&<>'"]/g, function(tag) {
+    const charsToReplace = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return charsToReplace[tag] || tag;
+  });
+}
+
 /* ==========================================================================
    Immovii - Moteur de Gestion d'Agence Immobilière (FCFA)
    ========================================================================== */
@@ -99,7 +114,7 @@ function showAccountEmail() {
   }
     
   if (currentUser && currentUser.email) {
-    showToast(`Votre adresse email : ${currentUser.email}`, 'success');
+    showToast(`Votre adresse email : ${escapeHTML(currentUser.email)}`, 'success');
   } else {
     // Fallback if completely unavailable
     showToast("Email introuvable", 'error');
@@ -327,7 +342,7 @@ async function loadData() {
 function getPropertyDisplayName(prop) {
   if (!prop) return '';
   if (prop.type) {
-    return `${prop.name} - ${prop.type}`;
+    return `${escapeHTML(prop.name)} - ${escapeHTML(prop.type)}`;
   }
   return prop.name;
 }
@@ -336,11 +351,11 @@ function getPropertyDisplayNameHTML(prop) {
   if (!prop) return '';
   if (prop.type && prop.type.includes(' - ')) {
     const parts = prop.type.split(' - ');
-    const propNameAndAppt = `${prop.name} - ${parts[0]}`;
+    const propNameAndAppt = `${escapeHTML(prop.name)} - ${parts[0]}`;
     const desc = parts.slice(1).join(' - ');
     return `${propNameAndAppt} <br> <span class="goal-deadline-badge" style="font-size: 0.8rem; font-weight: normal; margin-top: 2px; display: inline-block;">${desc}</span>`;
   } else if (prop.type) {
-    return `${prop.name} - ${prop.type}`;
+    return `${escapeHTML(prop.name)} - ${escapeHTML(prop.type)}`;
   }
   return prop.name;
 }
@@ -355,7 +370,7 @@ function populateDropdowns() {
   if (ownerSelect) {
     ownerSelect.innerHTML = '';
     state.owners.forEach(owner => {
-      ownerSelect.innerHTML += `<option value="${owner.id}">${owner.name}</option>`;
+      ownerSelect.innerHTML += `<option value="${owner.id}">${escapeHTML(owner.name)}</option>`;
     });
   }
 
@@ -365,7 +380,7 @@ function populateDropdowns() {
     propSelect.innerHTML = '<option value="">Aucun (Dépense Agence)</option>';
     state.properties.forEach(prop => {
       const displayName = getPropertyDisplayName(prop);
-      propSelect.innerHTML += `<option value="${prop.id}">${displayName} (${prop.address})</option>`;
+      propSelect.innerHTML += `<option value="${prop.id}">${displayName} (${escapeHTML(prop.address)})</option>`;
     });
   }
 
@@ -1142,7 +1157,7 @@ function renderRecentTransactionsList() {
             IM
           </div>
           <div class="recent-title-wrap">
-            <span class="recent-desc">${tx.description}</span>
+            <span class="recent-desc">${escapeHTML(tx.description)}</span>
             <span class="recent-date">${formattedDate} | ${propName}</span>
           </div>
         </div>
@@ -1214,7 +1229,7 @@ function renderDashboardOwnersPreview() {
       <div class="recent-item" style="padding: 0.6rem 0.85rem;">
         <div style="display: flex; flex-direction: column;">
           <span style="font-weight: 600; font-size: 0.9rem;">
-            <a class="owner-click-link" onclick="openOwnerDossier('${owner.id}')">${owner.name}</a>
+            <a class="owner-click-link" onclick="openOwnerDossier('${owner.id}')">${escapeHTML(owner.name)}</a>
           </span>
           <span style="font-size: 0.72rem; color: var(--color-text-muted);">${owner.count} biens sous mandat</span>
         </div>
@@ -1311,8 +1326,8 @@ function renderDashboardPropertiesPreview() {
     container.innerHTML += `
       <div class="recent-item" style="padding: 0.6rem 0.85rem;">
         <div style="display: flex; flex-direction: column;">
-          <span style="font-weight: 600; font-size: 0.9rem;">${prop.name}</span>
-          <span style="font-size: 0.72rem; color: var(--color-text-muted);">${prop.address}</span>
+          <span style="font-weight: 600; font-size: 0.9rem;">${escapeHTML(prop.name)}</span>
+          <span style="font-size: 0.72rem; color: var(--color-text-muted);">${escapeHTML(prop.address)}</span>
         </div>
         <span class="badge ${statusClass}">${statusText}</span>
       </div>
@@ -1443,10 +1458,10 @@ function renderOwnersTable() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>
-        <a class="owner-click-link" style="font-size: 0.95rem;" onclick="openOwnerDossier('${owner.id}')">${owner.name}</a>
+        <a class="owner-click-link" style="font-size: 0.95rem;" onclick="openOwnerDossier('${owner.id}')">${escapeHTML(owner.name)}</a>
       </td>
-      <td>${owner.phone}</td>
-      <td>${owner.email}</td>
+      <td>${escapeHTML(owner.phone)}</td>
+      <td>${escapeHTML(owner.email)}</td>
       <td class="text-center" style="font-weight: 600;">${ownerPropertiesCount}</td>
       <td class="text-center" style="font-weight: 600; color: var(--color-green);">${formatCurrency(totalRentValue)}</td>
         <td class="text-center" style="font-weight: 600; color: var(--color-primary);">${formatCurrency(totalSaleValue)}</td>
@@ -1548,7 +1563,7 @@ function addReceiptRow(propertyId = null, paidAmount = null) {
   let selectOptionsHtml = `<option value="" disabled ${!propertyId ? 'selected' : ''}>Choisir un bien/locataire</option>`;
   ownerProperties.forEach(p => {
     const tenant = getTenantForProperty(p.id);
-    selectOptionsHtml += `<option value="${p.id}" ${propertyId === p.id ? 'selected' : ''}>${tenant.name} (${p.name})</option>`;
+    selectOptionsHtml += `<option value="${p.id}" ${propertyId === p.id ? 'selected' : ''}>${escapeHTML(tenant.name)} (${escapeHTML(p.name)})</option>`;
   });
   
   // Récupérer le brouillon s'il existe
@@ -1936,7 +1951,7 @@ function openOwnerDossier(ownerId) {
 
   // Remplissage En-tête Dossier Bailleurs
   document.getElementById('owner-detail-name').textContent = owner.name;
-  document.getElementById('owner-detail-contact').textContent = `${owner.phone} | ${owner.email} | Commission : ${owner.commissionRate}%`;
+  document.getElementById('owner-detail-contact').textContent = `${escapeHTML(owner.phone)} | ${escapeHTML(owner.email)} | Commission : ${owner.commissionRate}%`;
   document.getElementById('owner-detail-avatar').textContent = owner.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   const ownerProperties = state.properties.filter(p => p.ownerId === owner.id);
@@ -1974,10 +1989,10 @@ function openOwnerDossier(ownerId) {
 
       tbodyBiens.innerHTML += `
         <tr>
-          <td class="text-center" style="font-weight: 500;">${p.name}</td>
-          <td class="text-center">${p.address}</td>
+          <td class="text-center" style="font-weight: 500;">${escapeHTML(p.name)}</td>
+          <td class="text-center">${escapeHTML(p.address)}</td>
           <td class="text-center" style="font-weight: 600;">${formatCurrency(p.rent)}</td>
-          <td class="text-center"><span class="badge ${badgeClass}">${p.status}</span></td>
+          <td class="text-center"><span class="badge ${badgeClass}">${escapeHTML(p.status)}</span></td>
           <td class="text-center">${mandateHtml}</td>
         </tr>
       `;
@@ -1996,9 +2011,9 @@ function openOwnerDossier(ownerId) {
       const tenant = getTenantForProperty(p.id);
       tbodyLocataires.innerHTML += `
         <tr>
-          <td style="font-weight: 500;"><a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${p.id}')">${tenant.name}</a></td>
-          <td><span class="badge badge-purple">${p.name}</span></td>
-          <td>${tenant.phone}</td>
+          <td style="font-weight: 500;"><a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${p.id}')">${escapeHTML(tenant.name)}</a></td>
+          <td><span class="badge badge-purple">${escapeHTML(p.name)}</span></td>
+          <td>${escapeHTML(tenant.phone)}</td>
           <td class="text-right" style="font-weight: 600; color: var(--color-green);">${formatCurrency(p.rent)}</td>
           <td class="text-center">
             <button class="btn-icon-only" onclick="deleteTenant('${p.id}')" title="Supprimer ce locataire">
@@ -2016,7 +2031,7 @@ function openOwnerDossier(ownerId) {
   
   const countBiens = ownerProperties.length;
   const countLoues = ownerProperties.filter(p => p.status === 'Loué').length;
-  const buildingDescText = `Bailleur : ${owner.name} (${countBiens} bien${countBiens > 1 ? 's' : ''} en gestion, ${countLoues} loué${countLoues > 1 ? 's' : ''})`;
+  const buildingDescText = `Bailleur : ${escapeHTML(owner.name)} (${countBiens} bien${countBiens > 1 ? 's' : ''} en gestion, ${countLoues} loué${countLoues > 1 ? 's' : ''})`;
   document.getElementById('receipt-building-desc').textContent = buildingDescText;
   
   const estimatedRent = ownerProperties.filter(p => p.transaction_type === 'Location').reduce((sum, p) => sum + p.rent, 0);
@@ -2083,7 +2098,7 @@ function openOwnerDossier(ownerId) {
         tbodyWithdrawals.innerHTML += `
           <tr>
             <td>${formatDateString(w.date)}</td>
-            <td style="font-weight: 500;">${w.description} ${badgeType}</td>
+            <td style="font-weight: 500;">${escapeHTML(w.description)} ${badgeType}</td>
             <td class="text-right value-rose" style="font-weight: 700;">-${formatCurrency(w.amount)}</td>
             <td class="text-center"><span class="badge badge-green">Payé</span></td>
             <td class="text-center no-print">
@@ -2135,7 +2150,7 @@ function openOwnerDossier(ownerId) {
     
     // Remplissage de la modale de relevé
     document.getElementById('statement-owner-name').textContent = owner.name;
-    document.getElementById('statement-owner-contact').textContent = `Tél: ${owner.phone} | Email: ${owner.email} | Commission : ${owner.commissionRate}%`;
+    document.getElementById('statement-owner-contact').textContent = `Tél: ${escapeHTML(owner.phone)} | Email: ${escapeHTML(owner.email)} | Commission : ${owner.commissionRate}%`;
     document.getElementById('statement-current-date').textContent = `Bamako, le ${getTodayFrenchDateString()}`;
     
     function renderStatement() {
@@ -2218,7 +2233,7 @@ function openOwnerDossier(ownerId) {
             tbodyStatement.innerHTML += `
               <tr>
                 <td>${formatDateString(t.date)}</td>
-                <td style="font-weight: 500;">${t.description}</td>
+                <td style="font-weight: 500;">${escapeHTML(t.description)}</td>
                 <td>${typeLabel}</td>
                 <td class="text-right" style="font-weight: 600;">${brutDisplay}</td>
                 <td class="text-right" style="font-weight: 600;">${netRepayeDisplay}</td>
@@ -2351,7 +2366,7 @@ function renderPropertiesGrid() {
         </div>
         <div class="goal-details-wrap">
           <h5 style="font-size: 0.95rem; font-weight: 600; line-height: 1.3;">${getPropertyDisplayNameHTML(prop)}</h5>
-          <span class="goal-deadline-badge">${prop.address}</span>
+          <span class="goal-deadline-badge">${escapeHTML(prop.address)}</span>
         </div>
       </div>
 
@@ -2447,7 +2462,7 @@ function filterAndRenderTransactionsTable() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${formatDateString(tx.date)}</td>
-      <td style="font-weight: 500;">${tx.description}</td>
+      <td style="font-weight: 500;">${escapeHTML(tx.description)}</td>
       <td><a class="owner-click-link" onclick="openOwnerDossier('${ownerId}')">${ownerName}</a></td>
       <td><span class="badge badge-purple">${propName}</span></td>
       <td>${typeBadge}</td>
@@ -2911,7 +2926,7 @@ async function handleOwnerSubmit(e) {
     closeAllModals();
     renderOwnersTable();
     
-    let msg = `Bailleur ${name} enregistré avec succès.`;
+    let msg = `Bailleur ${escapeHTML(name)} enregistré avec succès.`;
     if (propName) {
       msg += ` Bien "${propName}" également ajouté.`;
     }
@@ -3013,7 +3028,7 @@ async function handlePropertySubmit(e) {
     populateDropdowns();
     closeAllModals();
     renderPropertiesGrid();
-    showToast(`Bien "${name}" ajouté au catalogue de gestion.`, 'success');
+    showToast(`Bien "${escapeHTML(name)}" ajouté au catalogue de gestion.`, 'success');
   } catch (error) {
     console.error(error);
     showToast('Erreur lors de la création du bien.', 'error');
@@ -3108,7 +3123,7 @@ function openEditTenantModal(id) {
         option.value = prop.id;
         let typeName = '';
         if (prop.type) typeName = ' - ' + prop.type.split(' - ')[0];
-        option.textContent = `${prop.name}${typeName} | ${formatCurrency(prop.rent || prop.rent_amount || prop.price)}`;
+        option.textContent = `${escapeHTML(prop.name)}${typeName} | ${formatCurrency(prop.rent || prop.rent_amount || prop.price)}`;
         elProp.appendChild(option);
       }
     }
@@ -3208,11 +3223,11 @@ function deleteOwner(id) {
 
   const hasProperties = state.properties.some(p => p.ownerId === id);
   if (hasProperties) {
-    showCustomConfirm(`Impossible de supprimer le bailleur "${owner.name}" car des biens immobiliers lui sont encore associés.`, true, 'Action Impossible');
+    showCustomConfirm(`Impossible de supprimer le bailleur "${escapeHTML(owner.name)}" car des biens immobiliers lui sont encore associés.`, true, 'Action Impossible');
     return;
   }
 
-  showCustomConfirm(`Supprimer définitivement la fiche de "${owner.name}" ?`).then(async confirmed => {
+  showCustomConfirm(`Supprimer définitivement la fiche de "${escapeHTML(owner.name)}" ?`).then(async confirmed => {
     if (confirmed) {
       try {
         await API.deleteOwner(id);
@@ -3231,7 +3246,7 @@ function deleteProperty(id) {
   const prop = state.properties.find(p => p.id === id);
   if (!prop) return;
 
-  showCustomConfirm(`Retirer le bien "${prop.name}" du mandat de gestion ?`).then(async confirmed => {
+  showCustomConfirm(`Retirer le bien "${escapeHTML(prop.name)}" du mandat de gestion ?`).then(async confirmed => {
     if (confirmed) {
       try {
         await API.deleteProperty(id);
@@ -3268,7 +3283,7 @@ function getTodayDateString() {
 function showToast(message, type = 'success') {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+  toast.className = `toast toast-${escapeHTML(type)}`;
   
   let icon = `
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3289,7 +3304,7 @@ function showToast(message, type = 'success') {
     `;
   }
 
-  toast.innerHTML = `${icon} <span>${message}</span>`;
+  toast.innerHTML = `${icon} <span>${escapeHTML(message)}</span>`;
   container.appendChild(toast);
 
   setTimeout(() => {
@@ -3471,13 +3486,13 @@ function renderTenantsTable() {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>
-          <a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${prop.id}')">${tenant.name}</a>
-          ${tenant.cni ? `<span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">CNI/NINA: <strong style="color: var(--color-text-primary);">${tenant.cni}</strong></span>` : ''}
+          <a class="owner-click-link" style="font-weight: 600;" onclick="openTenantDossier('${prop.id}')">${escapeHTML(tenant.name)}</a>
+          ${tenant.cni ? `<span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">CNI/NINA: <strong style="color: var(--color-text-primary);">${escapeHTML(tenant.cni)}</strong></span>` : ''}
         </td>
-        <td>${tenant.phone}</td>
+        <td>${escapeHTML(tenant.phone)}</td>
         <td>
-          <span class="badge badge-purple">${prop.name}</span>
-          <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">${prop.address}</span>
+          <span class="badge badge-purple">${escapeHTML(prop.name)}</span>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">${escapeHTML(prop.address)}</span>
         </td>
         <td><a class="owner-click-link" onclick="openOwnerDossier('${prop.ownerId}')">${ownerName}</a></td>
         <td class="text-right" style="font-weight: 700; color: var(--color-green);">${formatCurrency(prop.rent)}</td>
@@ -3591,7 +3606,7 @@ function renderAccounting() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${formatDateString(tx.date)}</td>
-          <td style="font-weight: 500;">${tx.description}</td>
+          <td style="font-weight: 500;">${escapeHTML(tx.description)}</td>
           <td><a class="owner-click-link" onclick="openOwnerDossier('${ownerId}')">${ownerName}</a></td>
           <td><span class="badge badge-purple">${propName}</span></td>
           <td class="text-right value-green" style="font-weight: 600;">+${formatCurrency(commission)}</td>
@@ -3624,7 +3639,7 @@ function renderAccounting() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${formatDateString(tx.date)}</td>
-          <td style="font-weight: 500;">${tx.description}</td>
+          <td style="font-weight: 500;">${escapeHTML(tx.description)}</td>
           <td><span class="badge badge-purple">${tx.propertyId ? propName : 'Aucun (Agence)'}</span></td>
           <td class="text-right value-rose" style="font-weight: 700;">-${formatCurrency(tx.amount)}</td>
           <td class="text-center"><span class="badge badge-green">Validé</span></td>
@@ -3704,7 +3719,7 @@ async function handleSaveReceipt() {
         
         const newTx = {
           id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-          description: `Loyer ${month} - ${prop.name} (Reçu)`,
+          description: `Loyer ${month} - ${escapeHTML(prop.name)} (Reçu)`,
           amount: paidAmount,
           type: 'income',
           property_id: propertyId,
@@ -3786,7 +3801,7 @@ async function handleWithdrawalSubmit(e) {
 
   const newWithdrawal = {
     id: 'tx-withdrawal-' + Date.now(),
-    description: withdrawalType === 'cautions' ? `Retrait de cautions : ${owner.name}` : `Retrait de loyers : ${owner.name}`,
+    description: withdrawalType === 'cautions' ? `Retrait de cautions : ${escapeHTML(owner.name)}` : `Retrait de loyers : ${escapeHTML(owner.name)}`,
     amount: amount,
     type: 'expense',
     property_id: ownerProperties[0] ? ownerProperties[0].id : null,
@@ -3851,7 +3866,7 @@ function openEmailCommModal(defaultTargetType = 'all_tenants') {
     }
 
     selectProperty.innerHTML = uniqueProps.map(p => {
-      return `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${p.name}</option>`;
+      return `<option value="${p.id}" style="background: #1e2420; color: #fff;">🏢 ${escapeHTML(p.name)}</option>`;
     }).join('');
   }
 
@@ -3863,12 +3878,12 @@ function openEmailCommModal(defaultTargetType = 'all_tenants') {
 
     if (tenantsWithEmail.length > 0) {
       html += `<optgroup label="Locataires avec E-mail" style="background: #1e2420; color: #fff;">` +
-        tenantsWithEmail.map(t => `<option value="${t.id}" style="background: #1e2420; color: #fff;">👤 Locataire: ${t.name} (${t.email})</option>`).join('') +
+        tenantsWithEmail.map(t => `<option value="${t.id}" style="background: #1e2420; color: #fff;">👤 Locataire: ${escapeHTML(t.name)} (${escapeHTML(t.email)})</option>`).join('') +
         `</optgroup>`;
     }
     if (ownersWithEmail.length > 0) {
       html += `<optgroup label="Propriétaires avec E-mail" style="background: #1e2420; color: #fff;">` +
-        ownersWithEmail.map(o => `<option value="${o.id}" style="background: #1e2420; color: #fff;">🔑 Propriétaire: ${o.name} (${o.email})</option>`).join('') +
+        ownersWithEmail.map(o => `<option value="${o.id}" style="background: #1e2420; color: #fff;">🔑 Propriétaire: ${escapeHTML(o.name)} (${escapeHTML(o.email)})</option>`).join('') +
         `</optgroup>`;
     }
     if (!html) {
@@ -4079,10 +4094,10 @@ function openTenantDossier(propertyId) {
       
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 600; color: var(--color-text-primary); vertical-align: middle;">${m.name}</td>
+        <td style="font-weight: 600; color: var(--color-text-primary); vertical-align: middle;">${escapeHTML(m.name)}</td>
         <td class="text-right" style="color: var(--color-text-muted); vertical-align: middle;">${formatCurrency(prop.rent)}</td>
         <td class="text-right ${paidThisMonth > 0 ? 'value-green' : ''}" style="font-weight: 600; vertical-align: middle;">
-          <input type="number" class="form-input tenant-paid-month-input text-right" style="width: 130px; background: transparent; border: 1px solid var(--glass-border); padding: 0.25rem 0.5rem; color: var(--color-text-primary); font-weight: 700; display: inline-block;" data-month="${m.name}" value="${paidThisMonth}">
+          <input type="number" class="form-input tenant-paid-month-input text-right" style="width: 130px; background: transparent; border: 1px solid var(--glass-border); padding: 0.25rem 0.5rem; color: var(--color-text-primary); font-weight: 700; display: inline-block;" data-month="${escapeHTML(m.name)}" value="${paidThisMonth}">
         </td>
         <td class="text-right" style="color: var(--color-text-muted); vertical-align: middle;">${totalPaidDisplay}</td>
         <td class="text-right" style="color: ${solde > 0 ? 'var(--color-green)' : (solde < 0 ? 'var(--color-rose)' : 'white')}; vertical-align: middle;">${soldeDisplay}</td>
@@ -4123,7 +4138,7 @@ function openTenantDossier(propertyId) {
           // Créer une nouvelle transaction si elle n'existait pas
           const newTx = {
             id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-            description: `Loyer ${monthName} - ${prop.name}`,
+            description: `Loyer ${monthName} - ${escapeHTML(prop.name)}`,
             amount: newAmount,
             type: 'income',
             property_id: prop.id,
@@ -4171,7 +4186,7 @@ function openTenantModal() {
         if (p.type) {
             typeName = ' - ' + p.type.split(' - ')[0];
         }
-        select.innerHTML += `<option value="${p.id}">${p.name}${typeName} | ${formatCurrency(p.rent)}</option>`;
+        select.innerHTML += `<option value="${p.id}">${escapeHTML(p.name)}${typeName} | ${formatCurrency(p.rent)}</option>`;
       });
     }
   }
@@ -4233,7 +4248,7 @@ async function handleTenantSubmit(e) {
       });
   
       document.getElementById('modal-tenant').classList.remove('active');
-      showToast(`Le locataire ${name} a ete enregistre avec succes pour le bien ${prop.name}.`, 'success');
+      showToast(`Le locataire ${escapeHTML(name)} a ete enregistre avec succes pour le bien ${escapeHTML(prop.name)}.`, 'success');
       
       await loadData();
       renderTenantsTable();
@@ -4371,7 +4386,7 @@ function showSubscriptionExpiredModal(reason = 'Expiré') {
   const updateWhatsappLink = (planName, planPrice) => {
     if (!btnWhatsapp) return;
     const msg = `Bonjour, je souhaite renouveler mon abonnement Immovii avec ${planName} (${planPrice}) pour mon agence.`;
-    btnWhatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    btnWhatsapp.href = `https://wa.me/${escapeHTML(phone)}?text=${encodeURIComponent(msg)}`;
   };
 
   let selected = modal.querySelector('.expire-plan-card.selected') || cards[0];
@@ -4647,11 +4662,11 @@ function renderStaffTable() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--color-text-primary);">${member.name}</td>
+      <td style="font-weight: 600; color: var(--color-text-primary);">${escapeHTML(member.name)}</td>
       <td><span class="badge ${roleClass}">${member.role}</span></td>
-      <td>${member.phone}</td>
-      <td>${member.email}</td>
-      <td class="text-center"><span class="badge ${statusClass}">${member.status}</span></td>
+      <td>${escapeHTML(member.phone)}</td>
+      <td>${escapeHTML(member.email)}</td>
+      <td class="text-center"><span class="badge ${statusClass}">${escapeHTML(member.status)}</span></td>
       <td class="text-center no-print">
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
           <button class="btn-icon-only" onclick="toggleStaffStatus('${member.id}')" title="${toggleTitle}">
@@ -4741,7 +4756,7 @@ async function handleStaffSubmit(e) {
       showToast(err.message || 'Erreur lors de la mise à jour.', 'error');
       return;
     }
-    showToast(`Collaborateur ${name} mis à jour.`, 'success');
+    showToast(`Collaborateur ${escapeHTML(name)} mis à jour.`, 'success');
   } else {
     // Création
     if (!pwdInput) {
@@ -4757,7 +4772,7 @@ async function handleStaffSubmit(e) {
       showToast(err.message || 'Erreur lors de la création.', 'error');
       return;
     }
-    showToast(`Compte de ${name} créé. Il/Elle peut désormais se connecter !`, 'success');
+    showToast(`Compte de ${escapeHTML(name)} créé. Il/Elle peut désormais se connecter !`, 'success');
   }
   closeAllModals();
   await loadData();
@@ -4775,7 +4790,7 @@ function toggleStaffStatus(id) {
       }
     } catch(e) {}
     renderStaffTable();
-    showToast(`Statut de ${member.name} mis à jour : ${member.status}`, 'success');
+    showToast(`Statut de ${escapeHTML(member.name)} mis à jour : ${escapeHTML(member.status)}`, 'success');
   }
 }
 
@@ -4783,7 +4798,7 @@ function deleteStaff(id) {
   const member = state.staff.find(m => m.id === id);
   if (!member) return;
 
-  showCustomConfirm(`Voulez-vous vraiment retirer ${member.name} de l'équipe ?`).then(confirmed => {
+  showCustomConfirm(`Voulez-vous vraiment retirer ${escapeHTML(member.name)} de l'équipe ?`).then(confirmed => {
     if (confirmed) {
       try {
         if (typeof API !== 'undefined' && API.deleteUser) {
@@ -4793,7 +4808,7 @@ function deleteStaff(id) {
       
       state.staff = state.staff.filter(m => m.id !== id);
       renderStaffTable();
-      showToast(`Collaborateur ${member.name} retiré.`, 'warning');
+      showToast(`Collaborateur ${escapeHTML(member.name)} retiré.`, 'warning');
     }
   });
 }
@@ -4913,11 +4928,11 @@ function renderGlobalPrintHeader() {
   const htmlContent = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--color-text-primary); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
       <div style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-primary);">
-        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${settings.name || 'IMMOVII S.A.R.L'}</h4>
-        <p style="margin: 0; font-weight: 600;">${settings.slogan || 'Agence Immobilière & Syndic de Copropriété'}</p>
-        <p style="margin: 0;">${settings.address || "Adresse de l'agence"}</p>
-        <p style="margin: 0;">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovii.ml'}</p>
-        ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
+        <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0 0 0.4rem 0;">${escapeHTML(settings.name || 'IMMOVII S.A.R.L')}</h4>
+        <p style="margin: 0; font-weight: 600;">${escapeHTML(settings.slogan || 'Agence Immobilière & Syndic de Copropriété')}</p>
+        <p style="margin: 0;">${escapeHTML(settings.address || "Adresse de l'agence")}</p>
+        <p style="margin: 0;">Tél : ${escapeHTML(settings.phone || '+223 20 22 44 66')} | E-mail : ${escapeHTML(settings.email || 'contact@immovii.ml')}</p>
+        ${settings.nif ? `<p style="margin: 0; font-weight: 600; font-size: 0.85rem;">Numéro d'identification fiscale : ${escapeHTML(settings.nif)}</p>` : ''}
       </div>
       <div style="text-align: right;">
         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
@@ -4939,11 +4954,11 @@ function renderGlobalPrintHeader() {
     dynamicStatementHeader.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--glass-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
         <div>
-          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${settings.name || 'IMMOVII S.A.R.L'}</h4>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.slogan || 'Gestion de Portefeuille de Copropriété'}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${settings.address || "Adresse de l'agence"}</p>
-          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${settings.phone || '+223 20 22 44 66'} | E-mail : ${settings.email || 'contact@immovii.ml'}</p>
-          ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${settings.nif}</p>` : ''}
+          <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary); margin: 0 0 0.3rem 0;">${escapeHTML(settings.name || 'IMMOVII S.A.R.L')}</h4>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${escapeHTML(settings.slogan || 'Gestion de Portefeuille de Copropriété')}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">${escapeHTML(settings.address || "Adresse de l'agence")}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Tél : ${escapeHTML(settings.phone || '+223 20 22 44 66')} | E-mail : ${escapeHTML(settings.email || 'contact@immovii.ml')}</p>
+          ${settings.nif ? `<p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">Numéro d'identification fiscale : ${escapeHTML(settings.nif)}</p>` : ''}
         </div>
         <div style="text-align: right;">
           <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.25rem;">
@@ -5113,7 +5128,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     }
 
     if (owner) {
-      doc.text(`Pour le compte de : ${owner.name}`, 20, yPosEmetteur);
+      doc.text(`Pour le compte de : ${escapeHTML(owner.name)}`, 20, yPosEmetteur);
       yPosEmetteur += 6;
     }
 
@@ -5125,9 +5140,9 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setFont("helvetica", "normal");
     doc.text(tenant.name || "Locataire Inconnu", locataireX, 52);
     let tenantY = 58;
-    if (tenant.phone) { doc.text(`Tél : ${tenant.phone}`, locataireX, tenantY); tenantY += 6; }
-    if (tenant.cni) { doc.text(`CNI / NINA : ${tenant.cni}`, locataireX, tenantY); tenantY += 6; }
-    if (tenant.email) { doc.text(`Email : ${tenant.email}`, locataireX, tenantY); tenantY += 6; }
+    if (tenant.phone) { doc.text(`Tél : ${escapeHTML(tenant.phone)}`, locataireX, tenantY); tenantY += 6; }
+    if (tenant.cni) { doc.text(`CNI / NINA : ${escapeHTML(tenant.cni)}`, locataireX, tenantY); tenantY += 6; }
+    if (tenant.email) { doc.text(`Email : ${escapeHTML(tenant.email)}`, locataireX, tenantY); tenantY += 6; }
 
     // Ligne de séparation
     const lineY = Math.max(yPosEmetteur, tenantY) + 4;
@@ -5138,7 +5153,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setFontSize(12);
     doc.text(`Reçu de Monsieur / Madame : `, 20, detailsY);
     doc.setFont("helvetica", "bold");
-    doc.text(`${tenant.name}`, 80, detailsY);
+    doc.text(`${escapeHTML(tenant.name)}`, 80, detailsY);
     
     const safeCurrencyAmount = formatCurrency(tx.amount).replace(/[\u202f\u00a0]/g, ' ');
 
@@ -5150,7 +5165,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.setFont("helvetica", "normal");
     doc.text(`Pour le paiement du loyer concernant le bien :`, 20, detailsY + 20);
     doc.setFont("helvetica", "bold");
-    doc.text(`${prop.name} - ${prop.address}`, 20, detailsY + 28);
+    doc.text(`${escapeHTML(prop.name)} - ${escapeHTML(prop.address)}`, 20, detailsY + 28);
 
     doc.setFont("helvetica", "normal");
     doc.text(`Date du paiement : `, 20, detailsY + 40);
@@ -5158,7 +5173,7 @@ async function generateQuittancePDF(transactionId, autoDownload = true) {
     doc.text(`${formatDateString(tx.date)}`, 60, detailsY + 40);
 
     // Tableau des détails (AutoTable)
-    const rowDescription = tx.description ? `Loyer - ${tx.description}` : 'Loyer et charges (selon bail)';
+    const rowDescription = tx.description ? `Loyer - ${escapeHTML(tx.description)}` : 'Loyer et charges (selon bail)';
     
     doc.autoTable({
       startY: detailsY + 55,
@@ -5254,14 +5269,14 @@ async function renderSupportTickets() {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>#${ticket.id}</td>
-            <td><strong>${ticket.subject}</strong></td>
-            <td>${ticket.category}</td>
+            <td><strong>${escapeHTML(ticket.subject)}</strong></td>
+            <td>${escapeHTML(ticket.category)}</td>
             <td><span style="color: ${priorityColor}; font-weight: 500;">${ticket.priority}</span></td>
             <td>${statusBadge}</td>
             <td>${new Date(ticket.date).toLocaleDateString('fr-FR')}</td>
             <td>
               <div class="action-buttons">
-                <button class="btn-icon text-blue" title="Voir les messages" onclick="viewTicketChat('${ticket.id}', '${ticket.subject.replace(/'/g, "\\'")}', '${ticket.status}')">
+                <button class="btn-icon text-blue" title="Voir les messages" onclick="viewTicketChat('${ticket.id}', '${ticket.subject.replace(/'/g, "\\'")}', '${escapeHTML(ticket.status)}')">
                   <i class="fa-regular fa-comments"></i>
                 </button>
                 <button class="btn-icon text-rose" title="Fermer la demande" onclick="closeSupportTicket('${ticket.id}')" ${ticket.status === 'Fermé' ? 'disabled style="opacity: 0.5;"' : ''}>
@@ -5548,9 +5563,32 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fetch and render tutorials dynamically
 async function loadTutorials() {
   const container = document.getElementById('tutorials-grid');
+  const annContainer = document.getElementById('tutorials-announcement');
   if (!container) return;
   
   try {
+    // Load announcements
+    if (annContainer) {
+      try {
+        const resAnn = await fetch(`${API_BASE_URL}/announcements/tutorials`);
+        if (resAnn.ok) {
+          const announcements = await resAnn.json();
+          if (announcements.length > 0) {
+            annContainer.innerHTML = announcements.map(ann => `
+              <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: var(--color-text-primary);">
+                ${ann.title ? `<h4 style="margin: 0 0 0.5rem 0; color: #ef4444; font-size: 1.1rem;"><i class="fa-solid fa-bullhorn" style="margin-right: 0.5rem;"></i>${escapeHTML(ann.title)}</h4>` : ''}
+                <p style="margin: 0; line-height: 1.5; font-size: 0.95rem;">${escapeHTML(ann.message).replace(/\n/g, '<br>')}</p>
+              </div>
+            `).join('');
+          } else {
+            annContainer.innerHTML = '';
+          }
+        }
+      } catch (err) {
+        console.error("Error loading announcements", err);
+      }
+    }
+
     const res = await fetch(`${API_BASE_URL}/tutorials`);
     if (!res.ok) throw new Error('Erreur lors du chargement des tutoriels');
     const tutorials = await res.json();
@@ -5569,7 +5607,7 @@ async function loadTutorials() {
             <polygon points="10 8 16 12 10 16 10 8"></polygon>
           </svg>
         </div>
-        <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">${tut.title}</h4>
+        <h4 style="color: var(--color-text-primary); margin-bottom: 0.5rem; font-size: 1.05rem;">${escapeHTML(tut.title)}</h4>
         <p style="color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.4; margin: 0;">${tut.description.substring(0, 100)}${tut.description.length > 100 ? '...' : ''}</p>
       </div>
     `).join('');

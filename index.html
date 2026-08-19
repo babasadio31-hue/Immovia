@@ -38,6 +38,9 @@
 
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- DOMPurify for XSS Protection -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.3/purify.min.js"></script>
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css?v=20260731_1">
@@ -1916,6 +1919,7 @@
             </div>
           </header>
           
+          <div id="tutorials-announcement" style="margin-top: 1rem;"></div>
           <div id="tutorials-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
             <!-- Tutorials will be injected here dynamically -->
           </div>
