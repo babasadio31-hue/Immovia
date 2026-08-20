@@ -835,7 +835,8 @@ function editAdminTutorial(id, title, desc, url) {
 }
 
 async function deleteAdminTutorial(id) {
-  if (confirm("Êtes-vous sûr de vouloir supprimer ce tutoriel ?")) {
+  customConfirm("Êtes-vous sûr de vouloir supprimer ce tutoriel ?", async () => {
+    showLoading();
     try {
       const res = await fetch(`${API_URL}/admin/tutorials/${id}`, {
         method: 'DELETE',
@@ -849,8 +850,10 @@ async function deleteAdminTutorial(id) {
       }
     } catch (err) {
       showToast("Erreur réseau", "error");
+    } finally {
+      hideLoading();
     }
-  }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -963,7 +966,8 @@ function editAdminAnnouncement(id, title, message, target, isActive) {
 }
 
 async function deleteAdminAnnouncement(id) {
-  if (confirm("Êtes-vous sûr de vouloir supprimer cette annonce ?")) {
+  customConfirm("Êtes-vous sûr de vouloir supprimer cette annonce ?", async () => {
+    showLoading();
     try {
       const res = await fetch(`${API_URL}/admin/announcements/${id}`, {
         method: 'DELETE',
@@ -977,8 +981,10 @@ async function deleteAdminAnnouncement(id) {
       }
     } catch (err) {
       showToast("Erreur réseau", "error");
+    } finally {
+      hideLoading();
     }
-  }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
