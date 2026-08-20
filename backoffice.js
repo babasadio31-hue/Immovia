@@ -958,7 +958,7 @@ function editAdminAnnouncement(id, title, message, target, isActive) {
   document.getElementById('admin-announcement-message').value = message;
   document.getElementById('admin-announcement-target').value = target;
   document.getElementById('admin-announcement-active').checked = isActive;
-  document.getElementById('admin-announcement-modal-title').innerText = 'Modifier l\\'Annonce';
+  document.getElementById('admin-announcement-modal-title').innerText = 'Modifier l\'Annonce';
   document.getElementById('admin-announcement-modal').style.display = 'flex';
 }
 
