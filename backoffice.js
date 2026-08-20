@@ -29,7 +29,17 @@ const views = document.querySelectorAll('.admin-view');
 document.addEventListener('DOMContentLoaded', () => {
   if (adminToken) {
     showInterface();
-    loadDashboard();
+    const savedTab = localStorage.getItem('immovii_backoffice_tab');
+    if (savedTab) {
+      const pill = document.querySelector(`.nav-pill[data-target="${savedTab}"]`);
+      if (pill) {
+        pill.click();
+      } else {
+        loadDashboard();
+      }
+    } else {
+      loadDashboard();
+    }
   } else {
     showLogin();
   }
@@ -83,6 +93,7 @@ navPills.forEach(pill => {
     
     // switch active class on view
     const targetId = pill.getAttribute('data-target');
+    localStorage.setItem('immovii_backoffice_tab', targetId);
     views.forEach(v => v.classList.remove('active'));
     document.getElementById(targetId).classList.add('active');
     

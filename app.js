@@ -71,7 +71,8 @@ function initApp() {
   document.getElementById('input-tx-date').value = getTodayDateString();
   
   // Onglet initial
-  switchTab('dashboard');
+  const savedTab = localStorage.getItem('immovii_app_tab') || 'dashboard';
+  switchTab(savedTab);
   showToast('Immovii : Système chargé avec succès.', 'success');
   
   // Vérification expiration de l'abonnement
@@ -1028,6 +1029,12 @@ function switchTab(tabName) {
       showToast("Accès restreint : Vous n'avez pas l'autorisation d'accéder à cette section.", "error");
       return;
     }
+  }
+
+  // Enregistrer l'onglet courant s'il fait partie des menus principaux
+  const mainTabs = ['dashboard', 'owners', 'tenants', 'properties', 'accounting', 'transactions', 'staff', 'support', 'settings', 'tutorials'];
+  if (mainTabs.includes(tabName)) {
+    localStorage.setItem('immovii_app_tab', tabName);
   }
 
   document.querySelectorAll('.menu-btn').forEach(btn => {
