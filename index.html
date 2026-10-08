@@ -294,6 +294,19 @@
           </svg>
           <span>Personnel</span>
         </button>
+        <button class="menu-btn" id="btn-nav-design" data-tab="design">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"></path>
+            <path d="M9 8h1"></path>
+            <path d="M9 12h1"></path>
+            <path d="M9 16h1"></path>
+            <path d="M14 8h1"></path>
+            <path d="M14 12h1"></path>
+            <path d="M14 16h1"></path>
+            <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+          </svg>
+          <span>Conception & Construction</span>
+        </button>
         <button class="menu-btn" id="btn-nav-tutorials" data-tab="tutorials">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -395,6 +408,40 @@
 
       <!-- Content View Wrapper -->
       <div class="view-wrapper">
+
+        <!-- ================= DESIGN TAB ================= -->
+        <section class="tab-view" id="view-design">
+          <div class="card glass" style="margin-bottom: 1rem; padding: 1.5rem;">
+            <div style="display: flex; gap: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+              <button class="btn btn-primary" id="btn-tab-plan3d" onclick="switchDesignTab('plan3d')">Plan 3D</button>
+              <button class="btn btn-secondary" id="btn-tab-quote" onclick="switchDesignTab('quote')">Devis de construction</button>
+            </div>
+            
+            <div id="design-content-plan3d">
+              <h3 style="margin-bottom: 1rem;">Plans 3D</h3>
+              <p style="color: var(--color-text-muted);">Le module de conception de plans 3D sera bientôt disponible.</p>
+            </div>
+            
+            <div id="design-content-quote" style="display: none;">
+              <h3 style="margin-bottom: 1rem;">Devis de construction</h3>
+              <p style="color: var(--color-text-muted);">Le module d'édition de devis de construction sera bientôt disponible.</p>
+            </div>
+          </div>
+          <script>
+            function switchDesignTab(tabId) {
+              document.getElementById('design-content-plan3d').style.display = tabId === 'plan3d' ? 'block' : 'none';
+              document.getElementById('design-content-quote').style.display = tabId === 'quote' ? 'block' : 'none';
+              
+              if(tabId === 'plan3d') {
+                document.getElementById('btn-tab-plan3d').className = 'btn btn-primary';
+                document.getElementById('btn-tab-quote').className = 'btn btn-secondary';
+              } else {
+                document.getElementById('btn-tab-plan3d').className = 'btn btn-secondary';
+                document.getElementById('btn-tab-quote').className = 'btn btn-primary';
+              }
+            }
+          </script>
+        </section>
 
         <!-- ================= DASHBOARD TAB ================= -->
         <section class="tab-view active" id="view-dashboard">
